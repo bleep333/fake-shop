@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Product } from '@/lib/mockProducts'
 import PlaceholderImage from './PlaceholderImage'
 
@@ -9,6 +10,20 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
+  const [isAdding, setIsAdding] = useState(false)
+
+  const handleQuickAdd = () => {
+    if (isAdding || !onQuickAdd) return
+    
+    setIsAdding(true)
+    onQuickAdd(product)
+    
+    // Reset after a short delay to allow for legitimate subsequent clicks
+    setTimeout(() => {
+      setIsAdding(false)
+    }, 300)
+  }
+
   return (
     <div className="group">
       <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden rounded-lg mb-3">
@@ -28,8 +43,9 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
         {onQuickAdd && (
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
-              onClick={() => onQuickAdd(product)}
-              className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              onClick={handleQuickAdd}
+              disabled={isAdding}
+              className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Quick Add
             </button>

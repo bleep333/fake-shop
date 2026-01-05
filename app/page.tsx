@@ -4,17 +4,17 @@ import Link from 'next/link'
 import { useState } from 'react'
 import ProductCard from '@/components/ProductCard'
 import { mockProducts, Product } from '@/lib/mockProducts'
+import { useCart } from '@/lib/cartContext'
 
 export default function Home() {
   const [showToast, setShowToast] = useState(false)
   const [email, setEmail] = useState('')
+  const { addToCart } = useCart()
 
   const featuredProducts = mockProducts.slice(0, 8)
 
   const handleQuickAdd = (product: Product) => {
-    // Mock: Add to cart
-    console.log('Added to cart:', product.name)
-    // In real app, this would update cart state
+    addToCart(product, 'M')
   }
 
   const handleSubscribe = (e: React.FormEvent) => {

@@ -5,9 +5,11 @@ import { useSearchParams } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import FilterSidebar from '@/components/FilterSidebar'
 import { mockProducts, filterProducts, sortProducts, FilterOptions, SortOption, Product } from '@/lib/mockProducts'
+import { useCart } from '@/lib/cartContext'
 
 export default function WomensContent() {
   const searchParams = useSearchParams()
+  const { addToCart } = useCart()
   const [filters, setFilters] = useState<FilterOptions>({})
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [currentPage, setCurrentPage] = useState(1)
@@ -32,7 +34,7 @@ export default function WomensContent() {
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage)
 
   const handleQuickAdd = (product: Product) => {
-    console.log('Added to cart:', product.name)
+    addToCart(product, 'M')
   }
 
   return (

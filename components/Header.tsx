@@ -4,10 +4,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import MobileDrawer from './MobileDrawer'
+import { useCart } from '@/lib/cartContext'
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [cartCount] = useState(3) // Mock cart count
+  const { getCartCount } = useCart()
+  const cartCount = getCartCount()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
 

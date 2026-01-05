@@ -1,39 +1,18 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import PlaceholderImage from '@/components/PlaceholderImage'
-import { mockProducts, Product } from '@/lib/mockProducts'
-
-type CartItem = {
-  product: Product
-  quantity: number
-  size: string
-}
+import { useCart } from '@/lib/cartContext'
 
 export default function CartPage() {
-  // Mock cart items
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    { product: mockProducts[0], quantity: 2, size: 'M' },
-    { product: mockProducts[1], quantity: 1, size: 'L' },
-    { product: mockProducts[5], quantity: 1, size: 'S' },
-  ])
+  const { cartItems, updateQuantity, removeFromCart } = useCart()
 
-  const updateQuantity = (index: number, newQuantity: number) => {
-    if (newQuantity < 1) return
-    const updated = [...cartItems]
-    updated[index].quantity = newQuantity
-    setCartItems(updated)
-  }
-
-  const removeItem = (index: number) => {
-    setCartItems(cartItems.filter((_, i) => i !== index))
-  }
-
+  // Price includes tax, so we need to extract tax for display
+  // Tax = price / 11
   const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const tax = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity) / 11, 0)
   const shipping = subtotal > 100 ? 0 : 10
-  const tax = subtotal * 0.1
-  const total = subtotal + shipping + tax
+  const total = subtotal + shipping
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -85,7 +64,7 @@ export default function CartPage() {
 
                     {/* Remove Button */}
                     <button
-                      onClick={() => removeItem(index)}
+                      onClick={() => removeFromCart(index)}
                       className="text-sm text-gray-600 hover:text-black transition-colors underline focus:outline-none focus:ring-2 focus:ring-black rounded"
                     >
                       Remove
@@ -114,22 +93,22 @@ export default function CartPage() {
                   <span>Shipping</span>
                   <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
-                </div>
                 <div className="border-t border-gray-300 pt-2 mt-2">
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Including ${tax.toFixed(2)} in taxes
+                  </p>
                 </div>
               </div>
-              <button
-                className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors mb-4 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              <Link
+                href="/checkout"
+                className="block w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors mb-4 text-center focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
               >
                 Checkout
-              </button>
+              </Link>
               <Link
                 href="/mens"
                 className="block text-center text-sm text-gray-600 hover:text-black transition-colors"
