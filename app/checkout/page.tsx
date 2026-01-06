@@ -2,13 +2,17 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useCart } from '@/lib/cartContext'
 
 type PaymentMethod = 'credit-card' | 'paypal'
 type BillingOption = 'same' | 'different'
 
 export default function CheckoutPage() {
   const { data: session } = useSession()
+  const router = useRouter()
+  const { cartItems, clearCart } = useCart()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit-card')
   const [billingOption, setBillingOption] = useState<BillingOption>('same')
   
@@ -65,12 +69,12 @@ export default function CheckoutPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
   
-  // Credit card form state
-  const [cardNumber, setCardNumber] = useState('')
-  const [expirationDate, setExpirationDate] = useState('')
-  const [securityCode, setSecurityCode] = useState('')
-  const [nameOnCard, setNameOnCard] = useState('')
-  const prevExpirationRef = useRef('')
+  // Credit card form state - pre-filled with filler values and immutable
+  const [cardNumber, setCardNumber] = useState('4111111111111111')
+  const [expirationDate, setExpirationDate] = useState('12 / 25')
+  const [securityCode, setSecurityCode] = useState('123')
+  const [nameOnCard, setNameOnCard] = useState('John Doe')
+  const prevExpirationRef = useRef('12 / 25')
 
   const handleExpirationDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value
@@ -138,8 +142,77 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Checkout submitted')
+    
+    console.log('Form submitted, cartItems:', cartItems)
+    
+    // Validate cart is not empty
+    if (!cartItems || cartItems.length === 0) {
+      alert('Your cart is empty. Please add items to your cart before checkout.')
+      return
+    }
+
+    // Calculate totals
+    const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+    const tax = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity) / 11, 0)
+    const shipping = subtotal > 100 ? 0 : 10
+    const total = subtotal + shipping
+
+    // Generate order number (simple format: ORD-YYYYMMDD-HHMMSS-XXXX)
+    const now = new Date()
+    const orderNumber = `ORD-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`
+    
+    // Format order date
+    const orderDate = now.toLocaleDateString('en-AU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    // Prepare order data - make a deep copy of cartItems to avoid reference issues
+    const orderData = {
+      customerDetails: {
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        city,
+        state,
+        postcode,
+        country
+      },
+      paymentMethod,
+      cartItems: JSON.parse(JSON.stringify(cartItems)), // Deep copy
+      orderNumber,
+      orderDate,
+      subtotal,
+      shipping,
+      tax,
+      total
+    }
+
+    // Store order data in sessionStorage
+    try {
+      const orderDataString = JSON.stringify(orderData)
+      console.log('Storing order data:', orderDataString.substring(0, 100) + '...')
+      sessionStorage.setItem('order-confirmation-data', orderDataString)
+      
+      // Verify storage
+      const stored = sessionStorage.getItem('order-confirmation-data')
+      console.log('Data stored successfully:', stored ? 'Yes' : 'No')
+      
+      // Clear cart AFTER storing order data
+      clearCart()
+
+      // Redirect to order confirmation page
+      console.log('Redirecting to order confirmation...')
+      router.push('/order-confirmation')
+    } catch (error) {
+      console.error('Failed to store order data:', error)
+      alert('Failed to process order. Please try again.')
+    }
   }
 
   return (
@@ -353,7 +426,9 @@ export default function CheckoutPage() {
                       onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
                       placeholder="1234 5678 9012 3456"
                       required
-                      className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      disabled
+                      readOnly
+                      className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
                     />
                     <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -374,7 +449,9 @@ export default function CheckoutPage() {
                       placeholder="MM / YY"
                       maxLength={7} // "MM / YY" = 7 characters
                       required
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      disabled
+                      readOnly
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -390,7 +467,9 @@ export default function CheckoutPage() {
                         placeholder="CVV"
                         maxLength={4}
                         required
-                        className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                        disabled
+                        readOnly
+                        className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
                       />
                       <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -409,7 +488,9 @@ export default function CheckoutPage() {
                     value={nameOnCard}
                     onChange={(e) => setNameOnCard(e.target.value)}
                     required
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                    disabled
+                    readOnly
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
                   />
                 </div>
                 </div>
