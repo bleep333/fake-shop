@@ -3,19 +3,13 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import ProductCard from '@/components/ProductCard'
-import { mockProducts, Product } from '@/lib/mockProducts'
-import { useCart } from '@/lib/cartContext'
+import { mockProducts } from '@/lib/mockProducts'
 
 export default function Home() {
   const [showToast, setShowToast] = useState(false)
   const [email, setEmail] = useState('')
-  const { addToCart } = useCart()
 
   const featuredProducts = mockProducts.slice(0, 8)
-
-  const handleQuickAdd = (product: Product) => {
-    addToCart(product, 'M')
-  }
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
@@ -116,7 +110,6 @@ export default function Home() {
             <ProductCard
               key={product.id}
               product={product}
-              onQuickAdd={handleQuickAdd}
             />
           ))}
         </div>

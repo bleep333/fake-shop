@@ -4,27 +4,21 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Product } from '@/lib/mockProducts'
 import PlaceholderImage from './PlaceholderImage'
+import { useCart } from '@/lib/cartContext'
 
 interface ProductCardProps {
   product: Product
-  onQuickAdd?: (product: Product) => void
 }
 
-export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
-  const [isAdding, setIsAdding] = useState(false)
+const SIZES = ['S', 'M', 'L', 'XL', '2XL']
+
+export default function ProductCard({ product }: ProductCardProps) {
   const [imageError, setImageError] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const { addToCart } = useCart()
 
-  const handleQuickAdd = () => {
-    if (isAdding || !onQuickAdd) return
-    
-    setIsAdding(true)
-    onQuickAdd(product)
-    
-    // Reset after a short delay to allow for legitimate subsequent clicks
-    setTimeout(() => {
-      setIsAdding(false)
-    }, 300)
+  const handleSizeSelect = (size: string) => {
+    addToCart(product, size)
   }
 
   // Try to find the correct image extension
@@ -81,18 +75,20 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
           )}
         </div>
 
-        {/* Quick Add Button */}
-        {onQuickAdd && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={handleQuickAdd}
-              disabled={isAdding}
-              className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Quick Add
-            </button>
+        {/* Size Selection Buttons */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-2 justify-center">
+            {SIZES.map((size) => (
+              <button
+                key={size}
+                onClick={() => handleSizeSelect(size)}
+                className="px-3 py-1.5 border border-gray-300 rounded hover:bg-black hover:text-white hover:border-black transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              >
+                {size}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
       </div>
 
       <div>

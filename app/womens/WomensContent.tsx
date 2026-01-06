@@ -4,12 +4,10 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import FilterSidebar from '@/components/FilterSidebar'
-import { mockProducts, filterProducts, sortProducts, FilterOptions, SortOption, Product } from '@/lib/mockProducts'
-import { useCart } from '@/lib/cartContext'
+import { mockProducts, filterProducts, sortProducts, FilterOptions, SortOption } from '@/lib/mockProducts'
 
 export default function WomensContent() {
   const searchParams = useSearchParams()
-  const { addToCart } = useCart()
   const [filters, setFilters] = useState<FilterOptions>({})
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [currentPage, setCurrentPage] = useState(1)
@@ -32,10 +30,6 @@ export default function WomensContent() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
   const startIndex = (currentPage - 1) * productsPerPage
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage)
-
-  const handleQuickAdd = (product: Product) => {
-    addToCart(product, 'M')
-  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -99,7 +93,6 @@ export default function WomensContent() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onQuickAdd={handleQuickAdd}
                   />
                 ))}
               </div>
