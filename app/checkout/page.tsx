@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 type PaymentMethod = 'credit-card' | 'paypal'
 type BillingOption = 'same' | 'different'
 
 export default function CheckoutPage() {
+  const { data: session } = useSession()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit-card')
   const [billingOption, setBillingOption] = useState<BillingOption>('same')
   
@@ -20,6 +22,28 @@ export default function CheckoutPage() {
   const [state, setState] = useState('NSW')
   const [postcode, setPostcode] = useState('')
   const [phone, setPhone] = useState('')
+
+  // Pre-fill contact details if user is logged in
+  useEffect(() => {
+    if (session?.user) {
+      // Pre-fill email if not already set
+      if (session.user.email && email === '') {
+        setEmail(session.user.email)
+      }
+      
+      // Pre-fill name (split into first and last name) if not already set
+      if (session.user.name && firstName === '' && lastName === '') {
+        const nameParts = session.user.name.trim().split(' ')
+        if (nameParts.length > 0) {
+          setFirstName(nameParts[0])
+          if (nameParts.length > 1) {
+            setLastName(nameParts.slice(1).join(' '))
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session])
   
   // Credit card form state
   const [cardNumber, setCardNumber] = useState('')
