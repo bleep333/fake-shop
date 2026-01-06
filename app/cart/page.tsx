@@ -1,8 +1,58 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import PlaceholderImage from '@/components/PlaceholderImage'
-import { useCart } from '@/lib/cartContext'
+import { useCart, CartItem } from '@/lib/cartContext'
+import { useState, useEffect } from 'react'
+
+function CartItemImage({ product }: { product: CartItem['product'] }) {
+  const [imageError, setImageError] = useState(false)
+  const [imageSrc, setImageSrc] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!product.image.startsWith('/images/products/')) return
+    
+    const extensions = ['.jpg', '.jpeg', '.png', '.webp']
+    const basePath = product.image
+    
+    let currentIndex = 0
+    const tryNext = () => {
+      if (currentIndex >= extensions.length) {
+        setImageError(true)
+        return
+      }
+      
+      const testImg = new window.Image()
+      testImg.onload = () => {
+        setImageSrc(`${basePath}${extensions[currentIndex]}`)
+      }
+      testImg.onerror = () => {
+        currentIndex++
+        tryNext()
+      }
+      testImg.src = `${basePath}${extensions[currentIndex]}`
+    }
+    
+    tryNext()
+  }, [product.image, product.id])
+
+  return (
+    <>
+      {imageSrc && !imageError ? (
+        <Image
+          src={imageSrc}
+          alt={product.name}
+          fill
+          className="object-cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <PlaceholderImage seed={product.id} />
+      )}
+    </>
+  )
+}
 
 export default function CartPage() {
   const { cartItems, updateQuantity, removeFromCart } = useCart()
@@ -35,7 +85,7 @@ export default function CartPage() {
             {cartItems.map((item, index) => (
               <div key={`${item.product.id}-${index}`} className="flex gap-4 border-b border-gray-200 pb-4">
                 <div className="relative w-24 h-32 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                  <PlaceholderImage seed={item.product.id} />
+                  <CartItemImage product={item.product} />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold mb-1">{item.product.name}</h3>

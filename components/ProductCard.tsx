@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Product } from '@/lib/mockProducts'
 import PlaceholderImage from './PlaceholderImage'
 
@@ -11,6 +12,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
   const [isAdding, setIsAdding] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const [imageSrc, setImageSrc] = useState<string | null>(null)
 
   const handleQuickAdd = () => {
     if (isAdding || !onQuickAdd) return
@@ -24,10 +27,49 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
     }, 300)
   }
 
+  // Try to find the correct image extension
+  useEffect(() => {
+    if (!product.image.startsWith('/images/products/')) return
+    
+    const extensions = ['.jpg', '.jpeg', '.png', '.webp']
+    const basePath = product.image
+    
+    // Try each extension to find which one exists
+    let currentIndex = 0
+    const tryNext = () => {
+      if (currentIndex >= extensions.length) {
+        setImageError(true)
+        return
+      }
+      
+      const testImg = new window.Image()
+      testImg.onload = () => {
+        setImageSrc(`${basePath}${extensions[currentIndex]}`)
+      }
+      testImg.onerror = () => {
+        currentIndex++
+        tryNext()
+      }
+      testImg.src = `${basePath}${extensions[currentIndex]}`
+    }
+    
+    tryNext()
+  }, [product.image, product.id])
+
   return (
     <div className="group">
       <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden rounded-lg mb-3">
-        <PlaceholderImage seed={product.id} className="group-hover:scale-105 transition-transform duration-300" />
+        {imageSrc && !imageError ? (
+          <Image
+            src={imageSrc}
+            alt={product.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <PlaceholderImage seed={product.id} className="group-hover:scale-105 transition-transform duration-300" />
+        )}
         
         {/* Tags */}
         <div className="absolute top-2 left-2 flex gap-2">
