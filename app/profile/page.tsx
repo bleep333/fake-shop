@@ -1,13 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function ProfilePage() {
-  // Mock authentication state
-  const [isLoggedIn] = useState(false)
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
-  if (!isLoggedIn) {
+  if (status === 'loading') {
+    return (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-md mx-auto text-center py-12">
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-md mx-auto text-center py-12">
@@ -15,11 +26,12 @@ export default function ProfilePage() {
           <p className="text-gray-600 mb-8">
             Sign in to view your profile, orders, and manage your account.
           </p>
-          <button
-            className="bg-black text-white px-8 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          <Link
+            href="/auth/signin"
+            className="inline-block bg-black text-white px-8 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
           >
             Sign In
-          </button>
+          </Link>
           <p className="mt-4 text-sm text-gray-600">
             Don't have an account?{' '}
             <a href="#" className="underline hover:text-black">
@@ -47,7 +59,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  defaultValue="John Doe"
+                  defaultValue={session.user?.name || ''}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
@@ -57,7 +69,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="email"
-                  defaultValue="john.doe@example.com"
+                  defaultValue={session.user?.email || ''}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
@@ -67,7 +79,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="tel"
-                  defaultValue="+1 (555) 123-4567"
+                  defaultValue="+61 412 345 678"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
@@ -100,7 +112,7 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="New York"
+                    defaultValue="Sydney"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
@@ -110,7 +122,7 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="10001"
+                    defaultValue="2000"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
