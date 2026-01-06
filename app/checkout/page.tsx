@@ -41,6 +41,26 @@ export default function CheckoutPage() {
           }
         }
       }
+      
+      // Pre-fill address fields from user's session data if not already set
+      const userAddress = session.user.address
+      if (userAddress) {
+        if (address === '' && userAddress.street) {
+          setAddress(userAddress.street)
+        }
+        if (city === '' && userAddress.city) {
+          setCity(userAddress.city)
+        }
+        if (postcode === '' && userAddress.postcode) {
+          setPostcode(userAddress.postcode)
+        }
+        if (state === 'NSW' && userAddress.state) {
+          setState(userAddress.state)
+        }
+        if (phone === '' && userAddress.phone) {
+          setPhone(userAddress.phone)
+        }
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
