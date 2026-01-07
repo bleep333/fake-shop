@@ -1,15 +1,30 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ProductCard from '@/components/ProductCard'
-import { mockProducts } from '@/lib/mockProducts'
+import { getProducts } from '@/lib/products'
+import { Product } from '@/lib/mockProducts'
 
 export default function Home() {
   const [showToast, setShowToast] = useState(false)
   const [email, setEmail] = useState('')
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const featuredProducts = mockProducts.slice(0, 8)
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const products = await getProducts({ sortBy: 'newest' })
+        setFeaturedProducts(products.slice(0, 8))
+      } catch (error) {
+        console.error('Failed to load products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProducts()
+  }, [])
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
@@ -105,14 +120,22 @@ export default function Home() {
             View all →
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="aspect-[3/4] bg-gray-100 rounded-lg animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Promo Strip */}

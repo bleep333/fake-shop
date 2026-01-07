@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import FilterSidebar from '@/components/FilterSidebar'
-import { mockProducts, filterProducts, sortProducts, FilterOptions, SortOption } from '@/lib/mockProducts'
+import { getProducts, filterProductsBySize, FilterOptions, SortOption } from '@/lib/products'
+import { Product } from '@/lib/mockProducts'
 
 export default function MensContent() {
   const searchParams = useSearchParams()
@@ -12,6 +13,8 @@ export default function MensContent() {
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [currentPage, setCurrentPage] = useState(1)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const productsPerPage = 12
 
   useEffect(() => {
@@ -22,14 +25,33 @@ export default function MensContent() {
     }
   }, [searchParams])
 
-  const filteredProducts = sortProducts(
-    filterProducts(mockProducts, filters, 'mens'),
-    sortBy
-  )
+  useEffect(() => {
+    async function loadProducts() {
+      setLoading(true)
+      try {
+        const fetchedProducts = await getProducts({
+          gender: 'mens',
+          category: filters.category,
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          sortBy,
+        })
+        // Apply size filter on client side
+        const filtered = filterProductsBySize(fetchedProducts, filters.size)
+        setProducts(filtered)
+        setCurrentPage(1) // Reset to first page when filters change
+      } catch (error) {
+        console.error('Failed to load products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProducts()
+  }, [filters, sortBy])
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
+  const totalPages = Math.ceil(products.length / productsPerPage)
   const startIndex = (currentPage - 1) * productsPerPage
-  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage)
+  const paginatedProducts = products.slice(startIndex, startIndex + productsPerPage)
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -65,7 +87,7 @@ export default function MensContent() {
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-gray-600">
-              {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+              {products.length} {products.length === 1 ? 'product' : 'products'}
             </p>
             <div className="flex items-center gap-2">
               <label htmlFor="sort" className="text-sm text-gray-600">Sort by:</label>
@@ -86,7 +108,13 @@ export default function MensContent() {
           </div>
 
           {/* Products Grid */}
-          {paginatedProducts.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="aspect-[3/4] bg-gray-100 rounded-lg animate-pulse" />
+              ))}
+            </div>
+          ) : paginatedProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
                 {paginatedProducts.map((product) => (
