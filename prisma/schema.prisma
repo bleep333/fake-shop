@@ -88,3 +88,21 @@ model OrderItem {
 
   @@index([orderId])
 }
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  price         Float
+  originalPrice Float?
+  category      String   // 'shirts' | 'pants' | 'outerwear' | 'accessories'
+  gender        String   // 'mens' | 'womens' | 'unisex'
+  image         String
+  tags          String[] // Array of tags like ['New', 'Sale']
+  sizes         String[] // Array of available sizes
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([gender])
+  @@index([category])
+  @@index([gender, category])
+}
