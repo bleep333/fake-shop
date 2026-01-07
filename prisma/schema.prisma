@@ -46,6 +46,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  orders        Order[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -58,3 +59,32 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  orderNumber     String      @unique
+  orderDate       DateTime    @default(now())
+  customerDetails Json        // Store customer details as JSON
+  paymentMethod   String
+  subtotal        Float
+  shipping        Float
+  tax             Float
+  total           Float
+  items           OrderItem[]
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orderDate])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productData Json    // Store full product data as JSON
+  quantity    Int
+  size        String
+  price       Float   // Price at time of order
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}

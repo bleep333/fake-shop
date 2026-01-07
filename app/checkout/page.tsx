@@ -140,7 +140,7 @@ export default function CheckoutPage() {
   const [billingPostcode, setBillingPostcode] = useState('')
   const [billingPhone, setBillingPhone] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     console.log('Form submitted, cartItems:', cartItems)
@@ -193,15 +193,41 @@ export default function CheckoutPage() {
       total
     }
 
-    // Store order data in sessionStorage
+    // Store order data in sessionStorage and save to database
     try {
       const orderDataString = JSON.stringify(orderData)
       console.log('Storing order data:', orderDataString.substring(0, 100) + '...')
       sessionStorage.setItem('order-confirmation-data', orderDataString)
       
-      // Verify storage
-      const stored = sessionStorage.getItem('order-confirmation-data')
-      console.log('Data stored successfully:', stored ? 'Yes' : 'No')
+      // Save order to database if user is logged in
+      if (session?.user?.id) {
+        try {
+          const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              orderNumber,
+              customerDetails: orderData.customerDetails,
+              paymentMethod,
+              cartItems: orderData.cartItems,
+              subtotal,
+              shipping,
+              tax,
+              total
+            })
+          })
+
+          if (!response.ok) {
+            console.error('Failed to save order to database')
+            // Continue anyway - order is in sessionStorage
+          }
+        } catch (dbError) {
+          console.error('Error saving order to database:', dbError)
+          // Continue anyway - order is in sessionStorage
+        }
+      }
       
       // Clear cart AFTER storing order data
       clearCart()

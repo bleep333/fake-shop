@@ -3,10 +3,40 @@
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+type Order = {
+  id: string
+  orderNumber: string
+  orderDate: string
+  total: number
+}
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loadingOrders, setLoadingOrders] = useState(true)
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetchOrders()
+    }
+  }, [session])
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch('/api/orders')
+      if (response.ok) {
+        const data = await response.json()
+        setOrders(data.orders || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch orders:', error)
+    } finally {
+      setLoadingOrders(false)
+    }
+  }
 
   if (status === 'loading') {
     return (
@@ -140,15 +170,48 @@ export default function ProfilePage() {
         <div className="md:col-span-1">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
-            <div className="text-center py-8 text-gray-600">
-              <p className="mb-4">No orders yet</p>
-              <Link
-                href="/mens"
-                className="text-sm underline hover:text-black"
-              >
-                Start Shopping
-              </Link>
-            </div>
+            {loadingOrders ? (
+              <div className="text-center py-8 text-gray-600">
+                <p>Loading orders...</p>
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="text-center py-8 text-gray-600">
+                <p className="mb-4">No orders yet</p>
+                <Link
+                  href="/mens"
+                  className="text-sm underline hover:text-black"
+                >
+                  Start Shopping
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {orders.map((order) => {
+                  const orderDate = new Date(order.orderDate)
+                  const formattedDate = orderDate.toLocaleDateString('en-AU', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                  
+                  return (
+                    <Link
+                      key={order.id}
+                      href={`/orders/${order.id}`}
+                      className="block p-4 border border-gray-200 rounded-md hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-semibold text-sm">{order.orderNumber}</p>
+                          <p className="text-xs text-gray-600">{formattedDate}</p>
+                        </div>
+                        <p className="font-semibold">${order.total.toFixed(2)}</p>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
