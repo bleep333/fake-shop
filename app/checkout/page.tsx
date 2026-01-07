@@ -143,6 +143,11 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Prevent submission if PayPal is selected
+    if (paymentMethod === 'paypal') {
+      return
+    }
+    
     console.log('Form submitted, cartItems:', cartItems)
     
     // Validate cart is not empty
@@ -748,13 +753,18 @@ export default function CheckoutPage() {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            disabled={paymentMethod === 'paypal'}
+            className={`w-full py-3 rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              paymentMethod === 'paypal'
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-600'
+            }`}
           >
             {paymentMethod === 'credit-card' ? (
               'Pay now'
             ) : (
               <>
-                Pay with <span className="italic">PayPal</span>
+                <span className="italic">PayPal</span> currently unavailable
               </>
             )}
           </button>
