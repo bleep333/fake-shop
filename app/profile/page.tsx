@@ -10,6 +10,7 @@ type Order = {
   orderNumber: string
   orderDate: string
   total: number
+  status?: string
 }
 
 export default function ProfilePage() {
@@ -169,7 +170,17 @@ export default function ProfilePage() {
         {/* Orders */}
         <div className="md:col-span-1">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Past Orders</h2>
+              {orders.length > 0 && (
+                <Link
+                  href="/orders"
+                  className="text-sm text-gray-600 hover:text-black underline"
+                >
+                  View All
+                </Link>
+              )}
+            </div>
             {loadingOrders ? (
               <div className="text-center py-8 text-gray-600">
                 <p>Loading orders...</p>

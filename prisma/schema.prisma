@@ -67,6 +67,7 @@ model Order {
   orderDate       DateTime    @default(now())
   customerDetails Json        // Store customer details as JSON
   paymentMethod   String
+  status          String      @default("pending") // 'pending' | 'paid' | 'shipped' | 'cancelled' | 'refunded'
   subtotal        Float
   shipping        Float
   tax             Float
@@ -76,6 +77,7 @@ model Order {
 
   @@index([userId])
   @@index([orderDate])
+  @@index([status])
 }
 
 model OrderItem {

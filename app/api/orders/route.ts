@@ -140,6 +140,7 @@ export async function POST(request: NextRequest) {
           orderNumber,
           customerDetails: customerDetails as any,
           paymentMethod,
+          status: 'paid',
           subtotal,
           shipping,
           tax,
