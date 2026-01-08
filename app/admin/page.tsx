@@ -927,10 +927,7 @@ export default function AdminPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{product.gender}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ${product.price.toFixed(2)}
-                          {product.originalPrice && product.originalPrice > product.price && (
-                            <span className="ml-2 text-xs text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
-                          )}
+                          ${(product.originalPrice || product.price).toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {product.salePrice ? (
