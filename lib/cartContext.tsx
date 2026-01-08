@@ -29,6 +29,12 @@ type CartAction =
   | { type: 'UPDATE_QUANTITY'; payload: { index: number; quantity: number } }
   | { type: 'CLEAR_CART' }
 
+// Helper function to get available stock for a product size
+function getAvailableStock(product: Product, size: string): number {
+  if (!product.stockBySize) return 0
+  return product.stockBySize[size] || 0
+}
+
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
     case 'LOAD_CART':
@@ -39,6 +45,15 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
       const existingIndex = state.findIndex(
         (item) => item.product.id === product.id && item.size === size
       )
+
+      const availableStock = getAvailableStock(product, size)
+      const currentQuantity = existingIndex >= 0 ? state[existingIndex].quantity : 0
+
+      // Check if adding one more would exceed available stock
+      if (currentQuantity >= availableStock) {
+        // Don't add if already at or above stock limit
+        return state
+      }
 
       if (existingIndex >= 0) {
         const updated = [...state]
@@ -57,10 +72,18 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
     
     case 'UPDATE_QUANTITY': {
       if (action.payload.quantity < 1) return state
+      const item = state[action.payload.index]
+      if (!item) return state
+
+      const availableStock = getAvailableStock(item.product, item.size)
+      
+      // Don't allow quantity to exceed available stock
+      const newQuantity = Math.min(action.payload.quantity, availableStock)
+      
       const updated = [...state]
       updated[action.payload.index] = {
         ...updated[action.payload.index],
-        quantity: action.payload.quantity
+        quantity: newQuantity
       }
       return updated
     }
@@ -114,16 +137,46 @@ export function CartProvider({ children }: { children: ReactNode }) {
     
     lastAddRef.current = { key: addKey, timestamp: now }
     
+    // Check stock before adding
+    const availableStock = getAvailableStock(product, size)
+    if (availableStock <= 0) {
+      // Don't add if out of stock
+      return
+    }
+
+    // Check current quantity in cart
+    const existingItem = cartItems.find(
+      (item) => item.product.id === product.id && item.size === size
+    )
+    const currentQuantity = existingItem?.quantity || 0
+
+    if (currentQuantity >= availableStock) {
+      // Already at max stock, don't add more
+      return
+    }
+    
     dispatch({ type: 'ADD_TO_CART', payload: { product, size } })
-  }, [])
+  }, [cartItems])
 
   const removeFromCart = useCallback((index: number) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: index })
   }, [])
 
   const updateQuantity = useCallback((index: number, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { index, quantity } })
-  }, [])
+    if (quantity < 1) {
+      dispatch({ type: 'UPDATE_QUANTITY', payload: { index, quantity: 1 } })
+      return
+    }
+
+    const item = cartItems[index]
+    if (!item) return
+
+    // Check stock limit
+    const availableStock = getAvailableStock(item.product, item.size)
+    const newQuantity = Math.min(quantity, availableStock)
+    
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { index, quantity: newQuantity } })
+  }, [cartItems])
 
   const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' })

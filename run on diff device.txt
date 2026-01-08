@@ -13,3 +13,12 @@ npm run db:seed
 (Terminal 1): npm run dev
 
 (Terminal 2): npm run db:studio
+
+Dummy user:
+username: user@fakeshop.com
+password: user123
+
+Admin:
+/admin page
+username: admin
+password: admin

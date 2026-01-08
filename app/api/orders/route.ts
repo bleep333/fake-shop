@@ -80,29 +80,85 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Create order with items
-    const order = await prisma.order.create({
-      data: {
-        userId: user.id,
-        orderNumber,
-        customerDetails: customerDetails as any,
-        paymentMethod,
-        subtotal,
-        shipping,
-        tax,
-        total,
-        items: {
-          create: cartItems.map((item: any) => ({
-            productData: item.product as any,
-            quantity: item.quantity,
-            size: item.size,
-            price: item.product.price
-          }))
+    // Use a transaction to ensure order creation and stock updates happen atomically
+    const order = await prisma.$transaction(async (tx) => {
+      // Group cart items by product ID to handle multiple sizes of the same product
+      const itemsByProduct = new Map<string, Array<{ size: string; quantity: number }>>()
+      
+      for (const item of cartItems) {
+        const productId = item.product.id
+        if (!itemsByProduct.has(productId)) {
+          itemsByProduct.set(productId, [])
         }
-      },
-      include: {
-        items: true
+        itemsByProduct.get(productId)!.push({
+          size: item.size,
+          quantity: item.quantity
+        })
       }
+
+      // Verify stock and prepare updates for each product
+      const stockUpdates: Array<{ productId: string; newStockBySize: Record<string, number> }> = []
+      
+      for (const [productId, items] of itemsByProduct.entries()) {
+        const product = await tx.product.findUnique({
+          where: { id: productId }
+        })
+
+        if (!product) {
+          throw new Error(`Product ${productId} not found`)
+        }
+
+        const currentStockBySize = (product.stockBySize as Record<string, number>) || {}
+        const newStockBySize = { ...currentStockBySize }
+
+        // Update stock for all sizes of this product
+        for (const item of items) {
+          const currentStock = currentStockBySize[item.size] || 0
+
+          if (currentStock < item.quantity) {
+            throw new Error(`Insufficient stock for ${product.name} size ${item.size}. Available: ${currentStock}, Requested: ${item.quantity}`)
+          }
+
+          newStockBySize[item.size] = currentStock - item.quantity
+        }
+
+        stockUpdates.push({ productId, newStockBySize })
+      }
+
+      // Update stock for all products
+      for (const update of stockUpdates) {
+        await tx.product.update({
+          where: { id: update.productId },
+          data: { stockBySize: update.newStockBySize as any }
+        })
+      }
+
+      // Create order with items
+      const createdOrder = await tx.order.create({
+        data: {
+          userId: user.id,
+          orderNumber,
+          customerDetails: customerDetails as any,
+          paymentMethod,
+          subtotal,
+          shipping,
+          tax,
+          total,
+          items: {
+            create: cartItems.map((item: any) => ({
+              productData: item.product as any,
+              quantity: item.quantity,
+              size: item.size,
+              price: item.product.price
+            }))
+          }
+        },
+        include: {
+          items: true
+        }
+      })
+
+      return createdOrder
     })
 
     return NextResponse.json({ order }, { status: 201 })
