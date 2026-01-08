@@ -8,6 +8,7 @@ export type Product = {
   image: string
   tags: string[]
   sizes?: string[]
+  stockBySize?: Record<string, number> | null
 }
 
 // Helper function to generate image path from product name and gender

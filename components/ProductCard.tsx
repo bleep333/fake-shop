@@ -21,6 +21,23 @@ export default function ProductCard({ product }: ProductCardProps) {
     addToCart(product, size)
   }
 
+  // Get stock for a specific size
+  const getStockForSize = (size: string): number => {
+    if (!product.stockBySize) return 0
+    return product.stockBySize[size] || 0
+  }
+
+  // Check if all sizes are out of stock
+  const isAllSizesOutOfStock = (): boolean => {
+    if (!product.stockBySize) return false
+    return SIZES.every(size => getStockForSize(size) === 0)
+  }
+
+  // Check if a specific size is out of stock
+  const isSizeOutOfStock = (size: string): boolean => {
+    return getStockForSize(size) === 0
+  }
+
   // Try to find the correct image extension
   useEffect(() => {
     if (!product.image.startsWith('/images/products/')) return
@@ -75,19 +92,35 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Size Selection Buttons */}
+        {/* Size Selection Buttons or Sold Out */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex gap-2 justify-center">
-            {SIZES.map((size) => (
-              <button
-                key={size}
-                onClick={() => handleSizeSelect(size)}
-                className="px-3 py-1.5 border border-gray-300 rounded hover:bg-black hover:text-white hover:border-black transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-              >
-                {size}
-              </button>
-            ))}
-          </div>
+          {isAllSizesOutOfStock() ? (
+            <div className="flex justify-center">
+              <div className="px-4 py-2 bg-gray-200 text-gray-600 rounded text-sm font-medium cursor-not-allowed">
+                Sold out
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-2 justify-center">
+              {SIZES.map((size) => {
+                const outOfStock = isSizeOutOfStock(size)
+                return (
+                  <button
+                    key={size}
+                    onClick={() => !outOfStock && handleSizeSelect(size)}
+                    disabled={outOfStock}
+                    className={`px-3 py-1.5 border rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
+                      outOfStock
+                        ? 'border-gray-200 text-gray-400 line-through cursor-not-allowed bg-gray-50'
+                        : 'border-gray-300 hover:bg-black hover:text-white hover:border-black'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 
