@@ -22,3 +22,6 @@ Admin:
 /admin page
 username: admin
 password: admin
+
+npx prisma db push
+npx prisma generate

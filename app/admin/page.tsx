@@ -23,7 +23,7 @@ type Product = {
   lowStockThreshold: number
 }
 
-type TabType = 'stock' | 'products' | 'orders' | 'users'
+type TabType = 'stock' | 'products' | 'orders' | 'users' | 'analytics'
 
 type OrderItem = {
   id: string
@@ -91,6 +91,10 @@ export default function AdminPage() {
   const [showUserDetail, setShowUserDetail] = useState(false)
   const [userSearch, setUserSearch] = useState('')
 
+  // Analytics state
+  const [analytics, setAnalytics] = useState<any>(null)
+  const [analyticsDays, setAnalyticsDays] = useState(30)
+
   useEffect(() => {
     if (status === 'loading') return
 
@@ -112,7 +116,10 @@ export default function AdminPage() {
     if (activeTab === 'users') {
       fetchUsers()
     }
-  }, [session, status, router, activeTab])
+    if (activeTab === 'analytics') {
+      fetchAnalytics()
+    }
+  }, [session, status, router, activeTab, analyticsDays])
 
   const fetchProducts = async () => {
     try {
@@ -615,6 +622,19 @@ export default function AdminPage() {
     await handleUpdateUser(userId, { isDisabled: false })
   }
 
+  // Analytics Functions
+  const fetchAnalytics = async () => {
+    try {
+      const response = await fetch(`/api/admin/analytics?days=${analyticsDays}`)
+      if (response.ok) {
+        const data = await response.json()
+        setAnalytics(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error)
+    }
+  }
+
   const SortIcon = ({ column }: { column: 'sku' | 'name' | 'category' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock' }) => {
     if (sortColumn !== column) {
       return (
@@ -747,6 +767,16 @@ export default function AdminPage() {
             }`}
           >
             User Management
+          </button>
+          <button
+            onClick={() => { setActiveTab('analytics'); fetchAnalytics(); }}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'analytics'
+                ? 'border-black text-black'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Analytics
           </button>
         </nav>
       </div>
@@ -1055,6 +1085,15 @@ export default function AdminPage() {
           onPromoteToAdmin={handlePromoteToAdmin}
           onDisableUser={handleDisableUser}
           onEnableUser={handleEnableUser}
+        />
+      )}
+
+      {/* Analytics Tab */}
+      {activeTab === 'analytics' && (
+        <AnalyticsTab
+          analytics={analytics}
+          days={analyticsDays}
+          onDaysChange={setAnalyticsDays}
         />
       )}
     </div>
@@ -1537,6 +1576,169 @@ function OrderDetailModal({ order, onClose, onUpdateStatus, onCancelOrder, onIss
             <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">Close</button>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+// Analytics Tab Component
+function AnalyticsTab({
+  analytics,
+  days,
+  onDaysChange
+}: {
+  analytics: any
+  days: number
+  onDaysChange: (days: number) => void
+}) {
+  if (!analytics) {
+    return (
+      <div className="text-center py-12 text-gray-600">
+        <p>Loading analytics...</p>
+      </div>
+    )
+  }
+
+  const { kpis, ordersPerDay, topProducts, lowStockProducts } = analytics
+
+  // Calculate max values for chart scaling
+  const maxOrders = Math.max(...ordersPerDay.map((d: any) => d.count), 1)
+  const maxQuantity = Math.max(...topProducts.map((p: any) => p.quantity), 1)
+
+  return (
+    <div className="space-y-6">
+      {/* KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-gray-500 mb-1">Total Revenue</h3>
+          <p className="text-2xl font-bold text-gray-900">${kpis.totalRevenue.toFixed(2)}</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-gray-500 mb-1">Orders Today</h3>
+          <p className="text-2xl font-bold text-gray-900">{kpis.ordersToday}</p>
+          <p className="text-xs text-gray-500 mt-1">This Week: {kpis.ordersThisWeek}</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-gray-500 mb-1">Avg Order Value</h3>
+          <p className="text-2xl font-bold text-gray-900">${kpis.avgOrderValue.toFixed(2)}</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-gray-500 mb-1">Total Users</h3>
+          <p className="text-2xl font-bold text-gray-900">{kpis.totalUsers}</p>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Orders Per Day Chart */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Orders Per Day</h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => onDaysChange(7)}
+                className={`px-3 py-1 text-sm rounded-md ${days === 7 ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              >
+                7 Days
+              </button>
+              <button
+                onClick={() => onDaysChange(30)}
+                className={`px-3 py-1 text-sm rounded-md ${days === 30 ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              >
+                30 Days
+              </button>
+            </div>
+          </div>
+          <div className="h-64 flex items-end justify-between gap-1">
+            {ordersPerDay.map((day: any, index: number) => {
+              const height = maxOrders > 0 ? (day.count / maxOrders) * 100 : 0
+              const date = new Date(day.date)
+              const dayLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+              return (
+                <div key={index} className="flex-1 flex flex-col items-center group relative">
+                  <div
+                    className="w-full bg-blue-500 hover:bg-blue-600 transition-colors rounded-t"
+                    style={{ height: `${Math.max(height, 2)}%` }}
+                    title={`${dayLabel}: ${day.count} orders`}
+                  />
+                  {index % Math.ceil(ordersPerDay.length / 7) === 0 && (
+                    <span className="text-xs text-gray-500 mt-1 transform -rotate-45 origin-left whitespace-nowrap">
+                      {dayLabel}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Top Selling Products */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Top Selling Products</h3>
+          <div className="space-y-3">
+            {topProducts.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">No sales data available</p>
+            ) : (
+              topProducts.map((product: any, index: number) => {
+                const width = maxQuantity > 0 ? (product.quantity / maxQuantity) * 100 : 0
+                return (
+                  <div key={index}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm font-medium text-gray-900">{product.name}</span>
+                      <span className="text-sm text-gray-600">{product.quantity}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-green-500 h-2 rounded-full transition-all"
+                        style={{ width: `${width}%` }}
+                      />
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Low Stock Products */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Low Stock Products</h3>
+        {lowStockProducts.length === 0 ? (
+          <p className="text-gray-500 text-center py-8">All products are well stocked</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stock</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Threshold</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {lowStockProducts.map((product: any, index: number) => (
+                  <tr key={index} className={product.stock === 0 ? 'bg-red-50' : ''}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.stock}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.threshold}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        product.stock === 0 ? 'bg-red-100 text-red-800' :
+                        product.stock <= product.threshold / 2 ? 'bg-orange-100 text-orange-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {product.stock === 0 ? 'Out of Stock' :
+                         product.stock <= product.threshold / 2 ? 'Critical' : 'Low Stock'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )
