@@ -38,8 +38,16 @@ export async function GET(request: NextRequest) {
       }
       conditions.push({ price: priceCondition })
     }
-    
-    const where = conditions.length > 0 ? { AND: conditions } : {}
+
+    // Only show active and visible products to customers
+    conditions.push({
+      status: 'active'
+    })
+    conditions.push({
+      isVisible: true
+    })
+
+    const whereClause = conditions.length > 0 ? { AND: conditions } : {}
 
     // Build orderBy clause
     let orderBy: any = {}
@@ -58,7 +66,7 @@ export async function GET(request: NextRequest) {
     }
 
     const products = await prisma.product.findMany({
-      where,
+      where: whereClause,
       orderBy,
     })
 

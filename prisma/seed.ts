@@ -51,7 +51,13 @@ async function main() {
   console.log('Creating products...')
   for (const product of products) {
     await prisma.product.create({
-      data: product,
+      data: {
+        ...product,
+        status: 'active',
+        isVisible: true,
+        lowStockThreshold: 10,
+        salePrice: product.originalPrice && product.price < product.originalPrice ? product.price : null,
+      },
     })
   }
   console.log(`Created ${products.length} products`)

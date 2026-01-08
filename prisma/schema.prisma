@@ -91,20 +91,27 @@ model OrderItem {
 }
 
 model Product {
-  id            String   @id @default(cuid())
-  name          String
-  price         Float
-  originalPrice Float?
-  category      String   // 'shirts' | 'pants' | 'outerwear' | 'accessories'
-  gender        String   // 'mens' | 'womens' | 'unisex'
-  image         String
-  tags          String[] // Array of tags like ['New', 'Sale']
-  sizes         String[] // Array of available sizes
-  stockBySize   Json?    // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                String   @id @default(cuid())
+  sku               String?  @unique
+  name              String
+  price             Float
+  originalPrice     Float?
+  salePrice         Float?
+  category          String   // 'shirts' | 'pants' | 'outerwear' | 'accessories'
+  gender            String   // 'mens' | 'womens' | 'unisex'
+  image             String
+  tags              String[] // Array of tags like ['New', 'Sale']
+  sizes             String[] // Array of available sizes
+  stockBySize       Json?    // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
+  status            String   @default("active") // 'active' | 'draft' | 'archived'
+  isVisible         Boolean  @default(true)
+  lowStockThreshold Int      @default(10) // Warn when stock falls below this
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@index([gender])
   @@index([category])
   @@index([gender, category])
+  @@index([status])
+  @@index([isVisible])
 }
