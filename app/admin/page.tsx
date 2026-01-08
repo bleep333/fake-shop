@@ -23,7 +23,7 @@ type Product = {
   lowStockThreshold: number
 }
 
-type TabType = 'stock' | 'products' | 'orders'
+type TabType = 'stock' | 'products' | 'orders' | 'users'
 
 type OrderItem = {
   id: string
@@ -82,6 +82,12 @@ export default function AdminPage() {
     endDate: ''
   })
 
+  // User Management state
+  const [users, setUsers] = useState<any[]>([])
+  const [selectedUser, setSelectedUser] = useState<any | null>(null)
+  const [showUserDetail, setShowUserDetail] = useState(false)
+  const [userSearch, setUserSearch] = useState('')
+
   useEffect(() => {
     if (status === 'loading') return
 
@@ -99,6 +105,9 @@ export default function AdminPage() {
     fetchProducts()
     if (activeTab === 'orders') {
       fetchOrders()
+    }
+    if (activeTab === 'users') {
+      fetchUsers()
     }
   }, [session, status, router, activeTab])
 
@@ -452,6 +461,76 @@ export default function AdminPage() {
     alert('Invoice download feature coming soon (PDF generation)')
   }
 
+  // User Management Functions
+  const fetchUsers = async () => {
+    try {
+      const params = new URLSearchParams()
+      if (userSearch) params.append('search', userSearch)
+
+      const response = await fetch(`/api/admin/users?${params.toString()}`)
+      if (response.ok) {
+        const data = await response.json()
+        setUsers(data.users || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+    }
+  }
+
+  const handleViewUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSelectedUser(data.user)
+        setShowUserDetail(true)
+      }
+    } catch (error) {
+      console.error('Failed to fetch user:', error)
+      alert('Failed to load user details')
+    }
+  }
+
+  const handleUpdateUser = async (userId: string, updates: { isAdmin?: boolean; isDisabled?: boolean }) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setUsers(prev => prev.map(u => u.id === userId ? data.user : u))
+        if (selectedUser?.id === userId) {
+          setSelectedUser(data.user)
+        }
+        alert('User updated successfully!')
+        fetchUsers() // Refresh list
+      } else {
+        const error = await response.json()
+        alert(`Failed to update user: ${error.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error updating user:', error)
+      alert('Failed to update user. Please try again.')
+    }
+  }
+
+  const handlePromoteToAdmin = async (userId: string) => {
+    if (!confirm('Are you sure you want to promote this user to admin? This will give them full access to the admin dashboard.')) return
+    await handleUpdateUser(userId, { isAdmin: true })
+  }
+
+  const handleDisableUser = async (userId: string) => {
+    if (!confirm('Are you sure you want to disable/ban this user? They will not be able to log in.')) return
+    await handleUpdateUser(userId, { isDisabled: true })
+  }
+
+  const handleEnableUser = async (userId: string) => {
+    await handleUpdateUser(userId, { isDisabled: false })
+  }
+
   const SortIcon = ({ column }: { column: 'name' | 'category' | 'gender' | 'price' }) => {
     if (sortColumn !== column) {
       return (
@@ -574,6 +653,16 @@ export default function AdminPage() {
             }`}
           >
             Order Management
+          </button>
+          <button
+            onClick={() => { setActiveTab('users'); fetchUsers(); }}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'users'
+                ? 'border-black text-black'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            User Management
           </button>
         </nav>
       </div>
@@ -838,6 +927,31 @@ export default function AdminPage() {
           onCancelOrder={handleCancelOrder}
           onIssueRefund={handleIssueRefund}
           onDownloadInvoice={handleDownloadInvoice}
+        />
+      )}
+
+      {/* Users Tab */}
+      {activeTab === 'users' && (
+        <UsersTab
+          users={users}
+          search={userSearch}
+          onSearchChange={setUserSearch}
+          onSearch={fetchUsers}
+          onViewUser={handleViewUser}
+          onPromoteToAdmin={handlePromoteToAdmin}
+          onDisableUser={handleDisableUser}
+          onEnableUser={handleEnableUser}
+        />
+      )}
+
+      {/* User Detail Modal */}
+      {showUserDetail && selectedUser && (
+        <UserDetailModal
+          user={selectedUser}
+          onClose={() => { setShowUserDetail(false); setSelectedUser(null); }}
+          onPromoteToAdmin={handlePromoteToAdmin}
+          onDisableUser={handleDisableUser}
+          onEnableUser={handleEnableUser}
         />
       )}
     </div>
@@ -1290,6 +1404,262 @@ function OrderDetailModal({ order, onClose, onUpdateStatus, onCancelOrder, onIss
               <option value="refunded">Refunded</option>
             </select>
             <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Users Tab Component
+function UsersTab({
+  users,
+  search,
+  onSearchChange,
+  onSearch,
+  onViewUser,
+  onPromoteToAdmin,
+  onDisableUser,
+  onEnableUser
+}: {
+  users: any[]
+  search: string
+  onSearchChange: (search: string) => void
+  onSearch: () => void
+  onViewUser: (userId: string) => void
+  onPromoteToAdmin: (userId: string) => void
+  onDisableUser: (userId: string) => void
+  onEnableUser: (userId: string) => void
+}) {
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSearch()
+  }
+
+  return (
+    <div>
+      {/* Search */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search by email or name..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+          />
+          <button
+            type="submit"
+            className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
+          >
+            Search
+          </button>
+          {search && (
+            <button
+              type="button"
+              onClick={() => { onSearchChange(''); onSearch(); }}
+              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+            >
+              Clear
+            </button>
+          )}
+        </form>
+      </div>
+
+      {/* Users Table */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {users.map((user) => (
+                <tr key={user.id} className={user.isDisabled ? 'bg-red-50' : ''}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email || 'N/A'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.name || 'N/A'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${user.isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                      {user.isAdmin ? 'Admin' : 'User'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${user.isDisabled ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                      {user.isDisabled ? 'Disabled' : 'Active'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user._count?.orders || 0}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button onClick={() => onViewUser(user.id)} className="text-blue-600 hover:text-blue-900 mr-4">View</button>
+                    {!user.isAdmin && (
+                      <button onClick={() => onPromoteToAdmin(user.id)} className="text-purple-600 hover:text-purple-900 mr-4">Promote</button>
+                    )}
+                    {user.isDisabled ? (
+                      <button onClick={() => onEnableUser(user.id)} className="text-green-600 hover:text-green-900">Enable</button>
+                    ) : (
+                      <button onClick={() => onDisableUser(user.id)} className="text-red-600 hover:text-red-900">Disable</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {users.length === 0 && (
+          <div className="text-center py-12 text-gray-600">
+            <p>No users found.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// User Detail Modal Component
+function UserDetailModal({
+  user,
+  onClose,
+  onPromoteToAdmin,
+  onDisableUser,
+  onEnableUser
+}: {
+  user: any
+  onClose: () => void
+  onPromoteToAdmin: (userId: string) => void
+  onDisableUser: (userId: string) => void
+  onEnableUser: (userId: string) => void
+}) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto my-8">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
+          <h2 className="text-2xl font-bold">User Details</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* User Info */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Email</h3>
+              <p className="text-sm text-gray-900">{user.email || 'N/A'}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Name</h3>
+              <p className="text-sm text-gray-900">{user.name || 'N/A'}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Role</h3>
+              <span className={`px-2 py-1 text-xs rounded-full ${user.isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                {user.isAdmin ? 'Admin' : 'User'}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Status</h3>
+              <span className={`px-2 py-1 text-xs rounded-full ${user.isDisabled ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                {user.isDisabled ? 'Disabled' : 'Active'}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Total Orders</h3>
+              <p className="text-sm text-gray-900">{user._count?.orders || 0}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Member Since</h3>
+              <p className="text-sm text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          {/* Order History */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Order History</h3>
+            {user.orders && user.orders.length > 0 ? (
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {user.orders.map((order: any) => {
+                      const getStatusColor = (status: string) => {
+                        switch (status) {
+                          case 'paid': return 'bg-green-100 text-green-800'
+                          case 'shipped': return 'bg-blue-100 text-blue-800'
+                          case 'cancelled': return 'bg-red-100 text-red-800'
+                          case 'refunded': return 'bg-purple-100 text-purple-800'
+                          default: return 'bg-yellow-100 text-yellow-800'
+                        }
+                      }
+                      return (
+                        <tr key={order.id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">{order.orderNumber}</td>
+                          <td className="px-6 py-4 text-sm text-gray-500">{new Date(order.orderDate).toLocaleDateString()}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(order.status)}`}>
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-900">${order.total.toFixed(2)}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-600 border border-gray-200 rounded-lg">
+                <p>No orders found</p>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="border-t border-gray-200 pt-4 flex justify-end gap-2 flex-wrap">
+            {!user.isAdmin && (
+              <button
+                onClick={() => onPromoteToAdmin(user.id)}
+                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+              >
+                Promote to Admin
+              </button>
+            )}
+            {user.isDisabled ? (
+              <button
+                onClick={() => onEnableUser(user.id)}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              >
+                Enable User
+              </button>
+            ) : (
+              <button
+                onClick={() => onDisableUser(user.id)}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Disable User
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
