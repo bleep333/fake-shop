@@ -1605,6 +1605,10 @@ function AnalyticsTab({
   const maxOrders = Math.max(...ordersPerDay.map((d: any) => d.count), 1)
   const maxQuantity = Math.max(...topProducts.map((p: any) => p.quantity), 1)
 
+  // Debug: log the data
+  console.log('Orders per day data:', ordersPerDay)
+  console.log('Max orders:', maxOrders)
+
   return (
     <div className="space-y-6">
       {/* KPIs */}
@@ -1649,20 +1653,28 @@ function AnalyticsTab({
               </button>
             </div>
           </div>
-          <div className="h-64 flex items-end justify-between gap-1">
+          <div className="h-64 flex items-end justify-between gap-1 pb-6">
             {ordersPerDay.map((day: any, index: number) => {
-              const height = maxOrders > 0 ? (day.count / maxOrders) * 100 : 0
+              // Use a scale that makes bars more visible
+              // Add some padding so bars with small counts are still visible
+              const scaleFactor = 0.85 // Use 85% of available height for better visibility
+              const heightPercent = maxOrders > 0 
+                ? ((day.count / maxOrders) * 100 * scaleFactor) + (15 * scaleFactor) // Scale to 85% + add base padding
+                : 0
+              const minHeightPercent = day.count > 0 ? 8 : 2 // Minimum 8% for days with orders
+              const height = Math.max(heightPercent, minHeightPercent)
               const date = new Date(day.date)
               const dayLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+              const showLabel = index % Math.ceil(ordersPerDay.length / 7) === 0
               return (
-                <div key={index} className="flex-1 flex flex-col items-center group relative">
+                <div key={index} className="flex-1 flex flex-col items-center justify-end group relative" style={{ height: '100%' }}>
                   <div
-                    className="w-full bg-blue-500 hover:bg-blue-600 transition-colors rounded-t"
-                    style={{ height: `${Math.max(height, 2)}%` }}
+                    className={`w-full rounded-t ${day.count > 0 ? 'bg-blue-500 hover:bg-blue-600 transition-colors' : 'bg-gray-200'}`}
+                    style={{ height: day.count > 0 ? `${height}%` : '2px', minHeight: day.count > 0 ? '8px' : '2px' }}
                     title={`${dayLabel}: ${day.count} orders`}
                   />
-                  {index % Math.ceil(ordersPerDay.length / 7) === 0 && (
-                    <span className="text-xs text-gray-500 mt-1 transform -rotate-45 origin-left whitespace-nowrap">
+                  {showLabel && (
+                    <span className="text-xs text-gray-500 whitespace-nowrap absolute" style={{ bottom: '-20px', left: '50%', transform: 'translateX(-50%) rotate(-45deg)' }}>
                       {dayLabel}
                     </span>
                   )}

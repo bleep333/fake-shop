@@ -25,9 +25,11 @@ export async function GET(request: NextRequest) {
     const startOfWeek = new Date(now)
     startOfWeek.setDate(now.getDate() - now.getDay()) // Start of week (Sunday)
     startOfWeek.setHours(0, 0, 0, 0)
-    const daysAgo = new Date(now)
-    daysAgo.setDate(now.getDate() - days)
-    daysAgo.setHours(0, 0, 0, 0)
+    // For "last N days" including today, go back (N-1) days
+    // Use UTC consistently to avoid timezone issues
+    const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+    const daysAgo = new Date(todayUTC)
+    daysAgo.setUTCDate(todayUTC.getUTCDate() - (days - 1))
 
     // Total Revenue (sum of all order totals)
     const totalRevenueResult = await prisma.order.aggregate({
@@ -81,66 +83,75 @@ export async function GET(request: NextRequest) {
     })
 
     // Orders per day (last N days)
-    const ordersPerDay = await prisma.order.groupBy({
-      by: ['orderDate'],
-      _count: {
-        id: true
-      },
+    // Fetch all orders in the date range and group by date
+    const ordersInPeriod = await prisma.order.findMany({
       where: {
         orderDate: {
           gte: daysAgo
         }
       },
-      orderBy: {
-        orderDate: 'asc'
+      select: {
+        orderDate: true
       }
     })
 
     // Process orders per day to fill in missing dates
     const ordersPerDayMap = new Map<string, number>()
+    
+    // Initialize all dates in range with 0
+    // Convert daysAgo to UTC midnight for consistent date string generation
+    const startDate = new Date(daysAgo.getTime())
+    startDate.setUTCHours(0, 0, 0, 0)
+    
     for (let i = 0; i < days; i++) {
-      const date = new Date(daysAgo)
-      date.setDate(date.getDate() + i)
+      const date = new Date(startDate)
+      date.setUTCDate(date.getUTCDate() + i)
       const dateStr = date.toISOString().split('T')[0]
       ordersPerDayMap.set(dateStr, 0)
     }
-    ordersPerDay.forEach(item => {
-      const dateStr = item.orderDate.toISOString().split('T')[0]
-      ordersPerDayMap.set(dateStr, item._count.id)
+    
+    // Count orders per day (all dates from database are already Date objects)
+    ordersInPeriod.forEach(order => {
+      const dateStr = order.orderDate.toISOString().split('T')[0]
+      if (ordersPerDayMap.has(dateStr)) {
+        ordersPerDayMap.set(dateStr, ordersPerDayMap.get(dateStr)! + 1)
+      }
     })
-    const ordersPerDayArray = Array.from(ordersPerDayMap.entries()).map(([date, count]) => ({
-      date,
-      count
-    }))
+    
+    const ordersPerDayArray = Array.from(ordersPerDayMap.entries())
+      .map(([date, count]) => ({
+        date,
+        count
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date))
 
     // Top-selling products (by quantity sold)
-    const topProducts = await prisma.orderItem.groupBy({
-      by: ['productData'],
-      _sum: {
+    // First, get all order items
+    const allOrderItems = await prisma.orderItem.findMany({
+      select: {
+        productData: true,
         quantity: true
-      },
-      orderBy: {
-        _sum: {
-          quantity: 'desc'
-        },
-      },
-      take: 10
+      }
     })
 
-    // Process top products - extract product name from JSON
-    const topProductsProcessed = topProducts
-      .map(item => {
-        try {
-          const productData = item.productData as any
-          return {
-            name: productData?.name || 'Unknown',
-            quantity: item._sum.quantity || 0
-          }
-        } catch {
-          return null
-        }
-      })
-      .filter((item): item is { name: string; quantity: number } => item !== null)
+    // Group by product name (sum quantities across all sizes)
+    const productMap = new Map<string, number>()
+    allOrderItems.forEach(item => {
+      try {
+        const productData = item.productData as any
+        const productName = productData?.name || 'Unknown'
+        const currentQuantity = productMap.get(productName) || 0
+        productMap.set(productName, currentQuantity + (item.quantity || 0))
+      } catch {
+        // Skip invalid product data
+      }
+    })
+
+    // Convert to array and sort by quantity
+    const topProductsProcessed = Array.from(productMap.entries())
+      .map(([name, quantity]) => ({ name, quantity }))
+      .sort((a, b) => b.quantity - a.quantity)
+      .slice(0, 10)
 
     // Low-stock products
     const allProducts = await prisma.product.findMany({
