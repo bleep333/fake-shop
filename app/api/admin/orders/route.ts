@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
+    const search = searchParams.get('search')
 
     // Build where clause
     const conditions: any[] = []
@@ -43,6 +44,24 @@ export async function GET(request: NextRequest) {
         dateCondition.lte = new Date(endDate)
       }
       conditions.push({ orderDate: dateCondition })
+    }
+
+    if (search) {
+      // Search by order number or customer name/email
+      const searchLower = search.toLowerCase()
+      conditions.push({
+        OR: [
+          { orderNumber: { contains: search, mode: 'insensitive' } },
+          {
+            user: {
+              OR: [
+                { name: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } }
+              ]
+            }
+          }
+        ]
+      })
     }
 
     const where = conditions.length > 0 ? { AND: conditions } : {}

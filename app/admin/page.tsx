@@ -61,7 +61,7 @@ export default function AdminPage() {
   const [editingStock, setEditingStock] = useState<{ [productId: string]: Record<string, number> }>({})
   const [saving, setSaving] = useState<string | null>(null)
   const [loginCredentials, setLoginCredentials] = useState({ email: 'admin', password: 'admin' })
-  const [sortColumn, setSortColumn] = useState<'name' | 'category' | 'gender' | 'price' | null>(null)
+  const [sortColumn, setSortColumn] = useState<'sku' | 'name' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock' | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   
   // Product Management state
@@ -79,8 +79,11 @@ export default function AdminPage() {
     status: '',
     userId: '',
     startDate: '',
-    endDate: ''
+    endDate: '',
+    search: ''
   })
+  const [orderSortColumn, setOrderSortColumn] = useState<'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total' | null>(null)
+  const [orderSortDirection, setOrderSortDirection] = useState<'asc' | 'desc'>('desc')
 
   // User Management state
   const [users, setUsers] = useState<any[]>([])
@@ -201,7 +204,7 @@ export default function AdminPage() {
     return JSON.stringify(currentStock) !== JSON.stringify(editingStockForProduct)
   }
 
-  const handleSort = (column: 'name' | 'category' | 'gender' | 'price') => {
+  const handleSort = (column: 'sku' | 'name' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock') => {
     if (sortColumn === column) {
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')
     } else {
@@ -216,17 +219,33 @@ export default function AdminPage() {
     const sorted = [...products].sort((a, b) => {
       let comparison = 0
       switch (sortColumn) {
+        case 'sku':
+          comparison = (a.sku || '').localeCompare(b.sku || '')
+          break
         case 'name':
           comparison = a.name.localeCompare(b.name)
-          break
-        case 'category':
-          comparison = a.category.localeCompare(b.category)
           break
         case 'gender':
           comparison = a.gender.localeCompare(b.gender)
           break
         case 'price':
           comparison = a.price - b.price
+          break
+        case 'salePrice':
+          const aSalePrice = a.salePrice || 0
+          const bSalePrice = b.salePrice || 0
+          comparison = aSalePrice - bSalePrice
+          break
+        case 'status':
+          comparison = a.status.localeCompare(b.status)
+          break
+        case 'isVisible':
+          comparison = (a.isVisible === b.isVisible) ? 0 : (a.isVisible ? 1 : -1)
+          break
+        case 'stock':
+          const aStock = a.stockBySize ? Object.values(a.stockBySize).reduce((sum, val) => sum + val, 0) : 0
+          const bStock = b.stockBySize ? Object.values(b.stockBySize).reduce((sum, val) => sum + val, 0) : 0
+          comparison = aStock - bStock
           break
       }
       return sortDirection === 'asc' ? comparison : -comparison
@@ -395,6 +414,7 @@ export default function AdminPage() {
       if (orderFilters.userId) params.append('userId', orderFilters.userId)
       if (orderFilters.startDate) params.append('startDate', orderFilters.startDate)
       if (orderFilters.endDate) params.append('endDate', orderFilters.endDate)
+      if (orderFilters.search) params.append('search', orderFilters.search)
 
       const response = await fetch(`/api/admin/orders?${params.toString()}`)
       if (response.ok) {
@@ -404,6 +424,70 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch orders:', error)
     }
+  }
+
+  const handleOrderSort = (column: 'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total') => {
+    if (orderSortColumn === column) {
+      setOrderSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')
+    } else {
+      setOrderSortColumn(column)
+      setOrderSortDirection('asc')
+    }
+  }
+
+  const getSortedOrders = (): Order[] => {
+    if (!orderSortColumn) return orders
+
+    const sorted = [...orders].sort((a, b) => {
+      let comparison = 0
+
+      switch (orderSortColumn) {
+        case 'orderNumber':
+          comparison = a.orderNumber.localeCompare(b.orderNumber)
+          break
+        case 'orderDate':
+          comparison = new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime()
+          break
+        case 'customer':
+          const aCustomer = (a.customerDetails as any)?.firstName && (a.customerDetails as any)?.lastName
+            ? `${(a.customerDetails as any).firstName} ${(a.customerDetails as any).lastName}`
+            : a.user?.name || a.user?.email || ''
+          const bCustomer = (b.customerDetails as any)?.firstName && (b.customerDetails as any)?.lastName
+            ? `${(b.customerDetails as any).firstName} ${(b.customerDetails as any).lastName}`
+            : b.user?.name || b.user?.email || ''
+          comparison = aCustomer.localeCompare(bCustomer)
+          break
+        case 'status':
+          comparison = a.status.localeCompare(b.status)
+          break
+        case 'total':
+          comparison = a.total - b.total
+          break
+      }
+
+      return orderSortDirection === 'asc' ? comparison : -comparison
+    })
+
+    return sorted
+  }
+
+  const OrderSortIcon = ({ column }: { column: 'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total' }) => {
+    if (orderSortColumn !== column) {
+      return (
+        <svg className="w-4 h-4 text-gray-400 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+        </svg>
+      )
+    }
+    return orderSortDirection === 'asc' ? (
+      <svg className="w-4 h-4 text-black inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+      </svg>
+    ) : (
+      <svg className="w-4 h-4 text-black inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      </svg>
+    )
   }
 
   const handleViewOrder = async (orderId: string) => {
@@ -531,7 +615,7 @@ export default function AdminPage() {
     await handleUpdateUser(userId, { isDisabled: false })
   }
 
-  const SortIcon = ({ column }: { column: 'name' | 'category' | 'gender' | 'price' }) => {
+  const SortIcon = ({ column }: { column: 'sku' | 'name' | 'category' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock' }) => {
     if (sortColumn !== column) {
       return (
         <svg className="w-4 h-4 text-gray-400 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -796,13 +880,30 @@ export default function AdminPage() {
                         className="rounded border-gray-300"
                       />
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sale Price</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visible</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('sku')}>
+                      <span className="flex items-center">SKU <SortIcon column="sku" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('name')}>
+                      <span className="flex items-center">Name <SortIcon column="name" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('gender')}>
+                      <span className="flex items-center">Gender <SortIcon column="gender" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('price')}>
+                      <span className="flex items-center">Price <SortIcon column="price" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('salePrice')}>
+                      <span className="flex items-center">Sale Price <SortIcon column="salePrice" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('status')}>
+                      <span className="flex items-center">Status <SortIcon column="status" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('isVisible')}>
+                      <span className="flex items-center">Visible <SortIcon column="isVisible" /></span>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('stock')}>
+                      <span className="flex items-center">Stock <SortIcon column="stock" /></span>
+                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -824,6 +925,7 @@ export default function AdminPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.sku || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{product.gender}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           ${product.price.toFixed(2)}
                           {product.originalPrice && product.originalPrice > product.price && (
@@ -906,7 +1008,7 @@ export default function AdminPage() {
       {/* Orders Tab */}
       {activeTab === 'orders' && (
         <OrdersTab
-          orders={orders}
+          orders={getSortedOrders()}
           filters={orderFilters}
           onFiltersChange={setOrderFilters}
           onFetchOrders={fetchOrders}
@@ -915,6 +1017,10 @@ export default function AdminPage() {
           onCancelOrder={handleCancelOrder}
           onIssueRefund={handleIssueRefund}
           onDownloadInvoice={handleDownloadInvoice}
+          onSort={handleOrderSort}
+          sortColumn={orderSortColumn}
+          sortDirection={orderSortDirection}
+          SortIcon={OrderSortIcon}
         />
       )}
 
@@ -1197,7 +1303,11 @@ function OrdersTab({
   onUpdateStatus,
   onCancelOrder,
   onIssueRefund,
-  onDownloadInvoice
+  onDownloadInvoice,
+  onSort,
+  sortColumn,
+  sortDirection,
+  SortIcon
 }: {
   orders: Order[]
   filters: any
@@ -1208,6 +1318,10 @@ function OrdersTab({
   onCancelOrder: (orderId: string) => void
   onIssueRefund: (orderId: string) => void
   onDownloadInvoice: () => void
+  onSort: (column: 'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total') => void
+  sortColumn: 'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total' | null
+  sortDirection: 'asc' | 'desc'
+  SortIcon: ({ column }: { column: 'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total' }) => JSX.Element
 }) {
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({ ...filters, [key]: value })
@@ -1230,7 +1344,17 @@ function OrdersTab({
   return (
     <div>
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Search (Order #, Customer)</label>
+            <input
+              type="text"
+              value={filters.search || ''}
+              onChange={(e) => handleFilterChange('search', e.target.value)}
+              placeholder="Search orders..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
             <select
@@ -1279,11 +1403,21 @@ function OrdersTab({
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => onSort('orderNumber')}>
+                  <span className="flex items-center">Order # <SortIcon column="orderNumber" /></span>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => onSort('orderDate')}>
+                  <span className="flex items-center">Date <SortIcon column="orderDate" /></span>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => onSort('customer')}>
+                  <span className="flex items-center">Customer <SortIcon column="customer" /></span>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => onSort('status')}>
+                  <span className="flex items-center">Status <SortIcon column="status" /></span>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => onSort('total')}>
+                  <span className="flex items-center">Total <SortIcon column="total" /></span>
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
