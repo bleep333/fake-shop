@@ -3,6 +3,7 @@ import 'next-auth'
 declare module 'next-auth' {
   interface User {
     id: string
+    isAdmin?: boolean
     address?: {
       street: string
       city: string
@@ -17,6 +18,7 @@ declare module 'next-auth' {
       id: string
       email?: string | null
       name?: string | null
+      isAdmin?: boolean
       address?: {
         street: string
         city: string

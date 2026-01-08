@@ -9,26 +9,35 @@ function getImagePath(name: string, gender: 'mens' | 'womens'): string {
   return `/images/products/${genderPrefix}-${imageName}`
 }
 
+// Helper function to create stockBySize object with default values
+function createStockBySize(sizes: string[], defaultStock: number = 10): Record<string, number> {
+  const stockBySize: Record<string, number> = {}
+  sizes.forEach(size => {
+    stockBySize[size] = defaultStock
+  })
+  return stockBySize
+}
+
 const products = [
   // Mens products
-  { name: 'Classic White Tee', price: 29.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Classic White Tee', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Slim Fit Jeans', price: 79.99, originalPrice: 99.99, category: 'pants', gender: 'mens', image: getImagePath('Slim Fit Jeans', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Denim Jacket', price: 89.99, originalPrice: null, category: 'outerwear', gender: 'mens', image: getImagePath('Denim Jacket', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Cargo Pants', price: 69.99, originalPrice: null, category: 'pants', gender: 'mens', image: getImagePath('Cargo Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Polo Shirt', price: 49.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Polo Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Hooded Sweatshirt', price: 59.99, originalPrice: 79.99, category: 'outerwear', gender: 'mens', image: getImagePath('Hooded Sweatshirt', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Chino Pants', price: 64.99, originalPrice: null, category: 'pants', gender: 'mens', image: getImagePath('Chino Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Button Down Shirt', price: 54.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Button Down Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { name: 'Classic White Tee', price: 29.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Classic White Tee', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 10) },
+  { name: 'Slim Fit Jeans', price: 79.99, originalPrice: 99.99, category: 'pants', gender: 'mens', image: getImagePath('Slim Fit Jeans', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 6) },
+  { name: 'Denim Jacket', price: 89.99, originalPrice: null, category: 'outerwear', gender: 'mens', image: getImagePath('Denim Jacket', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 5) },
+  { name: 'Cargo Pants', price: 69.99, originalPrice: null, category: 'pants', gender: 'mens', image: getImagePath('Cargo Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 8) },
+  { name: 'Polo Shirt', price: 49.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Polo Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 9) },
+  { name: 'Hooded Sweatshirt', price: 59.99, originalPrice: 79.99, category: 'outerwear', gender: 'mens', image: getImagePath('Hooded Sweatshirt', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 7) },
+  { name: 'Chino Pants', price: 64.99, originalPrice: null, category: 'pants', gender: 'mens', image: getImagePath('Chino Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 8) },
+  { name: 'Button Down Shirt', price: 54.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Button Down Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 9) },
   
   // Womens products
-  { name: 'Floral Summer Dress', price: 89.99, originalPrice: null, category: 'shirts', gender: 'womens', image: getImagePath('Floral Summer Dress', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'High-Waist Jeans', price: 79.99, originalPrice: 99.99, category: 'pants', gender: 'womens', image: getImagePath('High-Waist Jeans', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Cropped Blazer', price: 119.99, originalPrice: null, category: 'outerwear', gender: 'womens', image: getImagePath('Cropped Blazer', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Wide Leg Pants', price: 69.99, originalPrice: null, category: 'pants', gender: 'womens', image: getImagePath('Wide Leg Pants', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Silk Blouse', price: 94.99, originalPrice: null, category: 'shirts', gender: 'womens', image: getImagePath('Silk Blouse', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Trench Coat', price: 149.99, originalPrice: 199.99, category: 'outerwear', gender: 'womens', image: getImagePath('Trench Coat', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Midi Skirt', price: 59.99, originalPrice: null, category: 'pants', gender: 'womens', image: getImagePath('Midi Skirt', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { name: 'Knit Sweater', price: 79.99, originalPrice: null, category: 'outerwear', gender: 'womens', image: getImagePath('Knit Sweater', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { name: 'Floral Summer Dress', price: 89.99, originalPrice: null, category: 'shirts', gender: 'womens', image: getImagePath('Floral Summer Dress', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 6) },
+  { name: 'High-Waist Jeans', price: 79.99, originalPrice: 99.99, category: 'pants', gender: 'womens', image: getImagePath('High-Waist Jeans', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 7) },
+  { name: 'Cropped Blazer', price: 119.99, originalPrice: null, category: 'outerwear', gender: 'womens', image: getImagePath('Cropped Blazer', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 4) },
+  { name: 'Wide Leg Pants', price: 69.99, originalPrice: null, category: 'pants', gender: 'womens', image: getImagePath('Wide Leg Pants', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 8) },
+  { name: 'Silk Blouse', price: 94.99, originalPrice: null, category: 'shirts', gender: 'womens', image: getImagePath('Silk Blouse', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 5) },
+  { name: 'Trench Coat', price: 149.99, originalPrice: 199.99, category: 'outerwear', gender: 'womens', image: getImagePath('Trench Coat', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 3) },
+  { name: 'Midi Skirt', price: 59.99, originalPrice: null, category: 'pants', gender: 'womens', image: getImagePath('Midi Skirt', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 8) },
+  { name: 'Knit Sweater', price: 79.99, originalPrice: null, category: 'outerwear', gender: 'womens', image: getImagePath('Knit Sweater', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 6) },
 ]
 
 async function main() {
@@ -60,9 +69,28 @@ async function main() {
       name: 'Fake User',
       email: 'user@fakeshop.com',
       emailVerified: new Date(),
+      isAdmin: false,
     },
   })
   console.log('Dummy user created/updated:', dummyUser.email)
+
+  // Create or update the admin user
+  console.log('Creating/updating admin user...')
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@fakeshop.com' },
+    update: {
+      name: 'Admin',
+      email: 'admin@fakeshop.com',
+      isAdmin: true,
+    },
+    create: {
+      name: 'Admin',
+      email: 'admin@fakeshop.com',
+      emailVerified: new Date(),
+      isAdmin: true,
+    },
+  })
+  console.log('Admin user created/updated:', adminUser.email)
 
   console.log('Seed completed!')
 }

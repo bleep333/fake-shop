@@ -16,6 +16,13 @@ const fakeUsers = {
       phone: '+61 412 345 678',
     },
   },
+  'admin': {
+    id: 'admin',
+    email: 'admin@fakeshop.com',
+    name: 'Admin',
+    password: 'admin',
+    isAdmin: true,
+  },
 }
 
 export const authOptions: NextAuthOptions = {
@@ -31,7 +38,12 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const user = fakeUsers[credentials.email as keyof typeof fakeUsers]
+        // Handle admin login (username can be "admin" or "admin@fakeshop.com")
+        const emailKey = credentials.email.toLowerCase() === 'admin' 
+          ? 'admin' 
+          : credentials.email.toLowerCase()
+        
+        const user = fakeUsers[emailKey as keyof typeof fakeUsers]
         
         if (user && user.password === credentials.password) {
           return {
@@ -39,6 +51,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             name: user.name,
             address: user.address,
+            isAdmin: user.isAdmin || false,
           }
         }
 
@@ -61,6 +74,9 @@ export const authOptions: NextAuthOptions = {
         if (token.address) {
           ;(session.user as any).address = token.address
         }
+        if (token.isAdmin !== undefined) {
+          ;(session.user as any).isAdmin = token.isAdmin
+        }
       }
       return session
     },
@@ -69,6 +85,9 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         if ((user as any).address) {
           token.address = (user as any).address
+        }
+        if ((user as any).isAdmin !== undefined) {
+          token.isAdmin = (user as any).isAdmin
         }
       }
       return token

@@ -44,6 +44,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  isAdmin       Boolean   @default(false)
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
@@ -99,6 +100,7 @@ model Product {
   image         String
   tags          String[] // Array of tags like ['New', 'Sale']
   sizes         String[] // Array of available sizes
+  stockBySize   Json?    // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
