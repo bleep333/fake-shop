@@ -1,0 +1,7 @@
+after git pull
+
+npx prisma generate
+npx prisma db push
+
+npm run dev
+npm run db:studio
