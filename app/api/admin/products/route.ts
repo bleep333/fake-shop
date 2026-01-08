@@ -66,7 +66,35 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Generate SKU if not provided
-    const productSku = sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+    let productSku = sku
+    if (!productSku) {
+      // Generate simple SKU based on gender and next available number
+      const genderPrefix = (gender === 'mens' || gender === 'womens') ? gender.charAt(0).toUpperCase() : 'P'
+      
+      // Find the highest existing SKU with this prefix
+      const existingProducts = await prisma.product.findMany({
+        where: {
+          sku: {
+            startsWith: `${genderPrefix}-`
+          }
+        },
+        orderBy: {
+          sku: 'desc'
+        },
+        take: 1
+      })
+      
+      let nextNumber = 1
+      if (existingProducts.length > 0 && existingProducts[0].sku) {
+        const lastSku = existingProducts[0].sku
+        const match = lastSku.match(/\d+$/)
+        if (match) {
+          nextNumber = parseInt(match[0]) + 1
+        }
+      }
+      
+      productSku = `${genderPrefix}-${String(nextNumber).padStart(3, '0')}`
+    }
 
     const product = await prisma.product.create({
       data: {
