@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const gender = searchParams.get('gender') as 'mens' | 'womens' | 'unisex' | null
     const categories = searchParams.getAll('category') // Handle multiple categories
+    const tags = searchParams.getAll('tag') // Handle multiple tags
     const sortBy = searchParams.get('sortBy') || 'newest'
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
@@ -26,6 +27,19 @@ export async function GET(request: NextRequest) {
       conditions.push({
         category: { in: categories }
       })
+    }
+    
+    if (tags.length > 0) {
+      // For multiple tags, we want products that have all of them
+      if (tags.length === 1) {
+        conditions.push({
+          tags: { has: tags[0] }
+        })
+      } else {
+        conditions.push({
+          tags: { hasEvery: tags }
+        })
+      }
     }
     
     if (minPrice || maxPrice) {

@@ -3,6 +3,7 @@ import { Product, FilterOptions, SortOption } from './mockProducts'
 export async function getProducts(filters?: {
   gender?: 'mens' | 'womens' | 'unisex'
   category?: string[]
+  tags?: string[]
   minPrice?: number
   maxPrice?: number
   sortBy?: SortOption
@@ -12,6 +13,9 @@ export async function getProducts(filters?: {
   if (filters?.gender) params.append('gender', filters.gender)
   if (filters?.category && filters.category.length > 0) {
     filters.category.forEach(cat => params.append('category', cat))
+  }
+  if (filters?.tags && filters.tags.length > 0) {
+    filters.tags.forEach(tag => params.append('tag', tag))
   }
   if (filters?.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString())
   if (filters?.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString())

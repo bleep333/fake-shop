@@ -59,6 +59,14 @@ export default function Header() {
             {/* Center: Nav Links (Desktop) */}
             <nav className="hidden md:flex items-center gap-8">
               <Link 
+                href="/new-arrivals" 
+                className={`text-sm font-medium transition-colors ${
+                  pathname === '/new-arrivals' ? 'text-black' : 'text-gray-600 hover:text-black'
+                }`}
+              >
+                New Arrivals
+              </Link>
+              <Link 
                 href="/mens" 
                 className={`text-sm font-medium transition-colors ${
                   pathname === '/mens' ? 'text-black' : 'text-gray-600 hover:text-black'

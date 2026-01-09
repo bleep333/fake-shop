@@ -73,6 +73,15 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
           {/* Navigation Links */}
           <nav className="flex-1 p-4 space-y-4">
             <Link
+              href="/new-arrivals"
+              onClick={onClose}
+              className={`block py-2 text-lg font-medium transition-colors ${
+                pathname === '/new-arrivals' ? 'text-black' : 'text-gray-600 hover:text-black'
+              }`}
+            >
+              New Arrivals
+            </Link>
+            <Link
               href="/mens"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
