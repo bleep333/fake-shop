@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       if (maxPrice) {
         priceCondition.lte = parseFloat(maxPrice)
       }
-      conditions.push({ price: priceCondition })
+      conditions.push({ basePrice: priceCondition })
     }
 
     // Only show active and visible products to customers
@@ -53,10 +53,10 @@ export async function GET(request: NextRequest) {
     let orderBy: any = {}
     switch (sortBy) {
       case 'price-low':
-        orderBy = { price: 'asc' }
+        orderBy = { basePrice: 'asc' }
         break
       case 'price-high':
-        orderBy = { price: 'desc' }
+        orderBy = { basePrice: 'desc' }
         break
       case 'newest':
       default:

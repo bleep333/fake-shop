@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
               productData: item.product as any,
               quantity: item.quantity,
               size: item.size,
-              price: item.product.price
+              price: item.product.salePrice || item.product.basePrice
             }))
           }
         },

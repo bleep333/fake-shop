@@ -157,8 +157,14 @@ export default function CheckoutPage() {
     }
 
     // Calculate totals
-    const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
-    const tax = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity) / 11, 0)
+    const subtotal = cartItems.reduce((sum, item) => {
+      const effectivePrice = item.product.salePrice || item.product.basePrice
+      return sum + effectivePrice * item.quantity
+    }, 0)
+    const tax = cartItems.reduce((sum, item) => {
+      const effectivePrice = item.product.salePrice || item.product.basePrice
+      return sum + (effectivePrice * item.quantity) / 11
+    }, 0)
     const shipping = subtotal > 100 ? 0 : 10
     const total = subtotal + shipping
 

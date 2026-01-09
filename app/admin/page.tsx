@@ -9,8 +9,7 @@ type Product = {
   id: string
   sku?: string | null
   name: string
-  price: number
-  originalPrice?: number | null
+  basePrice: number
   salePrice?: number | null
   category: string
   gender: string
@@ -239,7 +238,9 @@ export default function AdminPage() {
           comparison = a.gender.localeCompare(b.gender)
           break
         case 'price':
-          comparison = a.price - b.price
+          const aPrice = a.salePrice || a.basePrice
+          const bPrice = b.salePrice || b.basePrice
+          comparison = aPrice - bPrice
           break
         case 'salePrice':
           const aSalePrice = a.salePrice || 0
@@ -343,7 +344,7 @@ export default function AdminPage() {
           body: JSON.stringify({
             productIds: Array.from(selectedProducts),
             updates: {
-              price: actionData.price ? parseFloat(actionData.price) : undefined,
+              basePrice: actionData.basePrice ? parseFloat(actionData.basePrice) : undefined,
               salePrice: actionData.salePrice ? parseFloat(actionData.salePrice) : undefined,
               status: actionData.status || undefined,
               isVisible: actionData.isVisible !== undefined ? actionData.isVisible : undefined,
@@ -408,8 +409,7 @@ export default function AdminPage() {
     }
   }
 
-  const getDiscountPercent = (price: number, salePrice?: number | null, originalPrice?: number | null): number | null => {
-    const basePrice = originalPrice || price
+  const getDiscountPercent = (basePrice: number, salePrice?: number | null): number | null => {
     if (salePrice && salePrice < basePrice) {
       return Math.round(((basePrice - salePrice) / basePrice) * 100)
     }
@@ -791,6 +791,9 @@ export default function AdminPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('sku')}>
+                    <span className="flex items-center">SKU <SortIcon column="sku" /></span>
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none" onClick={() => handleSort('name')}>
                     <span className="flex items-center">Product Name <SortIcon column="name" /></span>
                   </th>
@@ -807,7 +810,7 @@ export default function AdminPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-l border-gray-300">Actions</th>
                 </tr>
                 <tr>
-                  <th colSpan={4}></th>
+                  <th colSpan={5}></th>
                   <th className="px-2 py-2 text-center text-xs font-medium text-gray-500">S</th>
                   <th className="px-2 py-2 text-center text-xs font-medium text-gray-500">M</th>
                   <th className="px-2 py-2 text-center text-xs font-medium text-gray-500">L</th>
@@ -824,10 +827,20 @@ export default function AdminPage() {
                   
                   return (
                     <tr key={product.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.sku || 'N/A'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{product.category}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{product.gender}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {product.salePrice ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 line-through">${product.basePrice.toFixed(2)}</span>
+                            <span className="whitespace-nowrap text-sm text-gray-500">${product.salePrice.toFixed(2)}</span>
+                          </div>
+                        ) : (
+                          <span>${product.basePrice.toFixed(2)}</span>
+                        )}
+                      </td>
                       {sizes.map((size) => {
                         const currentValue = currentStock[size] || 0
                         const editingValue = editingStockForProduct[size] ?? currentValue
@@ -944,7 +957,7 @@ export default function AdminPage() {
                   {getSortedProducts().map((product) => {
                     const totalStock = product.stockBySize ? Object.values(product.stockBySize).reduce((a, b) => a + b, 0) : 0
                     const isLowStock = totalStock <= product.lowStockThreshold
-                    const discount = getDiscountPercent(product.price, product.salePrice, product.originalPrice)
+                    const discount = getDiscountPercent(product.basePrice, product.salePrice)
                     
                     return (
                       <tr key={product.id} className={isLowStock ? 'bg-red-50' : ''}>
@@ -960,7 +973,7 @@ export default function AdminPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{product.gender}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ${(product.originalPrice || product.price).toFixed(2)}
+                          ${product.basePrice.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {product.salePrice ? (
@@ -1108,8 +1121,7 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
   const [formData, setFormData] = useState({
     sku: product?.sku || '',
     name: product?.name || '',
-    price: product?.price || 0,
-    originalPrice: product?.originalPrice || '',
+    basePrice: product?.basePrice || 0,
     salePrice: product?.salePrice || '',
     category: product?.category || 'shirts',
     gender: product?.gender || 'mens',
@@ -1132,9 +1144,8 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
       ...formData,
       tags: tagsArray,
       sizes: sizesArray,
-      originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice as any) : null,
+      basePrice: parseFloat(formData.basePrice as any),
       salePrice: formData.salePrice ? parseFloat(formData.salePrice as any) : null,
-      price: parseFloat(formData.price as any),
       lowStockThreshold: parseInt(formData.lowStockThreshold as any),
     }
 
@@ -1176,25 +1187,15 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Base Price *</label>
               <input
                 type="number"
                 step="0.01"
                 required
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Original Price</label>
-              <input
-                type="number"
-                step="0.01"
-                value={formData.originalPrice}
-                onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
+                value={formData.basePrice}
+                onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
             </div>
@@ -2018,7 +2019,7 @@ function UserDetailModal({
 // Bulk Action Modal Component
 function BulkActionModal({ action, onClose, onSave }: { action: 'price' | 'stock', onClose: () => void, onSave: (data: any) => void }) {
   const [formData, setFormData] = useState<any>({
-    price: '',
+    basePrice: '',
     salePrice: '',
     status: '',
     isVisible: undefined,
@@ -2046,12 +2047,12 @@ function BulkActionModal({ action, onClose, onSave }: { action: 'price' | 'stock
           {action === 'price' ? (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Price (leave empty to keep current)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Base Price (leave empty to keep current)</label>
                 <input
                   type="number"
                   step="0.01"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  value={formData.basePrice}
+                  onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>

@@ -61,8 +61,7 @@ export async function PATCH(
     const updateData: any = {}
     if (body.sku !== undefined) updateData.sku = body.sku
     if (body.name !== undefined) updateData.name = body.name
-    if (body.price !== undefined) updateData.price = parseFloat(body.price)
-    if (body.originalPrice !== undefined) updateData.originalPrice = body.originalPrice ? parseFloat(body.originalPrice) : null
+    if (body.basePrice !== undefined) updateData.basePrice = parseFloat(body.basePrice)
     if (body.salePrice !== undefined) updateData.salePrice = body.salePrice ? parseFloat(body.salePrice) : null
     if (body.category !== undefined) updateData.category = body.category
     if (body.gender !== undefined) updateData.gender = body.gender

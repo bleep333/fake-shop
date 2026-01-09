@@ -51,8 +51,7 @@ export async function POST(request: NextRequest) {
     const {
       sku,
       name,
-      price,
-      originalPrice,
+      basePrice,
       salePrice,
       category,
       gender,
@@ -100,8 +99,7 @@ export async function POST(request: NextRequest) {
       data: {
         sku: productSku,
         name,
-        price: parseFloat(price),
-        originalPrice: originalPrice ? parseFloat(originalPrice) : null,
+        basePrice: parseFloat(basePrice),
         salePrice: salePrice ? parseFloat(salePrice) : null,
         category,
         gender,
@@ -166,7 +164,7 @@ export async function PUT(request: NextRequest) {
 
     // Prepare update data
     const updateData: any = {}
-    if (updates.price !== undefined) updateData.price = parseFloat(updates.price)
+    if (updates.basePrice !== undefined) updateData.basePrice = parseFloat(updates.basePrice)
     if (updates.salePrice !== undefined) updateData.salePrice = updates.salePrice ? parseFloat(updates.salePrice) : null
     if (updates.status !== undefined) updateData.status = updates.status
     if (updates.isVisible !== undefined) updateData.isVisible = updates.isVisible

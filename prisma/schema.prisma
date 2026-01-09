@@ -105,8 +105,7 @@ model Product {
   id                String        @id @default(cuid())
   sku               String?       @unique
   name              String
-  price             Float
-  originalPrice     Float?
+  basePrice         Float
   salePrice         Float?
   category          String        // 'shirts' | 'pants' | 'outerwear' | 'accessories'
   gender            String        // 'mens' | 'womens' | 'unisex'

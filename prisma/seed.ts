@@ -76,12 +76,20 @@ async function main() {
   for (const product of products) {
     await prisma.product.create({
       data: {
-        ...product,
+        sku: product.sku,
+        name: product.name,
+        basePrice: product.originalPrice || product.price,
+        salePrice: product.originalPrice ? product.price : null,
+        category: product.category,
+        gender: product.gender,
+        image: product.image,
         description: getProductDescription(product.name, product.category, product.gender),
+        tags: product.tags,
+        sizes: product.sizes,
+        stockBySize: product.stockBySize,
         status: 'active',
         isVisible: true,
         lowStockThreshold: 10,
-        salePrice: product.originalPrice && product.price < product.originalPrice ? product.price : null,
       },
     })
   }

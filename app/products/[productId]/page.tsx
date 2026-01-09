@@ -168,10 +168,10 @@ export default function ProductDetailPage() {
           
           {/* Price */}
           <div className="flex items-center gap-3 mb-6">
-            <span className="text-3xl font-semibold">${product.price.toFixed(2)}</span>
-            {product.originalPrice && (
+            <span className="text-3xl font-semibold">${((product.salePrice || product.basePrice)).toFixed(2)}</span>
+            {product.salePrice && (
               <span className="text-xl text-gray-500 line-through">
-                ${product.originalPrice.toFixed(2)}
+                ${product.basePrice.toFixed(2)}
               </span>
             )}
           </div>

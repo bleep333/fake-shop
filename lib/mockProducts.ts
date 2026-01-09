@@ -1,8 +1,8 @@
 export type Product = {
   id: string
   name: string
-  price: number
-  originalPrice?: number
+  basePrice: number
+  salePrice?: number | null
   category: 'shirts' | 'pants' | 'outerwear' | 'accessories'
   gender: 'mens' | 'womens' | 'unisex'
   image: string
@@ -73,11 +73,17 @@ export function filterProducts(
   }
 
   if (filters.minPrice !== undefined) {
-    filtered = filtered.filter(p => p.price >= filters.minPrice!)
+    filtered = filtered.filter(p => {
+      const effectivePrice = p.salePrice || p.basePrice
+      return effectivePrice >= filters.minPrice!
+    })
   }
 
   if (filters.maxPrice !== undefined) {
-    filtered = filtered.filter(p => p.price <= filters.maxPrice!)
+    filtered = filtered.filter(p => {
+      const effectivePrice = p.salePrice || p.basePrice
+      return effectivePrice <= filters.maxPrice!
+    })
   }
 
   return filtered
@@ -94,9 +100,17 @@ export function sortProducts(products: Product[], sortBy: SortOption): Product[]
         return bIsNew - aIsNew
       })
     case 'price-low':
-      return sorted.sort((a, b) => a.price - b.price)
+      return sorted.sort((a, b) => {
+        const aPrice = a.salePrice || a.basePrice
+        const bPrice = b.salePrice || b.basePrice
+        return aPrice - bPrice
+      })
     case 'price-high':
-      return sorted.sort((a, b) => b.price - a.price)
+      return sorted.sort((a, b) => {
+        const aPrice = a.salePrice || a.basePrice
+        const bPrice = b.salePrice || b.basePrice
+        return bPrice - aPrice
+      })
     default:
       return sorted
   }

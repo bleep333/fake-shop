@@ -59,8 +59,14 @@ export default function CartPage() {
 
   // Price includes tax, so we need to extract tax for display
   // Tax = price / 11
-  const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
-  const tax = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity) / 11, 0)
+  const subtotal = cartItems.reduce((sum, item) => {
+    const effectivePrice = item.product.salePrice || item.product.basePrice
+    return sum + effectivePrice * item.quantity
+  }, 0)
+  const tax = cartItems.reduce((sum, item) => {
+    const effectivePrice = item.product.salePrice || item.product.basePrice
+    return sum + (effectivePrice * item.quantity) / 11
+  }, 0)
   const shipping = subtotal > 100 ? 0 : 10
   const total = subtotal + shipping
 
@@ -90,7 +96,7 @@ export default function CartPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold mb-1">{item.product.name}</h3>
                   <p className="text-sm text-gray-600 mb-2">Size: {item.size}</p>
-                  <p className="font-semibold mb-4">${item.product.price.toFixed(2)}</p>
+                  <p className="font-semibold mb-4">${((item.product.salePrice || item.product.basePrice)).toFixed(2)}</p>
                   
                   <div className="flex items-center gap-4">
                     {/* Quantity Stepper */}
@@ -123,7 +129,7 @@ export default function CartPage() {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold">
-                    ${(item.product.price * item.quantity).toFixed(2)}
+                    ${(((item.product.salePrice || item.product.basePrice)) * item.quantity).toFixed(2)}
                   </p>
                 </div>
               </div>
