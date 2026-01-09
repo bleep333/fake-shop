@@ -162,11 +162,17 @@ export default function MensContent() {
                     </div>
                   </div>
                 )}
-                {paginatedProducts.map((product) => (
-                  <ProductCard
+                {paginatedProducts.map((product, index) => (
+                  <div
                     key={product.id}
-                    product={product}
-                  />
+                    className="animate-fade-in"
+                    style={{
+                      animationDelay: `${Math.min(index * 30, 200)}ms`,
+                      animationFillMode: 'forwards'
+                    }}
+                  >
+                    <ProductCard product={product} />
+                  </div>
                 ))}
               </div>
 
