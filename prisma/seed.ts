@@ -18,6 +18,30 @@ function createStockBySize(sizes: string[], defaultStock: number = 10): Record<s
   return stockBySize
 }
 
+// Helper function to generate product descriptions
+function getProductDescription(name: string, category: string, gender: string): string {
+  const descriptions: Record<string, string> = {
+    'Classic White Tee': 'A timeless essential perfect for everyday wear. Made from premium cotton blend, this classic white t-shirt offers exceptional comfort and versatility. The relaxed fit and soft fabric make it an ideal foundation piece for any wardrobe.',
+    'Slim Fit Jeans': 'Modern slim-fit jeans that combine style with comfort. Crafted from premium denim with just the right amount of stretch, these jeans offer a tailored silhouette that flatters while allowing freedom of movement.',
+    'Denim Jacket': 'A versatile denim jacket that never goes out of style. Featuring a classic cut and durable construction, this jacket is perfect for layering in any season. The medium wash offers a timeless look that pairs with everything.',
+    'Cargo Pants': 'Functional and stylish cargo pants designed for comfort and durability. With multiple pockets and a relaxed fit, these pants are perfect for both casual and active wear. Made from a sturdy cotton blend that stands up to daily use.',
+    'Polo Shirt': 'A refined polo shirt that elevates your casual style. Made from pique cotton, this classic piece offers a polished look that works for both relaxed and semi-formal occasions. The breathable fabric keeps you comfortable all day.',
+    'Hooded Sweatshirt': 'A cozy hooded sweatshirt perfect for cooler weather. Made from soft, fleece-lined fabric, this sweatshirt provides warmth and comfort. The relaxed fit and adjustable drawstring hood make it an essential layering piece.',
+    'Chino Pants': 'Versatile chino pants that bridge the gap between casual and smart casual. Made from lightweight cotton twill, these pants offer a clean, polished appearance while maintaining comfort. Perfect for both work and leisure.',
+    'Button Down Shirt': 'A classic button-down shirt that combines traditional styling with modern comfort. Made from crisp cotton, this shirt features a tailored fit and can be dressed up or down. Essential for any professional or casual wardrobe.',
+    'Floral Summer Dress': 'A beautiful floral summer dress that captures the essence of warm-weather style. Made from lightweight, breathable fabric with a flowing silhouette, this dress is perfect for sunny days and special occasions.',
+    'High-Waist Jeans': 'Flattering high-waist jeans that accentuate your natural curves. Made from premium denim with stretch, these jeans offer both style and comfort. The high-rise waist and slim fit create a modern, polished look.',
+    'Cropped Blazer': 'A chic cropped blazer that adds sophistication to any outfit. Perfect for layering over dresses or pairing with high-waist pants, this structured piece elevates your style while maintaining a contemporary edge.',
+    'Wide Leg Pants': 'Elegant wide-leg pants that offer both comfort and style. Made from flowing fabric with a relaxed fit, these pants create a sophisticated silhouette. Perfect for those who appreciate both fashion and comfort.',
+    'Silk Blouse': 'A luxurious silk blouse that exudes elegance and sophistication. The smooth, lightweight fabric drapes beautifully and feels luxurious against the skin. Perfect for special occasions or when you want to add a touch of refinement to your look.',
+    'Trench Coat': 'A classic trench coat that combines timeless style with practical design. Made from weather-resistant fabric, this coat features a belted waist and classic silhouette. A wardrobe staple that never goes out of style.',
+    'Midi Skirt': 'A versatile midi skirt that offers the perfect length for any occasion. Made from comfortable, flowing fabric, this skirt pairs beautifully with casual tops or dressier blouses. The A-line cut flatters all body types.',
+    'Knit Sweater': 'A cozy knit sweater perfect for layering in cooler weather. Made from soft, breathable yarn, this sweater offers warmth without bulk. The relaxed fit and classic design make it a versatile addition to your wardrobe.',
+  }
+  
+  return descriptions[name] || `A stylish ${category} designed for ${gender}. This versatile piece offers both comfort and style, making it a perfect addition to your wardrobe.`
+}
+
 const products = [
   // Mens products
   { name: 'Classic White Tee', sku: 'M-001', price: 29.99, originalPrice: null, category: 'shirts', gender: 'mens', image: getImagePath('Classic White Tee', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'], stockBySize: createStockBySize(['S', 'M', 'L', 'XL', '2XL'], 1) },
@@ -53,6 +77,7 @@ async function main() {
     await prisma.product.create({
       data: {
         ...product,
+        description: getProductDescription(product.name, product.category, product.gender),
         status: 'active',
         isVisible: true,
         lowStockThreshold: 10,

@@ -6,6 +6,7 @@ export type Product = {
   category: 'shirts' | 'pants' | 'outerwear' | 'accessories'
   gender: 'mens' | 'womens' | 'unisex'
   image: string
+  description?: string | null
   tags: string[]
   sizes?: string[]
   stockBySize?: Record<string, number> | null

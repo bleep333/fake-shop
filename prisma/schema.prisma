@@ -106,6 +106,7 @@ model Product {
   category          String   // 'shirts' | 'pants' | 'outerwear' | 'accessories'
   gender            String   // 'mens' | 'womens' | 'unisex'
   image             String
+  description       String?  @db.Text
   tags              String[] // Array of tags like ['New', 'Sale']
   sizes             String[] // Array of available sizes
   stockBySize       Json?    // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
