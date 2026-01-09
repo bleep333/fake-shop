@@ -15,6 +15,7 @@ export default function WomensContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [priceRange, setPriceRange] = useState<{ min: number; max: number } | undefined>(undefined)
   const productsPerPage = 12
 
   useEffect(() => {
@@ -25,6 +26,28 @@ export default function WomensContent() {
     }
   }, [searchParams])
 
+  // Calculate price range from all womens products
+  useEffect(() => {
+    async function calculatePriceRange() {
+      try {
+        const allProducts = await getProducts({
+          gender: 'womens',
+          sortBy: 'price-low',
+        })
+        if (allProducts.length > 0) {
+          const prices = allProducts.map(p => p.price)
+          setPriceRange({
+            min: Math.min(...prices),
+            max: Math.max(...prices),
+          })
+        }
+      } catch (error) {
+        console.error('Failed to calculate price range:', error)
+      }
+    }
+    calculatePriceRange()
+  }, [])
+
   useEffect(() => {
     async function loadProducts() {
       setLoading(true)
@@ -32,7 +55,6 @@ export default function WomensContent() {
         const fetchedProducts = await getProducts({
           gender: 'womens',
           category: filters.category,
-          minPrice: filters.minPrice,
           maxPrice: filters.maxPrice,
           sortBy,
         })
@@ -49,9 +71,19 @@ export default function WomensContent() {
     loadProducts()
   }, [filters, sortBy])
 
-  const totalPages = Math.ceil(products.length / productsPerPage)
+  // Keep previous products during loading to prevent flash
+  const [displayProducts, setDisplayProducts] = useState<Product[]>([])
+  
+  useEffect(() => {
+    // Only update display products when loading completes
+    if (!loading) {
+      setDisplayProducts(products)
+    }
+  }, [loading, products])
+
+  const totalPages = Math.ceil(displayProducts.length / productsPerPage)
   const startIndex = (currentPage - 1) * productsPerPage
-  const paginatedProducts = products.slice(startIndex, startIndex + productsPerPage)
+  const paginatedProducts = displayProducts.slice(startIndex, startIndex + productsPerPage)
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -66,7 +98,7 @@ export default function WomensContent() {
       <div className="flex gap-8">
         {/* Filter Sidebar - Desktop */}
         <aside className="hidden lg:block flex-shrink-0">
-          <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+          <FilterSidebar filters={filters} onFiltersChange={setFilters} priceRange={priceRange} />
         </aside>
 
         {/* Main Content */}
@@ -87,7 +119,7 @@ export default function WomensContent() {
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-gray-600">
-              {products.length} {products.length === 1 ? 'product' : 'products'}
+              {loading ? 'Loading...' : `${displayProducts.length} ${displayProducts.length === 1 ? 'product' : 'products'}`}
             </p>
             <div className="flex items-center gap-2">
               <label htmlFor="sort" className="text-sm text-gray-600">Sort by:</label>
@@ -108,7 +140,7 @@ export default function WomensContent() {
           </div>
 
           {/* Products Grid */}
-          {loading ? (
+          {displayProducts.length === 0 && loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-[3/4] bg-gray-100 rounded-lg animate-pulse" />
@@ -116,7 +148,20 @@ export default function WomensContent() {
             </div>
           ) : paginatedProducts.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+              <div className={`grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}>
+                {loading && (
+                  <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+                    <div className="bg-white px-4 py-2 rounded-md shadow-md">
+                      <div className="flex items-center gap-2">
+                        <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span className="text-sm text-gray-700">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {paginatedProducts.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -176,7 +221,7 @@ export default function WomensContent() {
                 </svg>
               </button>
             </div>
-            <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+            <FilterSidebar filters={filters} onFiltersChange={setFilters} priceRange={priceRange} />
           </div>
         </>
       )}

@@ -1,15 +1,30 @@
 'use client'
 
 import { FilterOptions } from '@/lib/mockProducts'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface FilterSidebarProps {
   filters: FilterOptions
   onFiltersChange: (filters: FilterOptions) => void
+  priceRange?: { min: number; max: number }
 }
 
-export default function FilterSidebar({ filters, onFiltersChange }: FilterSidebarProps) {
+export default function FilterSidebar({ filters, onFiltersChange, priceRange }: FilterSidebarProps) {
   const [localFilters, setLocalFilters] = useState<FilterOptions>(filters)
+  const [sliderValue, setSliderValue] = useState<number>(
+    filters.maxPrice !== undefined ? filters.maxPrice : (priceRange?.max ?? 0)
+  )
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Sync local filters when props change
+  useEffect(() => {
+    setLocalFilters(filters)
+    if (filters.maxPrice !== undefined) {
+      setSliderValue(filters.maxPrice)
+    } else if (priceRange) {
+      setSliderValue(priceRange.max)
+    }
+  }, [filters, priceRange])
 
   const handleCategoryChange = (category: string) => {
     const currentCategories = localFilters.category || []
@@ -33,17 +48,55 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
     onFiltersChange(updated)
   }
 
-  const handlePriceChange = (field: 'minPrice' | 'maxPrice', value: string) => {
-    const numValue = value === '' ? undefined : Number(value)
-    const updated = { ...localFilters, [field]: numValue }
-    setLocalFilters(updated)
-    onFiltersChange(updated)
+  const handleMaxPriceChange = (value: number) => {
+    // Update slider value immediately for visual feedback
+    setSliderValue(value)
+    
+    // Clear existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+    
+    // Debounce the actual filter update
+    debounceTimeoutRef.current = setTimeout(() => {
+      const updated = { ...localFilters }
+      // Remove minPrice from filters since we're only using maxPrice now
+      delete updated.minPrice
+      
+      // If slider is at max value, clear the filter (no maxPrice filter)
+      if (priceRange && value >= priceRange.max) {
+        delete updated.maxPrice
+      } else {
+        updated.maxPrice = value
+      }
+      
+      setLocalFilters(updated)
+      onFiltersChange(updated)
+    }, 300) // 300ms delay after user stops sliding
   }
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const clearFilters = () => {
-    const cleared = {}
+    // Clear any pending debounce timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+      debounceTimeoutRef.current = null
+    }
+    const cleared: FilterOptions = {}
     setLocalFilters(cleared)
     onFiltersChange(cleared)
+    // Reset slider to max value (no filter)
+    if (priceRange) {
+      setSliderValue(priceRange.max)
+    }
   }
 
   return (
@@ -97,31 +150,34 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
       </div>
 
       {/* Price Range */}
-      <div>
-        <h3 className="font-medium mb-3">Price</h3>
-        <div className="space-y-2">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Min</label>
-            <input
-              type="number"
-              placeholder="0"
-              value={localFilters.minPrice || ''}
-              onChange={(e) => handlePriceChange('minPrice', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Max</label>
-            <input
-              type="number"
-              placeholder="500"
-              value={localFilters.maxPrice || ''}
-              onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-            />
+      {priceRange && (
+        <div>
+          <h3 className="font-medium mb-3">Price</h3>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm text-gray-600 mb-2">
+                Max: ${sliderValue.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min={priceRange.min}
+                max={priceRange.max}
+                step="1"
+                value={sliderValue}
+                onChange={(e) => handleMaxPriceChange(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                style={{
+                  background: `linear-gradient(to right, #000 0%, #000 ${((sliderValue - priceRange.min) / (priceRange.max - priceRange.min) * 100)}%, #e5e7eb ${((sliderValue - priceRange.min) / (priceRange.max - priceRange.min) * 100)}%, #e5e7eb 100%)`
+                }}
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>${priceRange.min.toFixed(2)}</span>
+                <span>${priceRange.max.toFixed(2)}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
