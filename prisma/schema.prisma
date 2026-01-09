@@ -49,6 +49,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
+  wishlistItems WishlistItem[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -97,28 +98,42 @@ model OrderItem {
 }
 
 model Product {
-  id                String   @id @default(cuid())
-  sku               String?  @unique
+  id                String        @id @default(cuid())
+  sku               String?       @unique
   name              String
   price             Float
   originalPrice     Float?
   salePrice         Float?
-  category          String   // 'shirts' | 'pants' | 'outerwear' | 'accessories'
-  gender            String   // 'mens' | 'womens' | 'unisex'
+  category          String        // 'shirts' | 'pants' | 'outerwear' | 'accessories'
+  gender            String        // 'mens' | 'womens' | 'unisex'
   image             String
-  description       String?  @db.Text
-  tags              String[] // Array of tags like ['New', 'Sale']
-  sizes             String[] // Array of available sizes
-  stockBySize       Json?    // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
-  status            String   @default("active") // 'active' | 'draft' | 'archived'
-  isVisible         Boolean  @default(true)
-  lowStockThreshold Int      @default(10) // Warn when stock falls below this
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  description       String?       @db.Text
+  tags              String[]      // Array of tags like ['New', 'Sale']
+  sizes             String[]      // Array of available sizes
+  stockBySize       Json?         // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
+  status            String        @default("active") // 'active' | 'draft' | 'archived'
+  isVisible         Boolean       @default(true)
+  lowStockThreshold Int           @default(10) // Warn when stock falls below this
+  wishlistItems     WishlistItem[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@index([gender])
   @@index([category])
   @@index([gender, category])
   @@index([status])
   @@index([isVisible])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
 }

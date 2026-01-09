@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Product } from '@/lib/mockProducts'
 import PlaceholderImage from './PlaceholderImage'
 import { useCart } from '@/lib/cartContext'
+import { useWishlist } from '@/lib/wishlistContext'
 
 interface ProductCardProps {
   product: Product
@@ -17,6 +18,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [imageError, setImageError] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const { addToCart } = useCart()
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist()
+  const inWishlist = isInWishlist(product.id)
 
   const handleSizeSelect = (size: string) => {
     addToCart(product, size)
@@ -69,11 +72,21 @@ export default function ProductCard({ product }: ProductCardProps) {
   }, [product.image, product.id])
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if clicking on size buttons
+    // Don't navigate if clicking on size buttons or wishlist button
     const target = e.target as HTMLElement
     if (target.closest('button')) {
       e.preventDefault()
       e.stopPropagation()
+    }
+  }
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (inWishlist) {
+      removeFromWishlist(product.id)
+    } else {
+      addToWishlist(product)
     }
   }
 
@@ -102,6 +115,27 @@ export default function ProductCard({ product }: ProductCardProps) {
               <span className="bg-red-600 text-white text-xs px-2 py-1 rounded">Sale</span>
             )}
           </div>
+
+          {/* Wishlist Heart Button */}
+          <button
+            onClick={handleWishlistToggle}
+            className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-md z-10"
+            aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            <svg
+              className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-700'}`}
+              fill={inWishlist ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
 
           {/* Size Selection Buttons or Sold Out */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 opacity-0 group-hover:opacity-100 transition-opacity">

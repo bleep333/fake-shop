@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { CartProvider } from '@/lib/cartContext'
+import { WishlistProvider } from '@/lib/wishlistContext'
 import SessionProvider from '@/components/SessionProvider'
 import './globals.css'
 
@@ -20,9 +21,11 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <SessionProvider>
           <CartProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <WishlistProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </WishlistProvider>
           </CartProvider>
         </SessionProvider>
       </body>

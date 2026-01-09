@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import PlaceholderImage from '@/components/PlaceholderImage'
 import { useCart } from '@/lib/cartContext'
+import { useWishlist } from '@/lib/wishlistContext'
 import { Product } from '@/lib/mockProducts'
 
 const SIZES = ['S', 'M', 'L', 'XL', '2XL']
@@ -15,6 +16,7 @@ export default function ProductDetailPage() {
   const router = useRouter()
   const productId = params?.productId as string
   const { addToCart } = useCart()
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist()
   
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -209,22 +211,55 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddToCart}
-            disabled={!selectedSize || isAllSizesOutOfStock || isSizeOutOfStock(selectedSize)}
-            className={`w-full py-4 px-6 rounded-md text-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
-              !selectedSize || isAllSizesOutOfStock || (selectedSize && isSizeOutOfStock(selectedSize))
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-black text-white hover:bg-gray-800'
-            }`}
-          >
-            {isAllSizesOutOfStock
-              ? 'Sold Out'
-              : !selectedSize
-              ? 'Select a Size'
-              : 'Add to Cart'}
-          </button>
+          {/* Add to Cart and Wishlist Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleAddToCart}
+              disabled={!selectedSize || isAllSizesOutOfStock || isSizeOutOfStock(selectedSize)}
+              className={`flex-1 py-4 px-6 rounded-md text-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
+                !selectedSize || isAllSizesOutOfStock || (selectedSize && isSizeOutOfStock(selectedSize))
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
+            >
+              {isAllSizesOutOfStock
+                ? 'Sold Out'
+                : !selectedSize
+                ? 'Select a Size'
+                : 'Add to Cart'}
+            </button>
+            {product && (
+              <button
+                onClick={() => {
+                  if (isInWishlist(product.id)) {
+                    removeFromWishlist(product.id)
+                  } else {
+                    addToWishlist(product)
+                  }
+                }}
+                className={`px-4 py-4 rounded-md border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
+                  isInWishlist(product.id)
+                    ? 'border-red-500 bg-red-50 text-red-500 hover:bg-red-100'
+                    : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                }`}
+                aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                <svg
+                  className={`w-6 h-6 ${isInWishlist(product.id) ? 'fill-current' : ''}`}
+                  fill={isInWishlist(product.id) ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
