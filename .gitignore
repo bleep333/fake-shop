@@ -50,3 +50,6 @@ prisma/dev.db-journal
 
 # Coverage / testing
 coverage/
+
+# Personal notes/documentation
+run on diff device.txt
