@@ -54,12 +54,15 @@ export default function ProfilePage() {
             const data = await response.json()
             const dbName = data.user?.name || session.user.name || ''
             
-            // Load phone and address from localStorage
-            const phone = localStorage.getItem('user_phone') || '+61 412 345 678'
-            const addressStr = localStorage.getItem('user_address')
-            const address: AddressInfo = addressStr 
-              ? JSON.parse(addressStr)
-              : { street: '123 Main St', city: 'Sydney', zipCode: '2000' }
+            // Load phone from database only
+            const phone = data.user?.phone || ''
+            
+            // Load address from database only
+            const address: AddressInfo = {
+              street: data.user?.addressStreet || '',
+              city: data.user?.addressCity || '',
+              zipCode: data.user?.addressZipCode || ''
+            }
             
             const initialProfile = { name: dbName, email, phone }
             setOriginalProfile(initialProfile)
@@ -73,13 +76,10 @@ export default function ProfilePage() {
           console.error('Failed to load profile from database:', error)
         }
         
-        // Fallback to session data if API fails
+        // Fallback to session data only if API fails (no localStorage)
         const name = session.user.name || ''
-        const phone = localStorage.getItem('user_phone') || '+61 412 345 678'
-        const addressStr = localStorage.getItem('user_address')
-        const address: AddressInfo = addressStr 
-          ? JSON.parse(addressStr)
-          : { street: '123 Main St', city: 'Sydney', zipCode: '2000' }
+        const phone = ''
+        const address: AddressInfo = { street: '', city: '', zipCode: '' }
         
         const initialProfile = { name, email, phone }
         setOriginalProfile(initialProfile)
@@ -129,12 +129,13 @@ export default function ProfilePage() {
     
     setSavingProfile(true)
     try {
-      // Save name to database (email changes not supported to avoid session issues)
+      // Save name and phone to database (email changes not supported to avoid session issues)
       const response = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: profileInfo.name
+          name: profileInfo.name,
+          phone: profileInfo.phone
         })
       })
       
@@ -146,25 +147,26 @@ export default function ProfilePage() {
         return
       }
       
-      // Save phone to localStorage
+      // Also save phone to localStorage as backup (for migration/fallback)
       localStorage.setItem('user_phone', profileInfo.phone)
       
-      // Reload profile from database to get the updated name
+      // Reload profile from database to get the updated values
       const refreshResponse = await fetch('/api/user/profile')
       if (refreshResponse.ok) {
         const refreshData = await refreshResponse.json()
         const updatedName = refreshData.user?.name || profileInfo.name
+        const updatedPhone = refreshData.user?.phone || profileInfo.phone
         
         // Update original values with the actual database values
         setOriginalProfile({ 
           name: updatedName,
           email: originalProfile.email, // Keep original email
-          phone: profileInfo.phone 
+          phone: updatedPhone 
         })
         setProfileInfo({
           name: updatedName,
           email: originalProfile.email,
-          phone: profileInfo.phone
+          phone: updatedPhone
         })
       } else {
         // Fallback: just update original values if refresh fails
@@ -190,7 +192,26 @@ export default function ProfilePage() {
     
     setSavingAddress(true)
     try {
-      // Save address to localStorage
+      // Save address to database
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          addressStreet: addressInfo.street,
+          addressCity: addressInfo.city,
+          addressZipCode: addressInfo.zipCode
+        })
+      })
+      
+      if (!response.ok) {
+        const error = await response.json()
+        alert(error.error || 'Failed to save address')
+        // Reset to original values on error
+        setAddressInfo({ ...originalAddress })
+        return
+      }
+      
+      // Also save to localStorage as backup (for migration/fallback)
       localStorage.setItem('user_address', JSON.stringify(addressInfo))
       
       // Update original values
@@ -198,6 +219,8 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Failed to save address:', error)
       alert('Failed to save address')
+      // Reset to original values on error
+      setAddressInfo({ ...originalAddress })
     } finally {
       setSavingAddress(false)
     }

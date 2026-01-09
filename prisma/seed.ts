@@ -94,6 +94,10 @@ async function main() {
     update: {
       name: 'Fake User',
       email: 'user@fakeshop.com',
+      phone: '+61 234 567 890',
+      addressStreet: '123 Main St',
+      addressCity: 'Sydney',
+      addressZipCode: '2000',
     },
     create: {
       id: '1',
@@ -101,6 +105,10 @@ async function main() {
       email: 'user@fakeshop.com',
       emailVerified: new Date(),
       isAdmin: false,
+      phone: '+61 234 567 890',
+      addressStreet: '123 Main St',
+      addressCity: 'Sydney',
+      addressZipCode: '2000',
     },
   })
   console.log('Dummy user created/updated:', dummyUser.email)

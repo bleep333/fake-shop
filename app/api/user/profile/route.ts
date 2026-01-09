@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/user/profile - Update user profile (name only - email changes not supported)
+// PATCH /api/user/profile - Update user profile (name and address)
 export async function PATCH(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -46,9 +46,16 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name } = body
+    const { name, phone, addressStreet, addressCity, addressZipCode } = body
 
-    if (name === undefined) {
+    const updateData: any = {}
+    if (name !== undefined) updateData.name = name
+    if (phone !== undefined) updateData.phone = phone || null
+    if (addressStreet !== undefined) updateData.addressStreet = addressStreet || null
+    if (addressCity !== undefined) updateData.addressCity = addressCity || null
+    if (addressZipCode !== undefined) updateData.addressZipCode = addressZipCode || null
+
+    if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
     }
 
@@ -58,12 +65,14 @@ export async function PATCH(request: NextRequest) {
       where: { 
         email: session.user.email 
       },
-      update: {
-        name: name
-      },
+      update: updateData,
       create: {
         email: session.user.email,
-        name: name || session.user.name || null
+        name: name || session.user.name || null,
+        phone: phone || null,
+        addressStreet: addressStreet || null,
+        addressCity: addressCity || null,
+        addressZipCode: addressZipCode || null
       }
     })
 
