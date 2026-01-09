@@ -61,7 +61,7 @@ export default function AdminPage() {
   const [editingStock, setEditingStock] = useState<{ [productId: string]: Record<string, number> }>({})
   const [saving, setSaving] = useState<string | null>(null)
   const [loginCredentials, setLoginCredentials] = useState({ email: 'admin', password: 'admin' })
-  const [sortColumn, setSortColumn] = useState<'sku' | 'name' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock' | null>(null)
+  const [sortColumn, setSortColumn] = useState<'sku' | 'name' | 'category' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock' | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   
   // Product Management state
@@ -211,7 +211,7 @@ export default function AdminPage() {
     return JSON.stringify(currentStock) !== JSON.stringify(editingStockForProduct)
   }
 
-  const handleSort = (column: 'sku' | 'name' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock') => {
+  const handleSort = (column: 'sku' | 'name' | 'category' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock') => {
     if (sortColumn === column) {
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')
     } else {
@@ -231,6 +231,9 @@ export default function AdminPage() {
           break
         case 'name':
           comparison = a.name.localeCompare(b.name)
+          break
+        case 'category':
+          comparison = a.category.localeCompare(b.category)
           break
         case 'gender':
           comparison = a.gender.localeCompare(b.gender)
