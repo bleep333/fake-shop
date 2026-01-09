@@ -13,11 +13,84 @@ type Order = {
   status?: string
 }
 
+type ProfileInfo = {
+  name: string
+  email: string
+  phone: string
+}
+
+type AddressInfo = {
+  street: string
+  city: string
+  zipCode: string
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [orders, setOrders] = useState<Order[]>([])
   const [loadingOrders, setLoadingOrders] = useState(true)
+  
+  // Profile info state
+  const [originalProfile, setOriginalProfile] = useState<ProfileInfo>({ name: '', email: '', phone: '' })
+  const [profileInfo, setProfileInfo] = useState<ProfileInfo>({ name: '', email: '', phone: '' })
+  const [savingProfile, setSavingProfile] = useState(false)
+  
+  // Address state
+  const [originalAddress, setOriginalAddress] = useState<AddressInfo>({ street: '', city: '', zipCode: '' })
+  const [addressInfo, setAddressInfo] = useState<AddressInfo>({ street: '', city: '', zipCode: '' })
+  const [savingAddress, setSavingAddress] = useState(false)
+
+  // Load profile and address data
+  useEffect(() => {
+    async function loadProfile() {
+      if (session?.user) {
+        const email = session.user.email || ''
+        
+        // Try to load from database first
+        try {
+          const response = await fetch('/api/user/profile')
+          if (response.ok) {
+            const data = await response.json()
+            const dbName = data.user?.name || session.user.name || ''
+            
+            // Load phone and address from localStorage
+            const phone = localStorage.getItem('user_phone') || '+61 412 345 678'
+            const addressStr = localStorage.getItem('user_address')
+            const address: AddressInfo = addressStr 
+              ? JSON.parse(addressStr)
+              : { street: '123 Main St', city: 'Sydney', zipCode: '2000' }
+            
+            const initialProfile = { name: dbName, email, phone }
+            setOriginalProfile(initialProfile)
+            setProfileInfo(initialProfile)
+            
+            setOriginalAddress(address)
+            setAddressInfo(address)
+            return
+          }
+        } catch (error) {
+          console.error('Failed to load profile from database:', error)
+        }
+        
+        // Fallback to session data if API fails
+        const name = session.user.name || ''
+        const phone = localStorage.getItem('user_phone') || '+61 412 345 678'
+        const addressStr = localStorage.getItem('user_address')
+        const address: AddressInfo = addressStr 
+          ? JSON.parse(addressStr)
+          : { street: '123 Main St', city: 'Sydney', zipCode: '2000' }
+        
+        const initialProfile = { name, email, phone }
+        setOriginalProfile(initialProfile)
+        setProfileInfo(initialProfile)
+        
+        setOriginalAddress(address)
+        setAddressInfo(address)
+      }
+    }
+    loadProfile()
+  }, [session])
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -36,6 +109,97 @@ export default function ProfilePage() {
       console.error('Failed to fetch orders:', error)
     } finally {
       setLoadingOrders(false)
+    }
+  }
+
+  // Check if profile has changes (excluding email since we don't allow email changes)
+  const hasProfileChanges = 
+    profileInfo.name !== originalProfile.name ||
+    profileInfo.phone !== originalProfile.phone
+
+  // Check if address has changes
+  const hasAddressChanges =
+    addressInfo.street !== originalAddress.street ||
+    addressInfo.city !== originalAddress.city ||
+    addressInfo.zipCode !== originalAddress.zipCode
+
+  // Handle profile save
+  const handleSaveProfile = async () => {
+    if (!hasProfileChanges || savingProfile) return
+    
+    setSavingProfile(true)
+    try {
+      // Save name to database (email changes not supported to avoid session issues)
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: profileInfo.name
+        })
+      })
+      
+      if (!response.ok) {
+        const error = await response.json()
+        alert(error.error || 'Failed to save profile')
+        // Reset to original values on error
+        setProfileInfo({ ...originalProfile })
+        return
+      }
+      
+      // Save phone to localStorage
+      localStorage.setItem('user_phone', profileInfo.phone)
+      
+      // Reload profile from database to get the updated name
+      const refreshResponse = await fetch('/api/user/profile')
+      if (refreshResponse.ok) {
+        const refreshData = await refreshResponse.json()
+        const updatedName = refreshData.user?.name || profileInfo.name
+        
+        // Update original values with the actual database values
+        setOriginalProfile({ 
+          name: updatedName,
+          email: originalProfile.email, // Keep original email
+          phone: profileInfo.phone 
+        })
+        setProfileInfo({
+          name: updatedName,
+          email: originalProfile.email,
+          phone: profileInfo.phone
+        })
+      } else {
+        // Fallback: just update original values if refresh fails
+        setOriginalProfile({ 
+          name: profileInfo.name,
+          email: originalProfile.email,
+          phone: profileInfo.phone 
+        })
+      }
+    } catch (error) {
+      console.error('Failed to save profile:', error)
+      alert('Failed to save profile')
+      // Reset to original values on error
+      setProfileInfo({ ...originalProfile })
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  // Handle address save
+  const handleSaveAddress = async () => {
+    if (!hasAddressChanges || savingAddress) return
+    
+    setSavingAddress(true)
+    try {
+      // Save address to localStorage
+      localStorage.setItem('user_address', JSON.stringify(addressInfo))
+      
+      // Update original values
+      setOriginalAddress({ ...addressInfo })
+    } catch (error) {
+      console.error('Failed to save address:', error)
+      alert('Failed to save address')
+    } finally {
+      setSavingAddress(false)
     }
   }
 
@@ -90,7 +254,8 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  defaultValue={session.user?.name || ''}
+                  value={profileInfo.name}
+                  onChange={(e) => setProfileInfo({ ...profileInfo, name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
@@ -100,8 +265,10 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="email"
-                  defaultValue={session.user?.email || ''}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                  value={profileInfo.email}
+                  disabled
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                  title="Email cannot be changed"
                 />
               </div>
               <div>
@@ -110,14 +277,21 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="tel"
-                  defaultValue="+61 412 345 678"
+                  value={profileInfo.phone}
+                  onChange={(e) => setProfileInfo({ ...profileInfo, phone: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               <button
-                className="bg-black text-white px-6 py-2 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                onClick={handleSaveProfile}
+                disabled={!hasProfileChanges || savingProfile}
+                className={`px-6 py-2 rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
+                  hasProfileChanges && !savingProfile
+                    ? 'bg-black text-white hover:bg-gray-800'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
-                Save Changes
+                {savingProfile ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>
@@ -132,7 +306,8 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="text"
-                  defaultValue="123 Main St"
+                  value={addressInfo.street}
+                  onChange={(e) => setAddressInfo({ ...addressInfo, street: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
@@ -143,7 +318,8 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="Sydney"
+                    value={addressInfo.city}
+                    onChange={(e) => setAddressInfo({ ...addressInfo, city: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
@@ -153,15 +329,22 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="2000"
+                    value={addressInfo.zipCode}
+                    onChange={(e) => setAddressInfo({ ...addressInfo, zipCode: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
               </div>
               <button
-                className="bg-black text-white px-6 py-2 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                onClick={handleSaveAddress}
+                disabled={!hasAddressChanges || savingAddress}
+                className={`px-6 py-2 rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
+                  hasAddressChanges && !savingAddress
+                    ? 'bg-black text-white hover:bg-gray-800'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
-                Update Address
+                {savingAddress ? 'Saving...' : 'Update Address'}
               </button>
             </div>
           </div>
