@@ -22,7 +22,7 @@ type Product = {
   lowStockThreshold: number
 }
 
-type TabType = 'stock' | 'products' | 'orders' | 'users' | 'analytics'
+type TabType = 'stock' | 'products' | 'orders' | 'users' | 'analytics' | 'promotions'
 
 type OrderItem = {
   id: string
@@ -94,6 +94,13 @@ export default function AdminPage() {
   const [analytics, setAnalytics] = useState<any>(null)
   const [analyticsDays, setAnalyticsDays] = useState(30)
 
+  // Promotions state
+  const [promoCodes, setPromoCodes] = useState<any[]>([])
+  const [announcementBar, setAnnouncementBar] = useState<any>(null)
+  const [showPromoCodeModal, setShowPromoCodeModal] = useState(false)
+  const [editingPromoCode, setEditingPromoCode] = useState<any>(null)
+  const [savingAnnouncement, setSavingAnnouncement] = useState(false)
+
   useEffect(() => {
     if (status === 'loading') return
 
@@ -117,6 +124,10 @@ export default function AdminPage() {
     }
     if (activeTab === 'analytics') {
       fetchAnalytics()
+    }
+    if (activeTab === 'promotions') {
+      fetchPromoCodes()
+      fetchAnnouncementBar()
     }
   }, [session, status, router, activeTab, analyticsDays])
 
@@ -638,6 +649,105 @@ export default function AdminPage() {
     }
   }
 
+  // Promotions Functions
+  const fetchPromoCodes = async () => {
+    try {
+      const response = await fetch('/api/admin/promotions/promo-codes')
+      if (response.ok) {
+        const data = await response.json()
+        setPromoCodes(data.promoCodes || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch promo codes:', error)
+    }
+  }
+
+  const fetchAnnouncementBar = async () => {
+    try {
+      const response = await fetch('/api/admin/promotions/announcement')
+      if (response.ok) {
+        const data = await response.json()
+        setAnnouncementBar(data.announcementBar)
+      }
+    } catch (error) {
+      console.error('Failed to fetch announcement bar:', error)
+    }
+  }
+
+  const handleSaveAnnouncement = async (text: string, isActive: boolean) => {
+    setSavingAnnouncement(true)
+    try {
+      const response = await fetch('/api/admin/promotions/announcement', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, isActive }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setAnnouncementBar(data.announcementBar)
+        alert('Announcement bar updated successfully!')
+      } else {
+        const error = await response.json()
+        alert(`Failed to update announcement bar: ${error.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error updating announcement bar:', error)
+      alert('Failed to update announcement bar. Please try again.')
+    } finally {
+      setSavingAnnouncement(false)
+    }
+  }
+
+  const handleSavePromoCode = async (promoCodeData: any) => {
+    try {
+      const url = editingPromoCode
+        ? `/api/admin/promotions/promo-codes/${editingPromoCode.id}`
+        : '/api/admin/promotions/promo-codes'
+      const method = editingPromoCode ? 'PATCH' : 'POST'
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(promoCodeData),
+      })
+
+      if (response.ok) {
+        setShowPromoCodeModal(false)
+        setEditingPromoCode(null)
+        fetchPromoCodes()
+        alert(`Promo code ${editingPromoCode ? 'updated' : 'created'} successfully!`)
+      } else {
+        const error = await response.json()
+        alert(`Failed to save promo code: ${error.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error saving promo code:', error)
+      alert('Failed to save promo code. Please try again.')
+    }
+  }
+
+  const handleDeletePromoCode = async (promoCodeId: string) => {
+    if (!confirm('Are you sure you want to delete this promo code?')) return
+
+    try {
+      const response = await fetch(`/api/admin/promotions/promo-codes/${promoCodeId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        fetchPromoCodes()
+        alert('Promo code deleted successfully!')
+      } else {
+        const error = await response.json()
+        alert(`Failed to delete promo code: ${error.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error deleting promo code:', error)
+      alert('Failed to delete promo code. Please try again.')
+    }
+  }
+
   const SortIcon = ({ column }: { column: 'sku' | 'name' | 'category' | 'gender' | 'price' | 'salePrice' | 'status' | 'isVisible' | 'stock' }) => {
     if (sortColumn !== column) {
       return (
@@ -780,6 +890,16 @@ export default function AdminPage() {
             }`}
           >
             Analytics
+          </button>
+          <button
+            onClick={() => { setActiveTab('promotions'); fetchPromoCodes(); fetchAnnouncementBar(); }}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'promotions'
+                ? 'border-black text-black'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Promotions
           </button>
         </nav>
       </div>
@@ -1110,6 +1230,28 @@ export default function AdminPage() {
           analytics={analytics}
           days={analyticsDays}
           onDaysChange={setAnalyticsDays}
+        />
+      )}
+
+      {/* Promotions Tab */}
+      {activeTab === 'promotions' && (
+        <PromotionsTab
+          promoCodes={promoCodes}
+          announcementBar={announcementBar}
+          onSaveAnnouncement={handleSaveAnnouncement}
+          savingAnnouncement={savingAnnouncement}
+          onCreatePromoCode={() => { setEditingPromoCode(null); setShowPromoCodeModal(true); }}
+          onEditPromoCode={(promoCode) => { setEditingPromoCode(promoCode); setShowPromoCodeModal(true); }}
+          onDeletePromoCode={handleDeletePromoCode}
+        />
+      )}
+
+      {/* Promo Code Modal */}
+      {showPromoCodeModal && (
+        <PromoCodeModal
+          promoCode={editingPromoCode}
+          onClose={() => { setShowPromoCodeModal(false); setEditingPromoCode(null); }}
+          onSave={handleSavePromoCode}
         />
       )}
     </div>
@@ -2125,6 +2267,297 @@ function BulkActionModal({ action, onClose, onSave }: { action: 'price' | 'stock
               className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
             >
               Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// Promotions Tab Component
+function PromotionsTab({
+  promoCodes,
+  announcementBar,
+  onSaveAnnouncement,
+  savingAnnouncement,
+  onCreatePromoCode,
+  onEditPromoCode,
+  onDeletePromoCode
+}: {
+  promoCodes: any[]
+  announcementBar: any
+  onSaveAnnouncement: (text: string, isActive: boolean) => void
+  savingAnnouncement: boolean
+  onCreatePromoCode: () => void
+  onEditPromoCode: (promoCode: any) => void
+  onDeletePromoCode: (promoCodeId: string) => void
+}) {
+  const [announcementText, setAnnouncementText] = useState(announcementBar?.text || '')
+  const [announcementActive, setAnnouncementActive] = useState(announcementBar?.isActive !== false)
+
+  useEffect(() => {
+    if (announcementBar) {
+      setAnnouncementText(announcementBar.text || '')
+      setAnnouncementActive(announcementBar.isActive !== false)
+    }
+  }, [announcementBar])
+
+  const handleSaveAnnouncementClick = () => {
+    onSaveAnnouncement(announcementText, announcementActive)
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Announcement Bar Section */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Announcement Bar</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Announcement Text
+            </label>
+            <textarea
+              value={announcementText}
+              onChange={(e) => setAnnouncementText(e.target.value)}
+              rows={2}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Free shipping on orders over $100 • Use code: SAVE20"
+            />
+          </div>
+          <div className="flex items-center">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={announcementActive}
+                onChange={(e) => setAnnouncementActive(e.target.checked)}
+                className="rounded border-gray-300 mr-2"
+              />
+              <span className="text-sm font-medium text-gray-700">Active</span>
+            </label>
+          </div>
+          <button
+            onClick={handleSaveAnnouncementClick}
+            disabled={savingAnnouncement}
+            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          >
+            {savingAnnouncement ? 'Saving...' : 'Save Announcement'}
+          </button>
+        </div>
+      </div>
+
+      {/* Promo Codes Section */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Promo Codes</h2>
+          <button
+            onClick={onCreatePromoCode}
+            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          >
+            + Create Promo Code
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min. Order</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage Count</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {promoCodes.map((promoCode) => {
+                const isExpired = promoCode.expiryDate && new Date(promoCode.expiryDate) < new Date()
+                const displayStatus = !promoCode.isActive ? 'Inactive' : isExpired ? 'Expired' : 'Active'
+                
+                return (
+                  <tr key={promoCode.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{promoCode.code}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {promoCode.discountType === 'percentage' 
+                        ? `${promoCode.discountValue}%`
+                        : `$${promoCode.discountValue.toFixed(2)}`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {promoCode.minimumOrder ? `$${promoCode.minimumOrder.toFixed(2)}` : '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        displayStatus === 'Active' ? 'bg-green-100 text-green-800' :
+                        displayStatus === 'Expired' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {displayStatus}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {promoCode.expiryDate ? new Date(promoCode.expiryDate).toLocaleDateString() : '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{promoCode.usageCount}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => onEditPromoCode(promoCode)}
+                        className="text-blue-600 hover:text-blue-900 mr-4"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => onDeletePromoCode(promoCode.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          {promoCodes.length === 0 && (
+            <div className="text-center py-12 text-gray-600">
+              <p>No promo codes found.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Promo Code Modal Component
+function PromoCodeModal({ promoCode, onClose, onSave }: { promoCode: any | null, onClose: () => void, onSave: (data: any) => void }) {
+  const [formData, setFormData] = useState({
+    code: promoCode?.code || '',
+    discountType: promoCode?.discountType || 'percentage',
+    discountValue: promoCode?.discountValue || '',
+    minimumOrder: promoCode?.minimumOrder || '',
+    isActive: promoCode?.isActive !== undefined ? promoCode.isActive : true,
+    expiryDate: promoCode?.expiryDate ? new Date(promoCode.expiryDate).toISOString().split('T')[0] : '',
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    const submitData = {
+      code: formData.code,
+      discountType: formData.discountType,
+      discountValue: parseFloat(formData.discountValue as any),
+      minimumOrder: formData.minimumOrder ? parseFloat(formData.minimumOrder as any) : null,
+      isActive: formData.isActive,
+      expiryDate: formData.expiryDate || null,
+    }
+
+    onSave(submitData)
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg max-w-md w-full">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-xl font-bold">{promoCode ? 'Edit Promo Code' : 'Create Promo Code'}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Code *</label>
+            <input
+              type="text"
+              required
+              value={formData.code}
+              onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="SAVE20"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Discount Type *</label>
+            <select
+              required
+              value={formData.discountType}
+              onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            >
+              <option value="percentage">Percentage</option>
+              <option value="fixed">Fixed Amount</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Discount Value * {formData.discountType === 'percentage' ? '(0-100%)' : '($)'}
+            </label>
+            <input
+              type="number"
+              step={formData.discountType === 'percentage' ? '1' : '0.01'}
+              min="0"
+              max={formData.discountType === 'percentage' ? '100' : undefined}
+              required
+              value={formData.discountValue}
+              onChange={(e) => setFormData({ ...formData, discountValue: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder={formData.discountType === 'percentage' ? '20' : '10.00'}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Minimum Order Value ($)</label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.minimumOrder}
+              onChange={(e) => setFormData({ ...formData, minimumOrder: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="100.00"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+            <input
+              type="date"
+              value={formData.expiryDate}
+              onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+
+          <div className="flex items-center">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                className="rounded border-gray-300 mr-2"
+              />
+              <span className="text-sm font-medium text-gray-700">Active</span>
+            </label>
+          </div>
+
+          <div className="border-t border-gray-200 pt-4 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+            >
+              {promoCode ? 'Update' : 'Create'}
             </button>
           </div>
         </form>

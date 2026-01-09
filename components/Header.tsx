@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
@@ -19,12 +19,33 @@ export default function Header() {
     await signOut({ callbackUrl: '/' })
   }
 
+  const [announcementText, setAnnouncementText] = useState<string>('')
+
+  useEffect(() => {
+    const fetchAnnouncement = async () => {
+      try {
+        const response = await fetch('/api/promotions/announcement')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.announcementBar) {
+            setAnnouncementText(data.announcementBar.text)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch announcement:', error)
+      }
+    }
+    fetchAnnouncement()
+  }, [])
+
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-black text-white text-center py-2 text-sm">
-        <p>Free shipping on orders over $100 • Use code: SAVE20</p>
-      </div>
+      {announcementText && (
+        <div className="bg-black text-white text-center py-2 text-sm">
+          <p>{announcementText}</p>
+        </div>
+      )}
 
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
