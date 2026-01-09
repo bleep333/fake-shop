@@ -133,19 +133,29 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange }: 
       <div>
         <h3 className="font-medium mb-3">Size</h3>
         <div className="grid grid-cols-4 gap-2">
-          {['S', 'M', 'L', 'XL'].map((size) => (
-            <label key={size} className="flex items-center justify-center border border-gray-300 rounded-md py-2 cursor-pointer hover:border-black transition-colors">
-              <input
-                type="checkbox"
-                checked={localFilters.size?.includes(size) || false}
-                onChange={() => handleSizeChange(size)}
-                className="sr-only"
-              />
-              <span className={`text-sm ${localFilters.size?.includes(size) ? 'font-semibold' : ''}`}>
-                {size}
-              </span>
-            </label>
-          ))}
+          {['S', 'M', 'L', 'XL'].map((size) => {
+            const isSelected = localFilters.size?.includes(size) || false
+            return (
+              <label
+                key={size}
+                className={`flex items-center justify-center border-2 rounded-md py-2 cursor-pointer transition-all ${
+                  isSelected
+                    ? 'bg-black border-black text-white font-semibold'
+                    : 'border-gray-300 text-gray-900 hover:border-black'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => handleSizeChange(size)}
+                  className="sr-only"
+                />
+                <span className="text-sm">
+                  {size}
+                </span>
+              </label>
+            )
+          })}
         </div>
       </div>
 

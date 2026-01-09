@@ -34,12 +34,20 @@ export async function getProducts(filters?: {
 }
 
 // Client-side filtering for size (since it's complex with arrays)
+// Filters products to only show those with at least one selected size available in stock
 export function filterProductsBySize(products: Product[], sizes?: string[]): Product[] {
   if (!sizes || sizes.length === 0) return products
   
-  return products.filter(p => 
-    p.sizes && p.sizes.some(s => sizes.includes(s))
-  )
+  return products.filter(p => {
+    // Check if product has stockBySize data
+    if (!p.stockBySize) return false
+    
+    // Check if at least one of the selected sizes has stock > 0
+    return sizes.some(size => {
+      const stock = p.stockBySize[size] || 0
+      return stock > 0
+    })
+  })
 }
 
 // Keep the types exported for compatibility
