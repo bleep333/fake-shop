@@ -24,11 +24,15 @@ export default function Header() {
   useEffect(() => {
     const fetchAnnouncement = async () => {
       try {
-        const response = await fetch('/api/promotions/announcement')
+        const response = await fetch('/api/promotions/announcement', {
+          cache: 'no-store'
+        })
         if (response.ok) {
           const data = await response.json()
           if (data.announcementBar) {
             setAnnouncementText(data.announcementBar.text)
+          } else {
+            setAnnouncementText('')
           }
         }
       } catch (error) {
