@@ -1337,7 +1337,7 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
                 step="0.01"
                 required
                 value={formData.basePrice}
-                onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, basePrice: parseFloat(e.target.value) || 0 })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
             </div>
@@ -1437,7 +1437,7 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
               <input
                 type="number"
                 value={formData.lowStockThreshold}
-                onChange={(e) => setFormData({ ...formData, lowStockThreshold: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, lowStockThreshold: parseInt(e.target.value) || 0 })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
             </div>

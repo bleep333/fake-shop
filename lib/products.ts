@@ -48,7 +48,7 @@ export function filterProductsBySize(products: Product[], sizes?: string[]): Pro
     
     // Check if at least one of the selected sizes has stock > 0
     return sizes.some(size => {
-      const stock = p.stockBySize[size] || 0
+      const stock = (p.stockBySize && p.stockBySize[size]) || 0
       return stock > 0
     })
   })

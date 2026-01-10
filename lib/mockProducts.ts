@@ -22,24 +22,24 @@ function getImagePath(name: string, gender: 'mens' | 'womens'): string {
 
 export const mockProducts: Product[] = [
   // Mens products
-  { id: '1', name: 'Classic White Tee', price: 29.99, category: 'shirts', gender: 'mens', image: getImagePath('Classic White Tee', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '2', name: 'Slim Fit Jeans', price: 79.99, originalPrice: 99.99, category: 'pants', gender: 'mens', image: getImagePath('Slim Fit Jeans', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '3', name: 'Denim Jacket', price: 89.99, category: 'outerwear', gender: 'mens', image: getImagePath('Denim Jacket', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '4', name: 'Cargo Pants', price: 69.99, category: 'pants', gender: 'mens', image: getImagePath('Cargo Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '5', name: 'Polo Shirt', price: 49.99, category: 'shirts', gender: 'mens', image: getImagePath('Polo Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '6', name: 'Hooded Sweatshirt', price: 59.99, originalPrice: 79.99, category: 'outerwear', gender: 'mens', image: getImagePath('Hooded Sweatshirt', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '7', name: 'Chino Pants', price: 64.99, category: 'pants', gender: 'mens', image: getImagePath('Chino Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '8', name: 'Button Down Shirt', price: 54.99, category: 'shirts', gender: 'mens', image: getImagePath('Button Down Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '1', name: 'Classic White Tee', basePrice: 29.99, category: 'shirts', gender: 'mens', image: getImagePath('Classic White Tee', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '2', name: 'Slim Fit Jeans', basePrice: 99.99, salePrice: 79.99, category: 'pants', gender: 'mens', image: getImagePath('Slim Fit Jeans', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '3', name: 'Denim Jacket', basePrice: 89.99, category: 'outerwear', gender: 'mens', image: getImagePath('Denim Jacket', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '4', name: 'Cargo Pants', basePrice: 69.99, category: 'pants', gender: 'mens', image: getImagePath('Cargo Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '5', name: 'Polo Shirt', basePrice: 49.99, category: 'shirts', gender: 'mens', image: getImagePath('Polo Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '6', name: 'Hooded Sweatshirt', basePrice: 79.99, salePrice: 59.99, category: 'outerwear', gender: 'mens', image: getImagePath('Hooded Sweatshirt', 'mens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '7', name: 'Chino Pants', basePrice: 64.99, category: 'pants', gender: 'mens', image: getImagePath('Chino Pants', 'mens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '8', name: 'Button Down Shirt', basePrice: 54.99, category: 'shirts', gender: 'mens', image: getImagePath('Button Down Shirt', 'mens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
   
   // Womens products
-  { id: '9', name: 'Floral Summer Dress', price: 89.99, category: 'shirts', gender: 'womens', image: getImagePath('Floral Summer Dress', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '10', name: 'High-Waist Jeans', price: 79.99, originalPrice: 99.99, category: 'pants', gender: 'womens', image: getImagePath('High-Waist Jeans', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '11', name: 'Cropped Blazer', price: 119.99, category: 'outerwear', gender: 'womens', image: getImagePath('Cropped Blazer', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '12', name: 'Wide Leg Pants', price: 69.99, category: 'pants', gender: 'womens', image: getImagePath('Wide Leg Pants', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '13', name: 'Silk Blouse', price: 94.99, category: 'shirts', gender: 'womens', image: getImagePath('Silk Blouse', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '14', name: 'Trench Coat', price: 149.99, originalPrice: 199.99, category: 'outerwear', gender: 'womens', image: getImagePath('Trench Coat', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '15', name: 'Midi Skirt', price: 59.99, category: 'pants', gender: 'womens', image: getImagePath('Midi Skirt', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
-  { id: '16', name: 'Knit Sweater', price: 79.99, category: 'outerwear', gender: 'womens', image: getImagePath('Knit Sweater', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '9', name: 'Floral Summer Dress', basePrice: 89.99, category: 'shirts', gender: 'womens', image: getImagePath('Floral Summer Dress', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '10', name: 'High-Waist Jeans', basePrice: 99.99, salePrice: 79.99, category: 'pants', gender: 'womens', image: getImagePath('High-Waist Jeans', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '11', name: 'Cropped Blazer', basePrice: 119.99, category: 'outerwear', gender: 'womens', image: getImagePath('Cropped Blazer', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '12', name: 'Wide Leg Pants', basePrice: 69.99, category: 'pants', gender: 'womens', image: getImagePath('Wide Leg Pants', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '13', name: 'Silk Blouse', basePrice: 94.99, category: 'shirts', gender: 'womens', image: getImagePath('Silk Blouse', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '14', name: 'Trench Coat', basePrice: 199.99, salePrice: 149.99, category: 'outerwear', gender: 'womens', image: getImagePath('Trench Coat', 'womens'), tags: ['Sale'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '15', name: 'Midi Skirt', basePrice: 59.99, category: 'pants', gender: 'womens', image: getImagePath('Midi Skirt', 'womens'), tags: [], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
+  { id: '16', name: 'Knit Sweater', basePrice: 79.99, category: 'outerwear', gender: 'womens', image: getImagePath('Knit Sweater', 'womens'), tags: ['New'], sizes: ['S', 'M', 'L', 'XL', '2XL'] },
 ]
 
 export type FilterOptions = {

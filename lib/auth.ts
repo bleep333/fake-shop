@@ -50,8 +50,8 @@ export const authOptions: NextAuthOptions = {
             id: user.id,
             email: user.email,
             name: user.name,
-            address: user.address,
-            isAdmin: user.isAdmin || false,
+            ...(('address' in user) && { address: user.address }),
+            isAdmin: ('isAdmin' in user) ? user.isAdmin : false,
           }
         }
 

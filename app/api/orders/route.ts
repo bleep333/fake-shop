@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       // Verify stock and prepare updates for each product
       const stockUpdates: Array<{ productId: string; newStockBySize: Record<string, number> }> = []
       
-      for (const [productId, items] of itemsByProduct.entries()) {
+      for (const [productId, items] of Array.from(itemsByProduct.entries())) {
         const product = await tx.product.findUnique({
           where: { id: productId }
         })

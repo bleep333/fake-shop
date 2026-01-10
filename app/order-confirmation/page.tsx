@@ -215,7 +215,7 @@ export default function OrderConfirmationPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-sm">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      ${((item.product.salePrice || item.product.basePrice) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 </div>

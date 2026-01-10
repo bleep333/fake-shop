@@ -35,7 +35,7 @@ export default function MensContent() {
           sortBy: 'price-low',
         })
         if (allProducts.length > 0) {
-          const prices = allProducts.map(p => p.price)
+          const prices = allProducts.map(p => p.salePrice || p.basePrice)
           setPriceRange({
             min: Math.min(...prices),
             max: Math.max(...prices),
