@@ -50,3 +50,6 @@ prisma/dev.db-journal
 
 # Coverage / testing
 coverage/
+
+# Personal notes
+FREE_HOSTING_PLAN.md
