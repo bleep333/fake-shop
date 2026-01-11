@@ -101,6 +101,16 @@ export default function SignInPage() {
             Sign up
           </Link>
         </p>
+
+        {/* Admin Dashboard Link */}
+        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+          <Link
+            href="/admin"
+            className="text-base font-semibold underline text-blue-700 hover:text-black"
+          >
+            View Admin Dashboard (Demo Access)
+          </Link>
+        </div>
       </div>
     </div>
   )
