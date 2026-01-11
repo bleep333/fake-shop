@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function SignInPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('user@fakeshop.com')
+  const [password, setPassword] = useState('user123')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -45,6 +45,10 @@ export default function SignInPage() {
           Sign in to view your profile, orders, and manage your account.
         </p>
 
+        <p className="text-sm text-gray-500 mb-4 text-center">
+          Demo credentials are pre-filled — just click Sign In.
+        </p>
+
         <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
@@ -78,7 +82,7 @@ export default function SignInPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="Enter your password"
+              placeholder="user123"
             />
           </div>
 
