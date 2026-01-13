@@ -51,9 +51,9 @@ export default function Home() {
     } catch (error) {
       console.error('Error subscribing:', error)
       // Still show toast for user feedback
-      setShowToast(true)
-      setEmail('')
-      setTimeout(() => setShowToast(false), 3000)
+    setShowToast(true)
+    setEmail('')
+    setTimeout(() => setShowToast(false), 3000)
     }
   }
 

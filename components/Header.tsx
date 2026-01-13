@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import MobileDrawer from './MobileDrawer'
 import { useCart } from '@/lib/cartContext'
@@ -12,7 +12,9 @@ export default function Header() {
   const { getCartCount } = useCart()
   const cartCount = getCartCount()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<'new-arrivals' | 'mens' | 'womens' | null>(null)
   const pathname = usePathname()
+  const router = useRouter()
   const { data: session } = useSession()
 
   const handleSignOut = async () => {
@@ -42,6 +44,11 @@ export default function Header() {
     fetchAnnouncement()
   }, [])
 
+  // Close dropdown when pathname changes
+  useEffect(() => {
+    setOpenDropdown(null)
+  }, [pathname])
+
   return (
     <>
       {/* Announcement Bar */}
@@ -62,30 +69,138 @@ export default function Header() {
 
             {/* Center: Nav Links (Desktop) */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link 
-                href="/new-arrivals" 
-                className={`text-sm font-medium transition-colors ${
-                  pathname === '/new-arrivals' ? 'text-black' : 'text-gray-600 hover:text-black'
-                }`}
-              >
-                New Arrivals
-              </Link>
-              <Link 
-                href="/mens" 
-                className={`text-sm font-medium transition-colors ${
-                  pathname === '/mens' ? 'text-black' : 'text-gray-600 hover:text-black'
-                }`}
-              >
-                Mens
-              </Link>
-              <Link 
-                href="/womens" 
-                className={`text-sm font-medium transition-colors ${
-                  pathname === '/womens' ? 'text-black' : 'text-gray-600 hover:text-black'
-                }`}
-              >
-                Womens
-              </Link>
+              {/* New Arrivals Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    if (openDropdown === 'new-arrivals') {
+                      setOpenDropdown(null)
+                      router.push('/new-arrivals')
+                    } else {
+                      setOpenDropdown('new-arrivals')
+                    }
+                  }}
+                  className={`text-sm font-medium transition-colors ${
+                    pathname === '/new-arrivals' ? 'text-black' : 'text-gray-600 hover:text-black'
+                  }`}
+                >
+                  New Arrivals
+                </button>
+                {openDropdown === 'new-arrivals' && (
+                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-sm py-2 min-w-[120px] z-50">
+                    <Link
+                      href="/new-arrivals?category=shirts"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Shirts
+                    </Link>
+                    <Link
+                      href="/new-arrivals?category=pants"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Pants
+                    </Link>
+                    <Link
+                      href="/new-arrivals?category=outerwear"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Outerwear
+                    </Link>
+                  </div>
+                )}
+              </div>
+              
+              {/* Mens Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    if (openDropdown === 'mens') {
+                      setOpenDropdown(null)
+                      router.push('/mens')
+                    } else {
+                      setOpenDropdown('mens')
+                    }
+                  }}
+                  className={`text-sm font-medium transition-colors ${
+                    pathname === '/mens' ? 'text-black' : 'text-gray-600 hover:text-black'
+                  }`}
+                >
+                  Mens
+                </button>
+                {openDropdown === 'mens' && (
+                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-sm py-2 min-w-[120px] z-50">
+                    <Link
+                      href="/mens?category=shirts"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Shirts
+                    </Link>
+                    <Link
+                      href="/mens?category=pants"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Pants
+                    </Link>
+                    <Link
+                      href="/mens?category=outerwear"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Outerwear
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Womens Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    if (openDropdown === 'womens') {
+                      setOpenDropdown(null)
+                      router.push('/womens')
+                    } else {
+                      setOpenDropdown('womens')
+                    }
+                  }}
+                  className={`text-sm font-medium transition-colors ${
+                    pathname === '/womens' ? 'text-black' : 'text-gray-600 hover:text-black'
+                  }`}
+                >
+                  Womens
+                </button>
+                {openDropdown === 'womens' && (
+                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-sm py-2 min-w-[120px] z-50">
+                    <Link
+                      href="/womens?category=shirts"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Shirts
+                    </Link>
+                    <Link
+                      href="/womens?category=pants"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Pants
+                    </Link>
+                    <Link
+                      href="/womens?category=outerwear"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Outerwear
+                    </Link>
+                  </div>
+                )}
+              </div>
+
               <Link 
                 href="/wishlist" 
                 className={`text-sm font-medium transition-colors ${
