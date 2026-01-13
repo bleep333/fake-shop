@@ -17,6 +17,16 @@ NEXTAUTH_URL="http://localhost:3000"
 # Generate a random secret: openssl rand -base64 32
 # Or use: https://generate-secret.vercel.app/32
 NEXTAUTH_SECRET="your-secret-key-here-change-this-in-production"
+
+# Email Configuration (for newsletter subscription)
+# For development, you can use a test email service like Ethereal Email
+# For production, configure with your SMTP provider (Gmail, SendGrid, etc.)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASSWORD="your-app-password"
+SMTP_FROM="noreply@fakeshop.com"
 ```
 
 ## Quick Setup

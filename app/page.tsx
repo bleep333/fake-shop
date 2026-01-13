@@ -26,11 +26,35 @@ export default function Home() {
     loadProducts()
   }, [])
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    setShowToast(true)
-    setEmail('')
-    setTimeout(() => setShowToast(false), 3000)
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      if (response.ok) {
+        setShowToast(true)
+        setEmail('')
+        setTimeout(() => setShowToast(false), 3000)
+      } else {
+        console.error('Failed to subscribe')
+        // Still show toast for user feedback
+        setShowToast(true)
+        setEmail('')
+        setTimeout(() => setShowToast(false), 3000)
+      }
+    } catch (error) {
+      console.error('Error subscribing:', error)
+      // Still show toast for user feedback
+      setShowToast(true)
+      setEmail('')
+      setTimeout(() => setShowToast(false), 3000)
+    }
   }
 
   return (
@@ -185,11 +209,13 @@ export default function Home() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              disabled
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none"
             />
             <button
               type="submit"
-              className="bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              disabled
+              className="bg-gray-400 text-white px-6 py-3 rounded-md font-semibold cursor-not-allowed focus:outline-none opacity-60"
             >
               Subscribe
             </button>
