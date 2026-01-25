@@ -87,10 +87,31 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ products })
   } catch (error: any) {
     console.error('Error fetching products:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
-      { status: 500 }
-    )
+    
+    // Fallback to mock products if database fails
+    try {
+      const { mockProducts } = await import('@/lib/mockProducts')
+      let filteredProducts = mockProducts
+      
+      // Apply basic filtering to mock products
+      const gender = request.nextUrl.searchParams.get('gender') as 'mens' | 'womens' | 'unisex' | null
+      if (gender) {
+        filteredProducts = filteredProducts.filter(p => p.gender === gender || p.gender === 'unisex')
+      }
+      
+      const categories = request.nextUrl.searchParams.getAll('category')
+      if (categories.length > 0) {
+        filteredProducts = filteredProducts.filter(p => categories.includes(p.category))
+      }
+      
+      return NextResponse.json({ products: filteredProducts })
+    } catch (mockError) {
+      console.error('Error loading mock products:', mockError)
+      return NextResponse.json(
+        { error: 'Failed to fetch products', products: [] },
+        { status: 500 }
+      )
+    }
   }
 }
 

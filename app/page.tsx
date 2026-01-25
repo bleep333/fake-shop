@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
+import Image from 'next/image'
 import ProductCard from '@/components/ProductCard'
 import { getProducts } from '@/lib/products'
 import { Product } from '@/lib/mockProducts'
-import { fadeInUp, staggerContainer, pageTransition } from '@/lib/animations'
+import { staggerContainer, staggerFadeUp, transitions, getReducedMotionTransition } from '@/lib/motion.config'
 import ScrollReveal from '@/components/ScrollReveal'
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
   const [email, setEmail] = useState('')
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     async function loadProducts() {
@@ -58,72 +60,109 @@ export default function Home() {
     }
   }
 
+  // Note: PageTransition component already handles page transitions, so we don't need
+  // a motion.div wrapper here. Removing it prevents double-wrapping that causes blank pages.
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={pageTransition}
-      className="overflow-hidden"
-    >
-      {/* Full-Width Hero Section */}
-      <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden bg-neutral-50">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-neutral-100 via-neutral-50 to-white opacity-60" />
-        </div>
-        
-        <div className="container-custom relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-light tracking-tight mb-6 text-black">
-              New Season
-            </h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto font-light"
-            >
-              Discover the latest trends in fashion. Curated collections for the modern lifestyle.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <Link href="/mens" className="btn-primary">
-                Shop Mens
-              </Link>
-              <Link href="/womens" className="btn-secondary">
-                Shop Womens
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
+    <div className="relative">
+      {/* Full-Viewport Hero Section - h-screen is fine here as header overlays it */}
+      <section className="relative h-screen w-full overflow-hidden bg-black film-grain">
+        {/* Background Image with Ambient Motion */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.6 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 1.05 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1,
+            x: prefersReducedMotion ? 0 : [0, -0.5, 0.3, -0.2, 0],
+            y: prefersReducedMotion ? 0 : [0, -0.3, 0.5, 0.2, 0]
+          }}
+          transition={{ 
+            opacity: { duration: 1.2, ease: [0.22, 1, 0.36, 1] },
+            scale: { duration: 1.2, ease: [0.22, 1, 0.36, 1] },
+            x: { duration: 12, repeat: Infinity, ease: "easeInOut" },
+            y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
+          }}
         >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center"
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-3 bg-gray-400 rounded-full mt-2"
-            />
-          </motion.div>
+          <Image
+            src="/hero-fakeshop.png"
+            alt="Fake Shop Hero"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+            quality={90}
+          />
         </motion.div>
+
+        {/* Gradient Overlay - stronger on bottom-left */}
+        <div 
+          className="absolute inset-0 z-[1]"
+          style={{
+            background: 'linear-gradient(to top right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%)'
+          }}
+        />
+
+        {/* Text Content - Bottom Left */}
+        <div className="absolute bottom-0 left-0 z-10 p-6 md:p-16 lg:p-20">
+          <motion.div
+            initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: prefersReducedMotion ? 0.3 : 1,
+              ease: [0.22, 1, 0.36, 1],
+              delay: prefersReducedMotion ? 0 : 0.3
+            }}
+            className="space-y-3 md:space-y-4"
+          >
+            {/* Title */}
+            <motion.h1
+              initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: prefersReducedMotion ? 0.3 : 1,
+                ease: [0.22, 1, 0.36, 1],
+                delay: prefersReducedMotion ? 0 : 0.5
+              }}
+              className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-serif text-white leading-[0.95] tracking-tight"
+              style={{
+                textShadow: '0 2px 20px rgba(0, 0, 0, 0.5), 0 4px 40px rgba(0, 0, 0, 0.3)',
+                fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif'
+              }}
+            >
+              Fake Shop
+            </motion.h1>
+            
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: prefersReducedMotion ? 0.3 : 0.8,
+                ease: [0.22, 1, 0.36, 1],
+                delay: prefersReducedMotion ? 0 : 0.7
+              }}
+              className="text-sm md:text-base lg:text-lg text-white font-light tracking-wide max-w-md"
+              style={{
+                textShadow: '0 1px 10px rgba(0, 0, 0, 0.5), 0 2px 20px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              <motion.span
+                whileHover={{ 
+                  opacity: prefersReducedMotion ? 1 : 1.2,
+                  transition: { duration: 0.3 }
+                }}
+                className="inline-block relative group"
+              >
+                Effortless Style, Everyday.
+                <motion.span
+                  className="absolute bottom-0 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: '100%' }}
+                />
+              </motion.span>
+            </motion.p>
+          </motion.div>
+        </div>
       </section>
 
       {/* Featured Collections - Editorial Style */}
@@ -131,39 +170,69 @@ export default function Home() {
         <div className="container-custom">
           <ScrollReveal>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-24">
+              {/* Mens Category Link - Safe navigation without blocking */}
               <Link
                 href="/mens"
                 className="group relative aspect-[4/5] overflow-hidden bg-neutral-100"
+                prefetch={true}
               >
+                {/* Background Image */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 bg-gradient-to-br from-neutral-200 to-neutral-300"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src="/images/mens-hero.jpg"
+                    alt="Mens Collection"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                  />
+                  {/* Subtle overlay for text readability */}
+                  <div className="absolute inset-0 bg-black/20" />
+                </motion.div>
+                <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <motion.span
-                    initial={{ opacity: 0, y: 20 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    className="text-5xl md:text-6xl font-light text-black"
+                    initial={{ opacity: 1, y: 0 }}
+                    whileHover={{ opacity: 1, y: -5 }}
+                    className="text-5xl md:text-6xl font-light text-white drop-shadow-2xl"
+                    style={{ textShadow: '0 4px 20px rgba(0, 0, 0, 0.8)' }}
                   >
                     Mens
                   </motion.span>
                 </div>
               </Link>
+              {/* Womens Category Link - Safe navigation without blocking */}
               <Link
                 href="/womens"
                 className="group relative aspect-[4/5] overflow-hidden bg-neutral-100"
+                prefetch={true}
               >
+                {/* Background Image */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 bg-gradient-to-br from-neutral-200 to-neutral-300"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src="/images/womens-hero.jpg"
+                    alt="Womens Collection"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                  />
+                  {/* Subtle overlay for text readability */}
+                  <div className="absolute inset-0 bg-black/20" />
+                </motion.div>
+                <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                   <motion.span
-                    initial={{ opacity: 0, y: 20 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    className="text-5xl md:text-6xl font-light text-black"
+                    initial={{ opacity: 1, y: 0 }}
+                    whileHover={{ opacity: 1, y: -5 }}
+                    className="text-5xl md:text-6xl font-light text-white drop-shadow-2xl"
+                    style={{ textShadow: '0 4px 20px rgba(0, 0, 0, 0.8)' }}
                   >
                     Womens
                   </motion.span>
@@ -271,7 +340,7 @@ export default function Home() {
               {featuredProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
-                  variants={fadeInUp}
+                  variants={staggerFadeUp}
                   custom={index}
                 >
                   <ProductCard product={product} />
@@ -364,6 +433,6 @@ export default function Home() {
           <p className="font-light">Thanks for subscribing!</p>
         </motion.div>
       )}
-    </motion.div>
+    </div>
   )
 }

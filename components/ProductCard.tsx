@@ -8,7 +8,7 @@ import { Product } from '@/lib/mockProducts'
 import PlaceholderImage from './PlaceholderImage'
 import { useCart } from '@/lib/cartContext'
 import { useWishlist } from '@/lib/wishlistContext'
-import { imageZoom, fadeIn } from '@/lib/animations'
+import { hoverEffects, fadeIn, transitions } from '@/lib/motion.config'
 
 interface ProductCardProps {
   product: Product
@@ -108,9 +108,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="relative aspect-[3/4] bg-neutral-100 overflow-hidden mb-4">
           {imageSrc && !imageError ? (
             <motion.div
-              whileHover={imageZoom}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={hoverEffects.imageZoom}
+              transition={transitions.hover}
               className="absolute inset-0"
+              style={{ willChange: 'transform' }}
             >
               <Image
                 src={imageSrc}
@@ -119,6 +120,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 className="object-cover"
                 onError={() => setImageError(true)}
                 sizes="(max-width: 768px) 50vw, 25vw"
+                priority={false}
               />
             </motion.div>
           ) : (
@@ -174,8 +176,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isHovered ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={transitions.quick}
             className="absolute bottom-0 left-0 right-0 p-4 bg-white/98 backdrop-blur-sm"
+            style={{ willChange: 'transform, opacity' }}
           >
             {isAllSizesOutOfStock() ? (
               <div className="flex justify-center">
@@ -196,13 +199,15 @@ export default function ProductCard({ product }: ProductCardProps) {
                         if (!outOfStock) handleSizeSelect(size)
                       }}
                       disabled={outOfStock}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={!outOfStock ? { scale: 1.05 } : {}}
+                      whileTap={!outOfStock ? { scale: 0.95 } : {}}
+                      transition={transitions.quick}
                       className={`px-3 py-1.5 border text-xs font-light tracking-wide transition-colors focus:outline-none ${
                         outOfStock
                           ? 'border-neutral-200 text-neutral-400 line-through cursor-not-allowed bg-neutral-50'
                           : 'border-neutral-300 hover:bg-black hover:text-white hover:border-black'
                       }`}
+                      style={{ willChange: 'transform' }}
                     >
                       {size}
                     </motion.button>

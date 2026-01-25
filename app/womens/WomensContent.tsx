@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
 import ProductCard from '@/components/ProductCard'
 import FilterSidebar from '@/components/FilterSidebar'
 import { getProducts, filterProductsBySize, FilterOptions, SortOption } from '@/lib/products'
 import { Product } from '@/lib/mockProducts'
+import { staggerContainer, staggerFadeUp } from '@/lib/motion.config'
 
 export default function WomensContent() {
   const searchParams = useSearchParams()
@@ -64,6 +66,8 @@ export default function WomensContent() {
         setCurrentPage(1) // Reset to first page when filters change
       } catch (error) {
         console.error('Failed to load products:', error)
+        // Ensure loading state is cleared even on error to prevent blank screen
+        setProducts([])
       } finally {
         setLoading(false)
       }
@@ -143,7 +147,13 @@ export default function WomensContent() {
             </div>
           ) : paginatedProducts.length > 0 ? (
             <>
-              <div className={`grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}>
+              <motion.div 
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                className={`grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}
+              >
                 {loading && (
                   <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <div className="bg-white px-4 py-2 rounded-md shadow-md">
@@ -157,19 +167,15 @@ export default function WomensContent() {
                     </div>
                   </div>
                 )}
-                {paginatedProducts.map((product, index) => (
-                  <div
+                {paginatedProducts.map((product) => (
+                  <motion.div
                     key={product.id}
-                    className="animate-fade-in"
-                    style={{
-                      animationDelay: `${Math.min(index * 30, 200)}ms`,
-                      animationFillMode: 'forwards'
-                    }}
+                    variants={staggerFadeUp}
                   >
                     <ProductCard product={product} />
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
 
               {/* Pagination */}
               {totalPages > 1 && (

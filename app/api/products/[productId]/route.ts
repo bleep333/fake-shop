@@ -4,25 +4,39 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 // GET /api/products/[productId] - Get a single product (public)
+// Supports both database products and mock products for compatibility
 export async function GET(
   request: NextRequest,
   { params }: { params: { productId: string } }
 ) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: params.productId }
-    })
+    // Try Prisma database first
+    try {
+      const product = await prisma.product.findUnique({
+        where: { id: params.productId }
+      })
 
-    if (!product) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+      if (product) {
+        // Only return active and visible products to public
+        if (product.status === 'active' && product.isVisible) {
+          return NextResponse.json({ product })
+        }
+      }
+    } catch (dbError) {
+      // Database might not be available, fall through to mock data
+      console.log('Database query failed, trying mock data:', dbError)
     }
 
-    // Only return active and visible products to public
-    if (product.status !== 'active' || !product.isVisible) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    // Fallback to mock products if database product not found
+    const { mockProducts } = await import('@/lib/mockProducts')
+    const mockProduct = mockProducts.find(p => p.id === params.productId)
+    
+    if (mockProduct) {
+      return NextResponse.json({ product: mockProduct })
     }
 
-    return NextResponse.json({ product })
+    // Product not found in either source
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 })
   } catch (error) {
     console.error('Error fetching product:', error)
     return NextResponse.json(

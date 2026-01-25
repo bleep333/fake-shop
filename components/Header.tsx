@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import MobileDrawer from './MobileDrawer'
 import { useCart } from '@/lib/cartContext'
+import { dropdownVariants, navbarVariants } from '@/lib/motion.config'
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -15,17 +16,29 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<'new-arrivals' | 'mens' | 'womens' | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const pathname = usePathname()
   const router = useRouter()
   const { data: session } = useSession()
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
+      const currentScrollY = window.scrollY
+      setIsScrolled(currentScrollY > 20)
+      
+      // Show/hide navbar on scroll (hide when scrolling down, show when scrolling up)
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false)
+      } else {
+        setIsVisible(true)
+      }
+      setLastScrollY(currentScrollY)
     }
-    window.addEventListener('scroll', handleScroll)
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [lastScrollY])
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' })
@@ -68,16 +81,21 @@ export default function Header() {
         </div>
       )}
 
-      {/* Sticky Header */}
+      {/* Fixed Header - positioned at top, content below accounts for height with padding-top */}
       <motion.header
         initial={false}
         animate={{
+          y: isVisible ? 0 : -100,
           backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 1)',
           backdropFilter: isScrolled ? 'blur(10px)' : 'blur(0px)',
           boxShadow: isScrolled ? '0 2px 40px rgba(0, 0, 0, 0.08)' : 'none',
         }}
-        transition={{ duration: 0.3 }}
-        className="sticky top-0 z-50 border-b border-neutral-200"
+        transition={{ 
+          duration: 0.4,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="fixed top-0 left-0 right-0 z-50 border-b border-neutral-200 bg-white"
+        style={{ willChange: 'transform' }}
       >
         <div className="container-custom">
           <div className="flex items-center justify-between h-20 md:h-24">
@@ -108,11 +126,12 @@ export default function Header() {
                 <AnimatePresence>
                   {openDropdown === 'new-arrivals' && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
                       className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[140px] z-50"
+                      style={{ willChange: 'transform, opacity' }}
                     >
                       <Link
                         href="/new-arrivals?category=shirts"
@@ -160,11 +179,12 @@ export default function Header() {
                 <AnimatePresence>
                   {openDropdown === 'mens' && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
                       className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[140px] z-50"
+                      style={{ willChange: 'transform, opacity' }}
                     >
                       <Link
                         href="/mens?category=shirts"
@@ -212,11 +232,12 @@ export default function Header() {
                 <AnimatePresence>
                   {openDropdown === 'womens' && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
                       className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[140px] z-50"
+                      style={{ willChange: 'transform, opacity' }}
                     >
                       <Link
                         href="/womens?category=shirts"

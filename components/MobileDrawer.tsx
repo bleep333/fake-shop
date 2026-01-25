@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { mobileMenuVariants } from '@/lib/motion.config'
 
 interface MobileDrawerProps {
   isOpen: boolean
@@ -38,24 +40,33 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
 
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
+            onClick={onClose}
+            aria-hidden="true"
+          />
 
-      {/* Drawer */}
-      <div
-        ref={drawerRef}
-        className="fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-xl transform transition-transform md:hidden"
-        tabIndex={-1}
-      >
-        <div className="flex flex-col h-full">
+          {/* Drawer */}
+          <motion.div
+            ref={drawerRef}
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-xl md:hidden"
+            tabIndex={-1}
+            style={{ willChange: 'transform' }}
+          >
+            <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold">Menu</h2>
@@ -136,9 +147,11 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
-        </div>
-      </div>
-    </>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }
 
