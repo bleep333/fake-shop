@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
@@ -13,9 +14,18 @@ export default function Header() {
   const cartCount = getCartCount()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<'new-arrivals' | 'mens' | 'womens' | null>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { data: session } = useSession()
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' })
@@ -59,16 +69,25 @@ export default function Header() {
       )}
 
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <motion.header
+        initial={false}
+        animate={{
+          backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 1)',
+          backdropFilter: isScrolled ? 'blur(10px)' : 'blur(0px)',
+          boxShadow: isScrolled ? '0 2px 40px rgba(0, 0, 0, 0.08)' : 'none',
+        }}
+        transition={{ duration: 0.3 }}
+        className="sticky top-0 z-50 border-b border-neutral-200"
+      >
+        <div className="container-custom">
+          <div className="flex items-center justify-between h-20 md:h-24">
             {/* Left: Logo */}
-            <Link href="/" className="text-2xl font-bold text-black hover:opacity-80 transition-opacity">
+            <Link href="/" className="text-2xl md:text-3xl font-light tracking-tight text-black hover:opacity-70 transition-opacity">
               Fake Shop
             </Link>
 
             {/* Center: Nav Links (Desktop) */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-10">
               {/* New Arrivals Dropdown */}
               <div className="relative">
                 <button
@@ -80,37 +99,45 @@ export default function Header() {
                       setOpenDropdown('new-arrivals')
                     }
                   }}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-light tracking-wide transition-colors ${
                     pathname === '/new-arrivals' ? 'text-black' : 'text-gray-600 hover:text-black'
                   }`}
                 >
                   New Arrivals
                 </button>
-                {openDropdown === 'new-arrivals' && (
-                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-sm py-2 min-w-[120px] z-50">
-                    <Link
-                      href="/new-arrivals?category=shirts"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                <AnimatePresence>
+                  {openDropdown === 'new-arrivals' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[140px] z-50"
                     >
-                      Shirts
-                    </Link>
-                    <Link
-                      href="/new-arrivals?category=pants"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Pants
-                    </Link>
-                    <Link
-                      href="/new-arrivals?category=outerwear"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Outerwear
-                    </Link>
-                  </div>
-                )}
+                      <Link
+                        href="/new-arrivals?category=shirts"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Shirts
+                      </Link>
+                      <Link
+                        href="/new-arrivals?category=pants"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Pants
+                      </Link>
+                      <Link
+                        href="/new-arrivals?category=outerwear"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Outerwear
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
               
               {/* Mens Dropdown */}
@@ -124,37 +151,45 @@ export default function Header() {
                       setOpenDropdown('mens')
                     }
                   }}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-light tracking-wide transition-colors ${
                     pathname === '/mens' ? 'text-black' : 'text-gray-600 hover:text-black'
                   }`}
                 >
                   Mens
                 </button>
-                {openDropdown === 'mens' && (
-                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-sm py-2 min-w-[120px] z-50">
-                    <Link
-                      href="/mens?category=shirts"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                <AnimatePresence>
+                  {openDropdown === 'mens' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[140px] z-50"
                     >
-                      Shirts
-                    </Link>
-                    <Link
-                      href="/mens?category=pants"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Pants
-                    </Link>
-                    <Link
-                      href="/mens?category=outerwear"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Outerwear
-                    </Link>
-                  </div>
-                )}
+                      <Link
+                        href="/mens?category=shirts"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Shirts
+                      </Link>
+                      <Link
+                        href="/mens?category=pants"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Pants
+                      </Link>
+                      <Link
+                        href="/mens?category=outerwear"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Outerwear
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Womens Dropdown */}
@@ -168,42 +203,50 @@ export default function Header() {
                       setOpenDropdown('womens')
                     }
                   }}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-light tracking-wide transition-colors ${
                     pathname === '/womens' ? 'text-black' : 'text-gray-600 hover:text-black'
                   }`}
                 >
                   Womens
                 </button>
-                {openDropdown === 'womens' && (
-                  <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-md shadow-sm py-2 min-w-[120px] z-50">
-                    <Link
-                      href="/womens?category=shirts"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                <AnimatePresence>
+                  {openDropdown === 'womens' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[140px] z-50"
                     >
-                      Shirts
-                    </Link>
-                    <Link
-                      href="/womens?category=pants"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Pants
-                    </Link>
-                    <Link
-                      href="/womens?category=outerwear"
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Outerwear
-                    </Link>
-                  </div>
-                )}
+                      <Link
+                        href="/womens?category=shirts"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Shirts
+                      </Link>
+                      <Link
+                        href="/womens?category=pants"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Pants
+                      </Link>
+                      <Link
+                        href="/womens?category=outerwear"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
+                      >
+                        Outerwear
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <Link 
                 href="/wishlist" 
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-light tracking-wide transition-colors ${
                   pathname === '/wishlist' ? 'text-black' : 'text-gray-600 hover:text-black'
                 }`}
               >
@@ -308,7 +351,7 @@ export default function Header() {
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Mobile Drawer */}
       <MobileDrawer isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />

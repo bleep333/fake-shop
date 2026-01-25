@@ -4,7 +4,52 @@
 
 @layer base {
   body {
-    @apply antialiased;
+    @apply antialiased bg-white text-gray-900;
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-normal tracking-tight;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  /* Calder Co style button */
+  .btn-primary {
+    @apply px-8 py-4 bg-black text-white font-medium tracking-wide;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:bg-gray-800 active:scale-[0.98];
+    letter-spacing: 0.05em;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 bg-transparent border-2 border-black text-black font-medium tracking-wide;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:bg-black hover:text-white active:scale-[0.98];
+    letter-spacing: 0.05em;
+  }
+
+  /* Section spacing */
+  .section-spacing {
+    @apply py-24 md:py-32;
+  }
+
+  /* Container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Soft shadow */
+  .shadow-soft {
+    box-shadow: 0 2px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 10px 60px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -22,5 +67,20 @@
 
   .animate-fade-in {
     animation: fade-in 0.4s ease-out;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
