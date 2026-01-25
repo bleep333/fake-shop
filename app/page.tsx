@@ -207,10 +207,10 @@ export default function Home() {
                   className="absolute inset-0"
                 >
                   <Image
-                    src="/images/mens-hero.jpg"
+                    src="/images/mens-hero.png"
                     alt="Mens Collection"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
@@ -241,10 +241,10 @@ export default function Home() {
                   className="absolute inset-0"
                 >
                   <Image
-                    src="/images/womens-hero.jpg"
+                    src="/images/womens-hero.png"
                     alt="Womens Collection"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
