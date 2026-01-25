@@ -45,14 +45,14 @@ export async function POST(request: NextRequest) {
       from: process.env.SMTP_FROM || 'noreply@fakeshop.com',
       to: email,
       subject: 'Welcome to our newsletter!',
-      text: `Thank you for subscribing to our newsletter!\n\nYou'll receive 10% off your first order. Use code: WELCOME10\n\nWe're excited to share the latest fashion trends and exclusive offers with you.\n\nBest regards,\nThe Fake Shop Team`,
+      text: `Thank you for subscribing to our newsletter!\n\nYou'll receive 10% off your first order. Use code: WELCOME10\n\nWe're excited to share the latest fashion trends and exclusive offers with you.\n\nBest regards,\nThe NOVARA Team`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #333;">Thank you for subscribing!</h2>
           <p>Thank you for subscribing to our newsletter!</p>
           <p>You'll receive <strong>10% off your first order</strong>. Use code: <strong>WELCOME10</strong></p>
           <p>We're excited to share the latest fashion trends and exclusive offers with you.</p>
-          <p>Best regards,<br>The Fake Shop Team</p>
+          <p>Best regards,<br>The NOVARA Team</p>
         </div>
       `,
     }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Inter, Playfair_Display } from 'next/font/google'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { CartProvider } from '@/lib/cartContext'
@@ -7,9 +8,22 @@ import SessionProvider from '@/components/SessionProvider'
 import PageTransition from '@/components/PageTransition'
 import './globals.css'
 
+// Google Fonts - Luxury typography system
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
-  title: 'Fake Shop - Clothing Store',
-  description: 'A fake clothing store website',
+  title: 'NOVARA - Premium Clothing',
+  description: 'Premium clothing and fashion essentials',
 }
 
 export default function RootLayout({
@@ -18,14 +32,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col">
+    <html lang="en" className={`${inter.variable} ${playfairDisplay.variable}`}>
+      <body className="min-h-screen flex flex-col font-sans">
         <SessionProvider>
           <CartProvider>
             <WishlistProvider>
               <Header />
-              {/* Main content with padding-top to account for fixed header (h-20 md:h-24 = 80px mobile, 96px desktop) */}
-              <main className="flex-1 pt-20 md:pt-24">
+              {/* Main content - no padding, hero starts at top */}
+              <main className="flex-1 pt-0">
                 <PageTransition>
                   {children}
                 </PageTransition>

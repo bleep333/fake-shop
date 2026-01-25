@@ -9,6 +9,7 @@ type WishlistContextType = {
   isInWishlist: (productId: string) => boolean
   addToWishlist: (product: Product) => void
   removeFromWishlist: (productId: string) => void
+  getWishlistCount: () => number
   isHydrated: boolean
 }
 
@@ -160,6 +161,10 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     return wishlistItems.some(item => item.id === productId)
   }, [wishlistItems])
 
+  const getWishlistCount = useCallback((): number => {
+    return wishlistItems.length
+  }, [wishlistItems])
+
   return (
     <WishlistContext.Provider
       value={{
@@ -167,6 +172,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         isInWishlist,
         addToWishlist,
         removeFromWishlist,
+        getWishlistCount,
         isHydrated,
       }}
     >

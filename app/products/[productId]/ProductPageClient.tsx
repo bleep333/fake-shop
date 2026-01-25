@@ -9,11 +9,13 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import PlaceholderImage from '@/components/PlaceholderImage'
+import ProductCard from '@/components/ProductCard'
 import ScrollReveal from '@/components/ScrollReveal'
 import { useCart } from '@/lib/cartContext'
 import { useWishlist } from '@/lib/wishlistContext'
 import { Product } from '@/lib/mockProducts'
-import { transitions, hoverEffects } from '@/lib/motion.config'
+import { getProducts } from '@/lib/products'
+import { transitions, hoverEffects, staggerContainer, staggerFadeUp } from '@/lib/motion.config'
 
 const SIZES = ['S', 'M', 'L', 'XL', '2XL']
 
@@ -29,6 +31,8 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
   const [imageError, setImageError] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [isSticky, setIsSticky] = useState(false)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
+  const [loadingRelated, setLoadingRelated] = useState(true)
 
   // Handle image extension detection (client-side only)
   useEffect(() => {
@@ -62,6 +66,36 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       tryNext()
     }
   }, [product?.image, product?.id])
+
+  // Fetch related products (same category and gender, excluding current product)
+  useEffect(() => {
+    async function loadRelatedProducts() {
+      if (!product) return
+      
+      try {
+        setLoadingRelated(true)
+        const allProducts = await getProducts({
+          gender: product.gender,
+          category: [product.category],
+          sortBy: 'newest',
+        })
+        
+        // Filter out current product and limit to 4
+        const filtered = allProducts
+          .filter(p => p.id !== product.id)
+          .slice(0, 4)
+        
+        setRelatedProducts(filtered)
+      } catch (error) {
+        console.error('Failed to load related products:', error)
+        setRelatedProducts([])
+      } finally {
+        setLoadingRelated(false)
+      }
+    }
+    
+    loadRelatedProducts()
+  }, [product])
 
   // Handle sticky positioning for product details panel
   useEffect(() => {
@@ -289,6 +323,39 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
           </motion.div>
         </div>
       </div>
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <section className="section-spacing bg-white border-t border-neutral-200">
+          <div className="container-custom">
+            <ScrollReveal>
+              <h2 
+                className="text-4xl md:text-5xl font-light tracking-tight mb-12 text-black"
+                style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}
+              >
+                You May Also Like
+              </h2>
+            </ScrollReveal>
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+            >
+              {relatedProducts.map((relatedProduct, index) => (
+                <motion.div
+                  key={relatedProduct.id}
+                  variants={staggerFadeUp}
+                  custom={index}
+                >
+                  <ProductCard product={relatedProduct} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

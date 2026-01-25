@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       // Create default if doesn't exist
       announcementBar = await prisma.announcementBar.create({
         data: {
-          text: 'Free shipping on orders over $100 • Use code: SAVE20',
+          text: 'Free shipping on orders over $100 - No discount code needed',
           isActive: true
         }
       })

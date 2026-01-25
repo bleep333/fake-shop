@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     if (!announcementBar) {
       announcementBar = await prisma.announcementBar.create({
         data: {
-          text: 'Free shipping on orders over $100 • Use code: SAVE20',
+          text: 'Free shipping on orders over $100 - No discount code needed',
           isActive: true
         }
       })
@@ -60,7 +60,7 @@ export async function PATCH(request: NextRequest) {
     } else {
       announcementBar = await prisma.announcementBar.create({
         data: {
-          text: text || 'Free shipping on orders over $100 • Use code: SAVE20',
+          text: text || 'Free shipping on orders over $100 - No discount code needed',
           isActive: isActive !== undefined ? isActive : true
         }
       })

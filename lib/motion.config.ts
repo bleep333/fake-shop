@@ -234,6 +234,58 @@ export const mobileMenuVariants: Variants = {
   },
 }
 
+// Modal variants (for search modal)
+export const modalVariants: Variants = {
+  hidden: { 
+    opacity: 0,
+    scale: 0.95,
+    y: 20,
+  },
+  visible: { 
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: easings.smooth,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    y: 20,
+    transition: {
+      duration: 0.2,
+      ease: easings.gentle,
+    },
+  },
+}
+
+// Drawer variants (for cart drawer)
+export const drawerVariants: Variants = {
+  hidden: { 
+    x: '100%',
+    transition: {
+      duration: 0.4,
+      ease: easings.smooth,
+    },
+  },
+  visible: { 
+    x: 0,
+    transition: {
+      duration: 0.4,
+      ease: easings.smooth,
+    },
+  },
+  exit: {
+    x: '100%',
+    transition: {
+      duration: 0.3,
+      ease: easings.smooth,
+    },
+  },
+}
+
 // ============================================
 // HOVER EFFECTS
 // ============================================

@@ -12,6 +12,7 @@
 
   body {
     @apply antialiased bg-white text-gray-900;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     font-feature-settings: "kern" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -22,6 +23,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), ui-serif, Georgia, serif;
     @apply font-normal tracking-tight;
     letter-spacing: -0.02em;
   }

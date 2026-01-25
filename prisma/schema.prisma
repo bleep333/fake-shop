@@ -159,7 +159,7 @@ model PromoCode {
 
 model AnnouncementBar {
   id        String   @id @default(cuid())
-  text      String   @default("Free shipping on orders over $100 • Use code: SAVE20")
+  text      String   @default("Free shipping on orders over $100 - No discount code needed")
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
