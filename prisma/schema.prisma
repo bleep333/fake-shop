@@ -107,7 +107,7 @@ model Product {
   name              String
   basePrice         Float
   salePrice         Float?
-  category          String        // 'shirts' | 'pants' | 'outerwear' | 'accessories'
+  category          String        // Mens: 't-shirts' | 'shirts' | 'hoodies' | 'jackets' | 'knitwear' | 'pants' | 'jeans' | 'shorts' | 'accessories' | Womens: 'dresses' | 'tops' | 't-shirts' | 'skirts' | 'pants' | 'jeans' | 'jackets' | 'knitwear' | 'shorts' | 'jumpsuits' | 'lingerie' | 'accessories'
   gender            String        // 'mens' | 'womens' | 'unisex'
   color             String?       // Product color (e.g., 'Black', 'White', 'Red', 'Blue')
   image             String
