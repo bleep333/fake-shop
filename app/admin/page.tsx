@@ -1108,7 +1108,6 @@ export default function AdminPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             product.status === 'active' ? 'bg-green-100 text-green-800' :
-                            product.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {product.status}
@@ -1260,6 +1259,41 @@ export default function AdminPage() {
 
 // Product Modal Component
 function ProductModal({ product, onClose, onSave }: { product: Product | null, onClose: () => void, onSave: (data: any) => void }) {
+  // Available tags for selection
+  const availableTags = ['New', 'Sale', 'Popular']
+  
+  // Category options based on gender
+  const categoryOptions: {
+    mens: Array<{ value: string; label: string }>
+    womens: Array<{ value: string; label: string }>
+  } = {
+    mens: [
+      { value: 't-shirts', label: 'T-Shirts' },
+      { value: 'shirts', label: 'Shirts' },
+      { value: 'hoodies', label: 'Hoodies' },
+      { value: 'jackets', label: 'Jackets' },
+      { value: 'knitwear', label: 'Knitwear' },
+      { value: 'pants', label: 'Pants' },
+      { value: 'jeans', label: 'Jeans' },
+      { value: 'shorts', label: 'Shorts' },
+      { value: 'accessories', label: 'Accessories' },
+    ],
+    womens: [
+      { value: 'dresses', label: 'Dresses' },
+      { value: 'tops', label: 'Tops' },
+      { value: 't-shirts', label: 'T-Shirts' },
+      { value: 'skirts', label: 'Skirts' },
+      { value: 'pants', label: 'Pants' },
+      { value: 'jeans', label: 'Jeans' },
+      { value: 'jackets', label: 'Jackets' },
+      { value: 'knitwear', label: 'Knitwear' },
+      { value: 'shorts', label: 'Shorts' },
+      { value: 'jumpsuits', label: 'Jumpsuits' },
+      { value: 'lingerie', label: 'Lingerie' },
+      { value: 'accessories', label: 'Accessories' },
+    ],
+  }
+  
   const [formData, setFormData] = useState({
     sku: product?.sku || '',
     name: product?.name || '',
@@ -1268,7 +1302,7 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
     category: product?.category || 'shirts',
     gender: product?.gender || 'mens',
     image: product?.image || '',
-    tags: product?.tags?.join(', ') || '',
+    tags: product?.tags || [], // Changed to array
     sizes: product?.sizes?.join(', ') || 'S, M, L, XL, 2XL',
     stockBySize: product?.stockBySize || { S: 0, M: 0, L: 0, XL: 0, '2XL': 0 },
     status: product?.status || 'active',
@@ -1276,22 +1310,117 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
     lowStockThreshold: product?.lowStockThreshold || 10,
   })
 
+  // Image upload state
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(product?.image || null)
+
+  // Update image preview when formData.image changes
+  useEffect(() => {
+    if (formData.image) {
+      setImagePreview(formData.image)
+    }
+  }, [formData.image])
+
+  // Calculate sale percentage
+  const calculateSalePercentage = (): number | null => {
+    if (!formData.salePrice || !formData.basePrice) return null
+    const base = parseFloat(formData.basePrice as any)
+    const sale = parseFloat(formData.salePrice as any)
+    if (base <= 0 || sale >= base) return null
+    return Math.round(((base - sale) / base) * 100)
+  }
+
+  // Get current categories based on selected gender
+  const getCurrentCategories = () => {
+    return categoryOptions[formData.gender as keyof typeof categoryOptions] || categoryOptions.mens
+  }
+
+  // Reset category if it's not valid for the selected gender
+  useEffect(() => {
+    const currentCategories = getCurrentCategories()
+    const isValidCategory = currentCategories.some(cat => cat.value === formData.category)
+    if (!isValidCategory && currentCategories.length > 0) {
+      setFormData(prev => ({ ...prev, category: currentCategories[0].value }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.gender])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(t => t)
     const sizesArray = formData.sizes.split(',').map(s => s.trim()).filter(s => s)
     
-    const submitData = {
+    const submitData: any = {
       ...formData,
-      tags: tagsArray,
+      tags: formData.tags, // Already an array
       sizes: sizesArray,
       basePrice: parseFloat(formData.basePrice as any),
       salePrice: formData.salePrice ? parseFloat(formData.salePrice as any) : null,
       lowStockThreshold: parseInt(formData.lowStockThreshold as any),
     }
 
+    // Don't send SKU for new products (it will be auto-generated)
+    if (!product) {
+      delete submitData.sku
+    }
+
     onSave(submitData)
+  }
+
+  const handleTagToggle = (tag: string) => {
+    setFormData({
+      ...formData,
+      tags: formData.tags.includes(tag)
+        ? formData.tags.filter(t => t !== tag)
+        : [...formData.tags, tag]
+    })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    if (!validTypes.includes(file.type)) {
+      alert('Invalid file type. Only JPEG, PNG, and WebP are allowed.')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      alert('File size too large. Maximum size is 5MB.')
+      return
+    }
+
+    setUploadingImage(true)
+
+    try {
+      const formDataToUpload = new FormData()
+      formDataToUpload.append('file', file)
+      formDataToUpload.append('gender', formData.gender)
+      formDataToUpload.append('productName', formData.name || 'product')
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formDataToUpload,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to upload image')
+      }
+
+      const data = await response.json()
+      setFormData({ ...formData, image: data.imagePath })
+      setImagePreview(data.imagePath)
+    } catch (error: any) {
+      console.error('Error uploading image:', error)
+      alert(error.message || 'Failed to upload image. Please try again.')
+    } finally {
+      setUploadingImage(false)
+    }
   }
 
   return (
@@ -1308,16 +1437,18 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">SKU (optional)</label>
-              <input
-                type="text"
-                value={formData.sku}
-                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-            <div>
+            {product && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SKU (Auto-generated)</label>
+                <input
+                  type="text"
+                  value={formData.sku}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                />
+              </div>
+            )}
+            <div className={product ? '' : 'col-span-2'}>
               <label className="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
               <input
                 type="text"
@@ -1326,6 +1457,37 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
+            </div>
+          </div>
+
+          {/* Gender and Category - Reordered: Gender first, then Category */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
+              <select
+                required
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="mens">Mens</option>
+                <option value="womens">Womens</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+              <select
+                required
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                {getCurrentCategories().map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -1350,73 +1512,106 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
                 onChange={(e) => setFormData({ ...formData, salePrice: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-              <select
-                required
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                <option value="shirts">Shirts</option>
-                <option value="pants">Pants</option>
-                <option value="outerwear">Outerwear</option>
-                <option value="accessories">Accessories</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
-              <select
-                required
-                value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                <option value="mens">Mens</option>
-                <option value="womens">Womens</option>
-                <option value="unisex">Unisex</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
-              <select
-                required
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                <option value="active">Active</option>
-                <option value="draft">Draft</option>
-                <option value="archived">Archived</option>
-              </select>
+              {formData.salePrice && calculateSalePercentage() && (
+                <p className="mt-1 text-sm text-gray-600">
+                  Sale: <span className="font-semibold text-red-600">-{calculateSalePercentage()}%</span>
+                </p>
+              )}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image Path *</label>
-            <input
-              type="text"
+            <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+            <select
               required
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="/images/products/MENS-product-name"
-            />
+            >
+              <option value="active">Active (Visible on website)</option>
+              <option value="archived">Archived (Not visible on website)</option>
+            </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
-            <input
-              type="text"
-              value={formData.tags}
-              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="New, Sale"
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Product Image *</label>
+            <div className="space-y-3">
+              <div>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Accepted formats: JPEG, PNG, WebP. Max size: 5MB
+                </p>
+              </div>
+              {uploadingImage && (
+                <p className="text-sm text-blue-600">Uploading image...</p>
+              )}
+              {imagePreview && (
+                <div className="mt-3">
+                  <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                  <img
+                    src={imagePreview}
+                    alt="Product preview"
+                    className="w-32 h-32 object-cover border border-gray-300 rounded"
+                    onError={() => setImagePreview(null)}
+                  />
+                  <p className="mt-2 text-xs text-gray-500">Image path: {formData.image}</p>
+                </div>
+              )}
+              {!imagePreview && formData.image && (
+                <div className="mt-3">
+                  <p className="text-sm text-gray-600 mb-2">Current image path:</p>
+                  <input
+                    type="text"
+                    value={formData.image}
+                    onChange={(e) => {
+                      setFormData({ ...formData, image: e.target.value })
+                      setImagePreview(e.target.value)
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    placeholder="/images/products/MENS-product-name"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+            <div className="flex flex-wrap gap-3">
+              {availableTags.map((tag) => (
+                <label
+                  key={tag}
+                  className="flex items-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.tags.includes(tag)}
+                    onChange={() => handleTagToggle(tag)}
+                    className="w-4 h-4 text-black border-gray-300 rounded focus:ring-2 focus:ring-black focus:ring-offset-0"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{tag}</span>
+                </label>
+              ))}
+            </div>
+            {formData.tags.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="text-xs text-gray-500">Selected:</span>
+                {formData.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -2217,8 +2412,8 @@ function BulkActionModal({ action, onClose, onSave }: { action: 'price' | 'stock
                 >
                   <option value="">Keep current</option>
                   <option value="active">Active</option>
-                  <option value="draft">Draft</option>
-                  <option value="archived">Archived</option>
+                  <option value="active">Active (Visible on website)</option>
+                  <option value="archived">Archived (Not visible on website)</option>
                 </select>
               </div>
               <div>

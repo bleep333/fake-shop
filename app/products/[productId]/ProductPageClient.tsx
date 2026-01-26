@@ -182,9 +182,9 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     New
                   </span>
                 )}
-                {product.tags.includes('Sale') && (
+                {product.tags.includes('Sale') && product.salePrice && product.basePrice && (
                   <span className="bg-red-600 text-white text-xs px-3 py-1.5 font-light tracking-wide">
-                    Sale
+                    -{Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%
                   </span>
                 )}
               </motion.div>

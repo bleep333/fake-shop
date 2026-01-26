@@ -64,11 +64,11 @@ export async function POST(request: NextRequest) {
       lowStockThreshold
     } = body
 
-    // Generate SKU if not provided
+    // Generate SKU automatically (always required)
     let productSku = sku
     if (!productSku) {
       // Generate simple SKU based on gender and next available number
-      const genderPrefix = (gender === 'mens' || gender === 'womens') ? gender.charAt(0).toUpperCase() : 'P'
+      const genderPrefix = gender === 'mens' ? 'M' : gender === 'womens' ? 'W' : 'P'
       
       // Find the highest existing SKU with this prefix
       const existingProducts = await prisma.product.findMany({

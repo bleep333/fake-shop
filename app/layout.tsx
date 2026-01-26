@@ -6,6 +6,7 @@ import { CartProvider } from '@/lib/cartContext'
 import { WishlistProvider } from '@/lib/wishlistContext'
 import SessionProvider from '@/components/SessionProvider'
 import PageTransition from '@/components/PageTransition'
+import MainContentWrapper from '@/components/MainContentWrapper'
 import './globals.css'
 
 // Google Fonts - Luxury typography system
@@ -38,10 +39,12 @@ export default function RootLayout({
           <CartProvider>
             <WishlistProvider>
               <Header />
-              {/* Main content - no padding, hero starts at top */}
-              <main className="flex-1 pt-0">
+              {/* Main content - padding handled by MainContentWrapper based on page */}
+              <main className="flex-1">
                 <PageTransition>
-                  {children}
+                  <MainContentWrapper>
+                    {children}
+                  </MainContentWrapper>
                 </PageTransition>
               </main>
               <Footer />
