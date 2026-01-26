@@ -241,7 +241,7 @@ export default function Home() {
                   className="absolute inset-0"
                 >
                   <Image
-                    src="/images/womens-hero.png"
+                    src="/images/womens-hero.jpg"
                     alt="Womens Collection"
                     fill
                     className="object-contain"
