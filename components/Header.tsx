@@ -153,30 +153,280 @@ export default function Header() {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-2 min-w-[160px] z-50"
-                      style={{ willChange: 'transform, opacity' }}
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-50"
+                      style={{ willChange: 'transform, opacity', minWidth: '600px' }}
                     >
-                      <Link
-                        href="/mens"
-                        onClick={() => setOpenDropdown(null)}
-                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
-                      >
-                        All
-                      </Link>
-                      <Link
-                        href="/mens"
-                        onClick={() => setOpenDropdown(null)}
-                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
-                      >
-                        Mens
-                      </Link>
-                      <Link
-                        href="/womens"
-                        onClick={() => setOpenDropdown(null)}
-                        className="block px-5 py-2.5 text-sm text-gray-700 hover:bg-neutral-50 font-light tracking-wide transition-colors"
-                      >
-                        Womens
-                      </Link>
+                      <div className="grid grid-cols-3 gap-12">
+                        {/* Discover Column */}
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
+                            Discover
+                          </h3>
+                          <ul className="space-y-2">
+                            <li>
+                              <Link
+                                href="/mens"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                              >
+                                All
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/new-arrivals"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                New
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Popular
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?tag=Sale"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Sale
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+
+                        {/* Men Column */}
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-900 uppercase tracking-wider mb-4">
+                            Men
+                          </h3>
+                          <ul className="space-y-2">
+                            <li>
+                              <Link
+                                href="/mens"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                              >
+                                All Men's
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                T-Shirts
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Shirts
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=outerwear"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Hoodies
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=outerwear"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Jackets
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=outerwear"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Knitwear
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Pants
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Jeans
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Shorts
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/mens?category=accessories"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Accessories
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+
+                        {/* Women Column */}
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-900 uppercase tracking-wider mb-4">
+                            Women
+                          </h3>
+                          <ul className="space-y-2">
+                            <li>
+                              <Link
+                                href="/womens"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                              >
+                                All Women's
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Dresses
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Tops
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                T-Shirts
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Skirts
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Pants
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Jeans
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=outerwear"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Jackets
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=outerwear"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Knitwear
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=pants"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Shorts
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Jumpsuits
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=shirts"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Lingerie
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/womens?category=accessories"
+                                onClick={() => setOpenDropdown(null)}
+                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Accessories
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
