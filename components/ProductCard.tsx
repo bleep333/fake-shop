@@ -19,6 +19,8 @@ const SIZES = ['S', 'M', 'L', 'XL', '2XL']
 export default function ProductCard({ product }: ProductCardProps) {
   const [imageError, setImageError] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const [alternateImageSrc, setAlternateImageSrc] = useState<string | null>(null)
+  const [alternateImageError, setAlternateImageError] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const { addToCart } = useCart()
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist()
@@ -45,6 +47,17 @@ export default function ProductCard({ product }: ProductCardProps) {
     return getStockForSize(size) === 0
   }
 
+  // Helper function to get alternate image path
+  const getAlternateImagePath = (basePath: string, extension: string): string => {
+    // Extract the filename without extension
+    const pathParts = basePath.split('/')
+    const filename = pathParts[pathParts.length - 1]
+    const filenameWithoutExt = filename.replace(/\.(jpg|jpeg|png|webp)$/i, '')
+    
+    // Construct alternate image path
+    return `/images/products/alternate images/${filenameWithoutExt} (2)${extension}`
+  }
+
   // Try to find the correct image extension
   useEffect(() => {
     if (!product.image.startsWith('/images/products/')) return
@@ -62,7 +75,30 @@ export default function ProductCard({ product }: ProductCardProps) {
       
       const testImg = new window.Image()
       testImg.onload = () => {
-        setImageSrc(`${basePath}${extensions[currentIndex]}`)
+        const foundExtension = extensions[currentIndex]
+        setImageSrc(`${basePath}${foundExtension}`)
+        
+        // Try to load alternate image - try all extensions since alternate might have different extension
+        let alternateIndex = 0
+        const tryAlternateNext = () => {
+          if (alternateIndex >= extensions.length) {
+            setAlternateImageError(true)
+            return
+          }
+          
+          const alternatePath = getAlternateImagePath(basePath, extensions[alternateIndex])
+          const alternateImg = new window.Image()
+          alternateImg.onload = () => {
+            setAlternateImageSrc(alternatePath)
+          }
+          alternateImg.onerror = () => {
+            alternateIndex++
+            tryAlternateNext()
+          }
+          alternateImg.src = alternatePath
+        }
+        
+        tryAlternateNext()
       }
       testImg.onerror = () => {
         currentIndex++
@@ -107,22 +143,50 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         <div className="relative aspect-[3/4] bg-white rounded-lg overflow-hidden mb-3">
           {imageSrc && !imageError ? (
-            <motion.div
-              whileHover={hoverEffects.imageZoom}
-              transition={transitions.hover}
-              className="absolute inset-0"
-              style={{ willChange: 'transform' }}
-            >
-              <Image
-                src={imageSrc}
-                alt={product.name}
-                fill
-                className="object-cover"
-                onError={() => setImageError(true)}
-                sizes="(max-width: 768px) 50vw, 25vw"
-                priority={false}
-              />
-            </motion.div>
+            <>
+              {/* Main Image */}
+              <motion.div
+                whileHover={hoverEffects.imageZoom}
+                transition={transitions.hover}
+                className="absolute inset-0"
+                style={{ willChange: 'transform' }}
+                animate={{ opacity: isHovered && alternateImageSrc && !alternateImageError ? 0 : 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Image
+                  src={imageSrc}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  onError={() => setImageError(true)}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  priority={false}
+                />
+              </motion.div>
+              
+              {/* Alternate Image on Hover */}
+              {alternateImageSrc && !alternateImageError && (
+                <motion.div
+                  whileHover={hoverEffects.imageZoom}
+                  transition={transitions.hover}
+                  className="absolute inset-0"
+                  style={{ willChange: 'transform' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isHovered ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Image
+                    src={alternateImageSrc}
+                    alt={`${product.name} - alternate view`}
+                    fill
+                    className="object-cover"
+                    onError={() => setAlternateImageError(true)}
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    priority={false}
+                  />
+                </motion.div>
+              )}
+            </>
           ) : (
             <PlaceholderImage seed={product.id} />
           )}
@@ -180,10 +244,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm p-4 z-20"
+                className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm p-2 z-20"
               >
-                <p className="text-base font-semibold text-gray-900 mb-2">Select size</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-nowrap gap-1.5 justify-center">
                   {SIZES.map((size) => {
                     const outOfStock = isSizeOutOfStock(size)
                     const stock = getStockForSize(size)
@@ -196,7 +259,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                           if (!outOfStock) handleSizeSelect(size)
                         }}
                         disabled={outOfStock}
-                        className={`px-3 py-1.5 text-xs font-medium transition-all focus:outline-none ${
+                        className={`px-2 py-1 text-xs font-medium transition-all focus:outline-none flex-shrink-0 ${
                           outOfStock
                             ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             : stock > 0
