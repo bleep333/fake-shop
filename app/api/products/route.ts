@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const gender = searchParams.get('gender') as 'mens' | 'womens' | 'unisex' | null
     const categories = searchParams.getAll('category') // Handle multiple categories
     const tags = searchParams.getAll('tag') // Handle multiple tags
+    const colors = searchParams.getAll('color') // Handle multiple colors
     const sortBy = searchParams.get('sortBy') || 'newest'
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
@@ -40,6 +41,12 @@ export async function GET(request: NextRequest) {
           tags: { hasEvery: tags }
         })
       }
+    }
+    
+    if (colors.length > 0) {
+      conditions.push({
+        color: { in: colors }
+      })
     }
     
     if (minPrice || maxPrice) {

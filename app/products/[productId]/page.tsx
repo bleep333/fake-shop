@@ -30,6 +30,7 @@ async function getProduct(productId: string): Promise<Product | null> {
         salePrice: product.salePrice || undefined,
         category: product.category as 'shirts' | 'pants' | 'outerwear' | 'accessories',
         gender: product.gender as 'mens' | 'womens' | 'unisex',
+        color: product.color || undefined,
         image: product.image,
         description: product.description || undefined,
         tags: product.tags,

@@ -109,12 +109,13 @@ model Product {
   salePrice         Float?
   category          String        // 'shirts' | 'pants' | 'outerwear' | 'accessories'
   gender            String        // 'mens' | 'womens' | 'unisex'
+  color             String?       // Product color (e.g., 'Black', 'White', 'Red', 'Blue')
   image             String
   description       String?       @db.Text
   tags              String[]      // Array of tags like ['New', 'Sale']
   sizes             String[]      // Array of available sizes
   stockBySize       Json?         // Object mapping size to stock count, e.g., {"S": 10, "M": 20, "L": 15}
-  status            String        @default("active") // 'active' | 'draft' | 'archived'
+  status            String        @default("active") // 'active' | 'archived'
   isVisible         Boolean       @default(true)
   lowStockThreshold Int           @default(10) // Warn when stock falls below this
   wishlistItems     WishlistItem[]
@@ -123,6 +124,7 @@ model Product {
 
   @@index([gender])
   @@index([category])
+  @@index([color])
   @@index([gender, category])
   @@index([status])
   @@index([isVisible])

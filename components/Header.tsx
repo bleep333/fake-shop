@@ -20,7 +20,7 @@ export default function Header() {
   const cartCount = getCartCount()
   const wishlistCount = getWishlistCount()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<'shop' | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<'shop' | 'company' | 'blog' | null>(null)
   const pathname = usePathname()
   // Initialize isScrolled based on pathname - non-home pages should always have white header
   const [isScrolled, setIsScrolled] = useState(pathname !== '/')
@@ -131,22 +131,19 @@ export default function Header() {
           })
         }}
       >
-        <div className="container-custom">
+        <div className="max-w-[1600px] mx-auto px-8 lg:px-12 xl:px-16">
           <div className="flex items-center justify-between h-20 md:h-24">
             {/* Left Navigation: Shop, Company, Blog */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-8 lg:gap-10">
               {/* Shop Dropdown */}
-              <div className="relative">
+              <div 
+                className="relative"
+                onMouseEnter={() => setOpenDropdown('shop')}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
                 <button
-                  onClick={() => {
-                    if (openDropdown === 'shop') {
-                      setOpenDropdown(null)
-                    } else {
-                      setOpenDropdown('shop')
-                    }
-                  }}
-                  className={`text-sm font-light tracking-wide transition-colors ${
-                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-black'
+                  className={`text-base font-medium tracking-wide transition-colors ${
+                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-black'
                   }`}
                 >
                   Shop
@@ -160,6 +157,8 @@ export default function Header() {
                       exit="exit"
                       className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-[100]"
                       style={{ willChange: 'transform, opacity', minWidth: '600px' }}
+                      onMouseEnter={() => setOpenDropdown('shop')}
+                      onMouseLeave={() => setOpenDropdown(null)}
                     >
                       <div className="grid grid-cols-3 gap-12">
                         {/* Discover Column */}
@@ -170,8 +169,7 @@ export default function Header() {
                           <ul className="space-y-2">
                             <li>
                               <Link
-                                href="/mens"
-                                onClick={() => setOpenDropdown(null)}
+                                href="/all"
                                 className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
                                 All
@@ -180,7 +178,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/new-arrivals"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 New
@@ -188,8 +185,7 @@ export default function Header() {
                             </li>
                             <li>
                               <Link
-                                href="/mens"
-                                onClick={() => setOpenDropdown(null)}
+                                href="/popular"
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Popular
@@ -197,8 +193,7 @@ export default function Header() {
                             </li>
                             <li>
                               <Link
-                                href="/mens?tag=Sale"
-                                onClick={() => setOpenDropdown(null)}
+                                href="/sale"
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Sale
@@ -216,7 +211,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
                                 All Men's
@@ -225,7 +219,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=t-shirts"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 T-Shirts
@@ -234,7 +227,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=shirts"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Shirts
@@ -243,7 +235,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=hoodies"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Hoodies
@@ -252,7 +243,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=jackets"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jackets
@@ -261,7 +251,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=knitwear"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Knitwear
@@ -270,7 +259,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=pants"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Pants
@@ -279,7 +267,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=jeans"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jeans
@@ -288,7 +275,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=shorts"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Shorts
@@ -297,7 +283,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=accessories"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Accessories
@@ -315,7 +300,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
                                 All Women's
@@ -324,7 +308,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=dresses"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Dresses
@@ -333,7 +316,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=tops"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Tops
@@ -342,7 +324,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=t-shirts"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 T-Shirts
@@ -351,7 +332,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=skirts"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Skirts
@@ -360,7 +340,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=pants"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Pants
@@ -369,7 +348,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=jeans"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jeans
@@ -378,7 +356,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=jackets"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jackets
@@ -387,7 +364,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=knitwear"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Knitwear
@@ -396,7 +372,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=shorts"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Shorts
@@ -405,7 +380,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=jumpsuits"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jumpsuits
@@ -414,7 +388,6 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=lingerie"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Lingerie
@@ -423,11 +396,10 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=accessories"
-                                onClick={() => setOpenDropdown(null)}
                                 className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Accessories
-                              </Link>
+            </Link>
                             </li>
                           </ul>
                         </div>
@@ -437,31 +409,123 @@ export default function Header() {
                 </AnimatePresence>
               </div>
 
-              {/* Company */}
-              <Link 
-                href="/about"
-                className={`text-sm font-light tracking-wide transition-colors ${
-                  isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-black'
-                }`}
+              {/* Company Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setOpenDropdown('company')}
+                onMouseLeave={() => setOpenDropdown(null)}
               >
-                Company
-              </Link>
+                <button
+                  className={`text-base font-medium tracking-wide transition-colors ${
+                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-black'
+                  }`}
+                >
+                  Company
+                </button>
+                <AnimatePresence>
+                  {openDropdown === 'company' && (
+                    <motion.div
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-[100]"
+                      style={{ willChange: 'transform, opacity', minWidth: '280px' }}
+                      onMouseEnter={() => setOpenDropdown('company')}
+                      onMouseLeave={() => setOpenDropdown(null)}
+                    >
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/about"
+                            className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                          >
+                            About
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/values"
+                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                          >
+                            Values
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/locations"
+                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                          >
+                            Locations
+                          </Link>
+                        </li>
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-              {/* Blog */}
-              <Link 
-                href="/blog"
-                className={`text-sm font-light tracking-wide transition-colors ${
-                  isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-black'
-                }`}
+              {/* Blog Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setOpenDropdown('blog')}
+                onMouseLeave={() => setOpenDropdown(null)}
               >
-                Blog
-              </Link>
+                <button
+                  className={`text-base font-medium tracking-wide transition-colors ${
+                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-black'
+                  }`}
+                >
+                  Blog
+                </button>
+                <AnimatePresence>
+                  {openDropdown === 'blog' && (
+                    <motion.div
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-[100]"
+                      style={{ willChange: 'transform, opacity', minWidth: '280px' }}
+                      onMouseEnter={() => setOpenDropdown('blog')}
+                      onMouseLeave={() => setOpenDropdown(null)}
+                    >
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/blog"
+                            className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                          >
+                            Newsroom
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/faqs"
+                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                          >
+                            FAQ's
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/contact"
+                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                          >
+                            Contact
+                          </Link>
+                        </li>
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </nav>
 
             {/* Center: NOVARA Brand (Large, Centered) */}
-            <Link 
+              <Link 
               href="/" 
-              className={`text-3xl md:text-4xl font-serif font-normal tracking-tight transition-opacity hover:opacity-70 ${
+              className={`text-4xl md:text-5xl font-serif font-normal tracking-tight transition-opacity hover:opacity-70 ${
                 isOnHero ? 'text-white' : 'text-black'
               }`}
               style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}
@@ -470,7 +534,7 @@ export default function Header() {
             </Link>
 
             {/* Right: Search, Wishlist, Cart */}
-            <div className="flex items-center gap-4 md:gap-6">
+            <div className="flex items-center gap-5 md:gap-7">
               {/* Search Icon */}
               <button
                 onClick={() => setIsSearchOpen(true)}
@@ -479,7 +543,7 @@ export default function Header() {
                 }`}
                 aria-label="Search"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
@@ -492,11 +556,11 @@ export default function Header() {
                 }`}
                 aria-label="Wishlist"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 {wishlistCount > 0 && (
-                  <span className={`absolute top-0 right-0 text-xs rounded-full w-4 h-4 flex items-center justify-center ${
+                  <span className={`absolute top-0 right-0 text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold ${
                     isOnHero ? 'bg-white text-black' : 'bg-black text-white'
                   }`}>
                     {wishlistCount > 9 ? '9+' : wishlistCount}
@@ -505,18 +569,18 @@ export default function Header() {
               </Link>
 
               {/* Cart Icon */}
-              <button
+                  <button
                 onClick={() => setIsCartOpen(true)}
                 className={`relative p-2 transition-colors rounded-full ${
                   isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
                 }`}
                 aria-label="Shopping cart"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 {cartCount > 0 && (
-                  <span className={`absolute top-0 right-0 text-xs rounded-full w-4 h-4 flex items-center justify-center ${
+                  <span className={`absolute top-0 right-0 text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold ${
                     isOnHero ? 'bg-white text-black' : 'bg-black text-white'
                   }`}>
                     {cartCount > 9 ? '9+' : cartCount}
@@ -534,7 +598,7 @@ export default function Header() {
                     }`}
                     aria-label="Profile"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </Link>
@@ -563,7 +627,7 @@ export default function Header() {
                   }`}
                   aria-label="Sign In"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </Link>

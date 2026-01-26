@@ -9,7 +9,7 @@ import { getProducts, filterProductsBySize, FilterOptions, SortOption } from '@/
 import { Product } from '@/lib/mockProducts'
 import { staggerContainer, staggerFadeUp } from '@/lib/motion.config'
 
-export default function WomensContent() {
+export default function PopularContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [filters, setFilters] = useState<FilterOptions>({})
@@ -62,12 +62,12 @@ export default function WomensContent() {
     }
   }, [searchParams])
 
-  // Calculate price range and get available colors and categories from all womens products
+  // Calculate price range and get available colors and categories from all popular products
   useEffect(() => {
     async function calculatePriceRangeAndColors() {
       try {
         const allProducts = await getProducts({
-          gender: 'womens',
+          tags: ['Popular'],
           sortBy: 'price-low',
         })
         if (allProducts.length > 0) {
@@ -81,8 +81,8 @@ export default function WomensContent() {
           const colors = Array.from(new Set(
             allProducts
               .map(p => p.color)
-              .filter((color): color is string => !!color)
-          )).sort()
+              .filter((color): color is string => color !== null && color !== undefined)
+          ))
           setAvailableColors(colors)
           
           // Extract unique categories
@@ -102,10 +102,20 @@ export default function WomensContent() {
     async function loadProducts() {
       setLoading(true)
       try {
+        // Always filter by "Popular" tag, but also include any additional tags from filters
+        const tagsToFilter = ['Popular']
+        if (filters.tags && filters.tags.length > 0) {
+          // Add other tags if selected (though for Popular, we primarily show "Popular")
+          filters.tags.forEach(tag => {
+            if (tag !== 'Popular' && !tagsToFilter.includes(tag)) {
+              tagsToFilter.push(tag)
+            }
+          })
+        }
+        
         const fetchedProducts = await getProducts({
-          gender: 'womens',
+          tags: tagsToFilter,
           category: filters.category,
-          tags: filters.tags,
           maxPrice: filters.maxPrice,
           sortBy,
         })
@@ -148,13 +158,12 @@ export default function WomensContent() {
     <div className="w-full py-8">
       {/* Collection Header */}
       <div className="mb-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold mb-3">Womens Collection</h1>
+        <h1 className="text-4xl font-bold mb-3">Popular</h1>
         <p className="text-gray-600 text-base">
-          Explore our curated womens fashion collection. Style that speaks to you.
+          Discover our most loved products. Handpicked favorites from our community.
         </p>
       </div>
 
-      {/* Main Content - Sidebar + Products */}
       <div className="flex gap-12 px-4 sm:px-6 lg:px-8">
         {/* Filter Sidebar - Always Visible on Desktop */}
         <aside className="hidden lg:block flex-shrink-0">
@@ -180,17 +189,29 @@ export default function WomensContent() {
                 params.append('maxPrice', newFilters.maxPrice.toString())
               }
               const queryString = params.toString()
-              router.push(queryString ? `/womens?${queryString}` : '/womens', { scroll: false })
+              router.push(queryString ? `/popular?${queryString}` : '/popular', { scroll: false })
             }} 
             priceRange={priceRange}
             availableColors={availableColors}
             availableCategories={availableCategories}
-            currentGender="womens"
+            currentGender={undefined}
           />
         </aside>
 
         {/* Products Section */}
         <div className="flex-1">
+          {/* Mobile Filter Button */}
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filters
+            </button>
+          </div>
 
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-8">
@@ -218,7 +239,7 @@ export default function WomensContent() {
 
           {/* Products Grid */}
           {displayProducts.length === 0 && loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-12">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-[3/4] bg-gray-100 rounded-lg animate-pulse" />
               ))}
@@ -230,7 +251,7 @@ export default function WomensContent() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}
+                className={`grid grid-cols-2 md:grid-cols-3 gap-6 mb-12 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}
               >
                 {loading && (
                   <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
@@ -283,74 +304,60 @@ export default function WomensContent() {
               <p className="text-gray-600">No products found. Try adjusting your filters.</p>
             </div>
           )}
-
-          {/* Mobile Filter Button */}
-          <div className="lg:hidden mb-4">
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              Filters
-            </button>
-          </div>
-
-          {/* Mobile Filter Drawer */}
-          {isFilterOpen && (
-            <>
-              <div
-                className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-                onClick={() => setIsFilterOpen(false)}
-              />
-              <div className="fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-xl p-6 overflow-y-auto lg:hidden">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold">Filters</h2>
-                  <button
-                    onClick={() => setIsFilterOpen(false)}
-                    className="p-2 hover:bg-gray-100 rounded-full"
-                    aria-label="Close filters"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                <FilterSidebar 
-                  filters={filters} 
-                  onFiltersChange={(newFilters) => {
-                    setFilters(newFilters)
-                    // Update URL with new filters
-                    const params = new URLSearchParams()
-                    if (newFilters.category && newFilters.category.length > 0) {
-                      newFilters.category.forEach(cat => params.append('category', cat))
-                    }
-                    if (newFilters.tags && newFilters.tags.length > 0) {
-                      newFilters.tags.forEach(tag => params.append('tag', tag))
-                    }
-                    if (newFilters.color && newFilters.color.length > 0) {
-                      newFilters.color.forEach(color => params.append('color', color))
-                    }
-                    if (newFilters.size && newFilters.size.length > 0) {
-                      newFilters.size.forEach(size => params.append('size', size))
-                    }
-                    if (newFilters.maxPrice !== undefined) {
-                      params.append('maxPrice', newFilters.maxPrice.toString())
-                    }
-                    const queryString = params.toString()
-                    router.push(queryString ? `/womens?${queryString}` : '/womens', { scroll: false })
-                  }} 
-                  priceRange={priceRange}
-                  availableColors={availableColors}
-                  currentGender="womens"
-                />
-              </div>
-            </>
-          )}
         </div>
       </div>
+
+      {/* Mobile Filter Drawer */}
+      {isFilterOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setIsFilterOpen(false)}
+          />
+          <div className="fixed top-0 left-0 h-full w-80 lg:w-96 bg-white z-50 shadow-xl p-6 overflow-y-auto lg:hidden">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+                aria-label="Close filters"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <FilterSidebar 
+              filters={filters} 
+              onFiltersChange={(newFilters) => {
+                setFilters(newFilters)
+                // Update URL with new filters
+                const params = new URLSearchParams()
+                if (newFilters.category && newFilters.category.length > 0) {
+                  newFilters.category.forEach(cat => params.append('category', cat))
+                }
+                if (newFilters.tags && newFilters.tags.length > 0) {
+                  newFilters.tags.forEach(tag => params.append('tag', tag))
+                }
+                if (newFilters.color && newFilters.color.length > 0) {
+                  newFilters.color.forEach(color => params.append('color', color))
+                }
+                if (newFilters.size && newFilters.size.length > 0) {
+                  newFilters.size.forEach(size => params.append('size', size))
+                }
+                if (newFilters.maxPrice !== undefined) {
+                  params.append('maxPrice', newFilters.maxPrice.toString())
+                }
+                const queryString = params.toString()
+                router.push(queryString ? `/popular?${queryString}` : '/popular', { scroll: false })
+              }} 
+              priceRange={priceRange}
+              availableColors={availableColors}
+              currentGender={undefined}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }
-

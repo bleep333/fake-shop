@@ -65,6 +65,7 @@ export async function PATCH(
     if (body.salePrice !== undefined) updateData.salePrice = body.salePrice ? parseFloat(body.salePrice) : null
     if (body.category !== undefined) updateData.category = body.category
     if (body.gender !== undefined) updateData.gender = body.gender
+    if (body.color !== undefined) updateData.color = body.color || null
     if (body.image !== undefined) updateData.image = body.image
     if (body.tags !== undefined) updateData.tags = body.tags
     if (body.sizes !== undefined) updateData.sizes = body.sizes

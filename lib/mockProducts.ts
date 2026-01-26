@@ -3,8 +3,9 @@ export type Product = {
   name: string
   basePrice: number
   salePrice?: number | null
-  category: 'shirts' | 'pants' | 'outerwear' | 'accessories'
+  category: 'shirts' | 'pants' | 'outerwear' | 'accessories' | string
   gender: 'mens' | 'womens' | 'unisex'
+  color?: string | null
   image: string
   description?: string | null
   tags: string[]
@@ -45,6 +46,8 @@ export const mockProducts: Product[] = [
 export type FilterOptions = {
   category?: string[]
   size?: string[]
+  color?: string[]
+  tags?: string[] // For Collection filter (New, Popular, Sale)
   minPrice?: number
   maxPrice?: number
 }

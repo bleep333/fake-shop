@@ -4,6 +4,7 @@ export async function getProducts(filters?: {
   gender?: 'mens' | 'womens' | 'unisex'
   category?: string[]
   tags?: string[]
+  color?: string[]
   minPrice?: number
   maxPrice?: number
   sortBy?: SortOption
@@ -16,6 +17,9 @@ export async function getProducts(filters?: {
   }
   if (filters?.tags && filters.tags.length > 0) {
     filters.tags.forEach(tag => params.append('tag', tag))
+  }
+  if (filters?.color && filters.color.length > 0) {
+    filters.color.forEach(color => params.append('color', color))
   }
   if (filters?.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString())
   if (filters?.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString())

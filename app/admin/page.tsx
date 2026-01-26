@@ -1301,6 +1301,7 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
     salePrice: product?.salePrice || '',
     category: product?.category || 'shirts',
     gender: product?.gender || 'mens',
+    color: product?.color || '',
     image: product?.image || '',
     tags: product?.tags || [], // Changed to array
     sizes: product?.sizes?.join(', ') || 'S, M, L, XL, 2XL',
@@ -1520,17 +1521,29 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
-            <select
-              required
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-            >
-              <option value="active">Active (Visible on website)</option>
-              <option value="archived">Archived (Not visible on website)</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+              <input
+                type="text"
+                value={formData.color}
+                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="e.g., Black, White, Red, Blue"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+              <select
+                required
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="active">Active (Visible on website)</option>
+                <option value="archived">Archived (Not visible on website)</option>
+              </select>
+            </div>
           </div>
 
           <div>

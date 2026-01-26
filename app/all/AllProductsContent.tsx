@@ -9,7 +9,7 @@ import { getProducts, filterProductsBySize, FilterOptions, SortOption } from '@/
 import { Product } from '@/lib/mockProducts'
 import { staggerContainer, staggerFadeUp } from '@/lib/motion.config'
 
-export default function WomensContent() {
+export default function AllProductsContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [filters, setFilters] = useState<FilterOptions>({})
@@ -62,12 +62,11 @@ export default function WomensContent() {
     }
   }, [searchParams])
 
-  // Calculate price range and get available colors and categories from all womens products
+  // Calculate price range and get available colors from all products
   useEffect(() => {
     async function calculatePriceRangeAndColors() {
       try {
         const allProducts = await getProducts({
-          gender: 'womens',
           sortBy: 'price-low',
         })
         if (allProducts.length > 0) {
@@ -85,7 +84,7 @@ export default function WomensContent() {
           )).sort()
           setAvailableColors(colors)
           
-          // Extract unique categories
+          // Extract unique categories (all categories without duplicates)
           const categories = Array.from(new Set(
             allProducts.map(p => p.category)
           )).sort()
@@ -102,8 +101,8 @@ export default function WomensContent() {
     async function loadProducts() {
       setLoading(true)
       try {
+        // Don't filter by gender - get all products
         const fetchedProducts = await getProducts({
-          gender: 'womens',
           category: filters.category,
           tags: filters.tags,
           maxPrice: filters.maxPrice,
@@ -148,9 +147,9 @@ export default function WomensContent() {
     <div className="w-full py-8">
       {/* Collection Header */}
       <div className="mb-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold mb-3">Womens Collection</h1>
+        <h1 className="text-4xl font-bold mb-3">All Products</h1>
         <p className="text-gray-600 text-base">
-          Explore our curated womens fashion collection. Style that speaks to you.
+          Discover our complete collection. From casual to formal, find your perfect style.
         </p>
       </div>
 
@@ -180,17 +179,29 @@ export default function WomensContent() {
                 params.append('maxPrice', newFilters.maxPrice.toString())
               }
               const queryString = params.toString()
-              router.push(queryString ? `/womens?${queryString}` : '/womens', { scroll: false })
+              router.push(queryString ? `/all?${queryString}` : '/all', { scroll: false })
             }} 
             priceRange={priceRange}
             availableColors={availableColors}
             availableCategories={availableCategories}
-            currentGender="womens"
+            currentGender={undefined}
           />
         </aside>
 
         {/* Products Section */}
         <div className="flex-1">
+          {/* Mobile Filter Button */}
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filters
+            </button>
+          </div>
 
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-8">
@@ -284,19 +295,6 @@ export default function WomensContent() {
             </div>
           )}
 
-          {/* Mobile Filter Button */}
-          <div className="lg:hidden mb-4">
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              Filters
-            </button>
-          </div>
-
           {/* Mobile Filter Drawer */}
           {isFilterOpen && (
             <>
@@ -339,11 +337,11 @@ export default function WomensContent() {
                       params.append('maxPrice', newFilters.maxPrice.toString())
                     }
                     const queryString = params.toString()
-                    router.push(queryString ? `/womens?${queryString}` : '/womens', { scroll: false })
+                    router.push(queryString ? `/all?${queryString}` : '/all', { scroll: false })
                   }} 
                   priceRange={priceRange}
                   availableColors={availableColors}
-                  currentGender="womens"
+                  currentGender={undefined}
                 />
               </div>
             </>
@@ -353,4 +351,3 @@ export default function WomensContent() {
     </div>
   )
 }
-

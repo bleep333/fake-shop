@@ -1,10 +1,10 @@
 import { Suspense } from 'react'
-import NewArrivalsContent from './NewArrivalsContent'
+import AllProductsContent from './AllProductsContent'
 
-export default function NewArrivalsPage() {
+export default function AllProductsPage() {
   return (
     <Suspense fallback={<div className="w-full py-8 px-4 sm:px-6 lg:px-8">Loading...</div>}>
-      <NewArrivalsContent />
+      <AllProductsContent />
     </Suspense>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import ProductCard from '@/components/ProductCard'
 import FilterSidebar from '@/components/FilterSidebar'
@@ -11,6 +11,7 @@ import { staggerContainer, staggerFadeUp } from '@/lib/motion.config'
 
 export default function MensContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [filters, setFilters] = useState<FilterOptions>({})
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [currentPage, setCurrentPage] = useState(1)
@@ -18,19 +19,52 @@ export default function MensContent() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [priceRange, setPriceRange] = useState<{ min: number; max: number } | undefined>(undefined)
+  const [availableColors, setAvailableColors] = useState<string[]>([])
+  const [availableCategories, setAvailableCategories] = useState<string[]>([])
   const productsPerPage = 12
 
   useEffect(() => {
-    // Check for category in URL params
-    const category = searchParams.get('category')
-    if (category) {
-      setFilters({ category: [category] })
+    // Check for all filter params in URL
+    const category = searchParams.getAll('category')
+    const tags = searchParams.getAll('tag')
+    const colors = searchParams.getAll('color')
+    const sizes = searchParams.getAll('size')
+    const maxPrice = searchParams.get('maxPrice')
+    
+    const newFilters: FilterOptions = {}
+    
+    if (category.length > 0) {
+      newFilters.category = category
+    }
+    
+    if (tags.length > 0) {
+      newFilters.tags = tags
+    }
+    
+    if (colors.length > 0) {
+      newFilters.color = colors
+    }
+    
+    if (sizes.length > 0) {
+      newFilters.size = sizes
+    }
+    
+    if (maxPrice) {
+      newFilters.maxPrice = parseFloat(maxPrice)
+    }
+    
+    // Only update if there are actual filters
+    if (Object.keys(newFilters).length > 0) {
+      setFilters(newFilters)
+    } else {
+      // Clear filters if no URL params
+      setFilters({})
     }
   }, [searchParams])
 
-  // Calculate price range from all mens products
+  // Calculate price range and get available colors and categories from all mens products
   useEffect(() => {
-    async function calculatePriceRange() {
+    async function calculatePriceRangeAndColors() {
       try {
         const allProducts = await getProducts({
           gender: 'mens',
@@ -42,12 +76,26 @@ export default function MensContent() {
             min: Math.min(...prices),
             max: Math.max(...prices),
           })
+          
+          // Extract unique colors
+          const colors = Array.from(new Set(
+            allProducts
+              .map(p => p.color)
+              .filter((color): color is string => !!color)
+          )).sort()
+          setAvailableColors(colors)
+          
+          // Extract unique categories
+          const categories = Array.from(new Set(
+            allProducts.map(p => p.category)
+          )).sort()
+          setAvailableCategories(categories)
         }
       } catch (error) {
-        console.error('Failed to calculate price range:', error)
+        console.error('Failed to calculate price range, colors, and categories:', error)
       }
     }
-    calculatePriceRange()
+    calculatePriceRangeAndColors()
   }, [])
 
   useEffect(() => {
@@ -57,11 +105,18 @@ export default function MensContent() {
         const fetchedProducts = await getProducts({
           gender: 'mens',
           category: filters.category,
+          tags: filters.tags,
           maxPrice: filters.maxPrice,
           sortBy,
         })
-        // Apply size filter on client side
-        const filtered = filterProductsBySize(fetchedProducts, filters.size)
+        // Apply size and color filters on client side
+        let filtered = filterProductsBySize(fetchedProducts, filters.size)
+        
+        // Filter by color
+        if (filters.color && filters.color.length > 0) {
+          filtered = filtered.filter(p => p.color && filters.color!.includes(p.color))
+        }
+        
         setProducts(filtered)
         setCurrentPage(1) // Reset to first page when filters change
       } catch (error) {
@@ -90,38 +145,72 @@ export default function MensContent() {
   const paginatedProducts = displayProducts.slice(startIndex, startIndex + productsPerPage)
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full py-8">
       {/* Collection Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Mens Collection</h1>
-        <p className="text-gray-600">
+      <div className="mb-12 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-bold mb-3">Mens Collection</h1>
+        <p className="text-gray-600 text-base">
           Discover our latest mens fashion collection. From casual to formal, find your perfect style.
         </p>
       </div>
 
-      {/* Filter Button */}
-      <div className="mb-4">
-        <button
-          onClick={() => setIsFilterOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-          </svg>
-          Filters
-        </button>
-      </div>
+      {/* Main Content - Sidebar + Products */}
+      <div className="flex gap-12 px-4 sm:px-6 lg:px-8">
+        {/* Filter Sidebar - Always Visible on Desktop */}
+        <aside className="hidden lg:block flex-shrink-0">
+          <FilterSidebar 
+            filters={filters} 
+            onFiltersChange={(newFilters) => {
+              setFilters(newFilters)
+              // Update URL with new filters
+              const params = new URLSearchParams()
+              if (newFilters.category && newFilters.category.length > 0) {
+                newFilters.category.forEach(cat => params.append('category', cat))
+              }
+              if (newFilters.tags && newFilters.tags.length > 0) {
+                newFilters.tags.forEach(tag => params.append('tag', tag))
+              }
+              if (newFilters.color && newFilters.color.length > 0) {
+                newFilters.color.forEach(color => params.append('color', color))
+              }
+              if (newFilters.size && newFilters.size.length > 0) {
+                newFilters.size.forEach(size => params.append('size', size))
+              }
+              if (newFilters.maxPrice !== undefined) {
+                params.append('maxPrice', newFilters.maxPrice.toString())
+              }
+              const queryString = params.toString()
+              router.push(queryString ? `/mens?${queryString}` : '/mens', { scroll: false })
+            }} 
+            priceRange={priceRange}
+            availableColors={availableColors}
+            availableCategories={availableCategories}
+            currentGender="mens"
+          />
+        </aside>
 
-      {/* Main Content */}
-      <div>
+        {/* Products Section */}
+        <div className="flex-1">
+          {/* Mobile Filter Button */}
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filters
+            </button>
+          </div>
 
           {/* Sort and Results Count */}
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-gray-600">
-              {loading ? 'Loading...' : `${displayProducts.length} ${displayProducts.length === 1 ? 'product' : 'products'}`}
+          <div className="flex items-center justify-between mb-8">
+            <p className="text-base font-semibold text-gray-900">
+              {loading ? 'Loading...' : `${displayProducts.length} total`}
             </p>
             <div className="flex items-center gap-2">
-              <label htmlFor="sort" className="text-sm text-gray-600">Sort by:</label>
+              <label htmlFor="sort" className="text-base font-semibold text-gray-900">Sort</label>
               <select
                 id="sort"
                 value={sortBy}
@@ -129,11 +218,12 @@ export default function MensContent() {
                   setSortBy(e.target.value as SortOption)
                   setCurrentPage(1)
                 }}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-base bg-white font-medium"
               >
+                <option value="newest">Relevance</option>
                 <option value="newest">Newest</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
+                <option value="price-low">Price (lowest first)</option>
+                <option value="price-high">Price (highest first)</option>
               </select>
             </div>
           </div>
@@ -152,7 +242,7 @@ export default function MensContent() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
-                className={`grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}
+                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 relative ${loading ? 'opacity-60' : 'opacity-100'} transition-opacity duration-200`}
               >
                 {loading && (
                   <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
@@ -205,32 +295,60 @@ export default function MensContent() {
               <p className="text-gray-600">No products found. Try adjusting your filters.</p>
             </div>
           )}
-      </div>
 
-      {/* Filter Drawer */}
-      {isFilterOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setIsFilterOpen(false)}
-          />
-          <div className="fixed top-0 left-0 h-full w-80 lg:w-96 bg-white z-50 shadow-xl p-6 overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">Filters</h2>
-              <button
+          {/* Mobile Filter Drawer */}
+          {isFilterOpen && (
+            <>
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
                 onClick={() => setIsFilterOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-                aria-label="Close filters"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <FilterSidebar filters={filters} onFiltersChange={setFilters} priceRange={priceRange} />
-          </div>
-        </>
-      )}
+              />
+              <div className="fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-xl p-6 overflow-y-auto lg:hidden">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-semibold">Filters</h2>
+                  <button
+                    onClick={() => setIsFilterOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                    aria-label="Close filters"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <FilterSidebar 
+                  filters={filters} 
+                  onFiltersChange={(newFilters) => {
+                    setFilters(newFilters)
+                    // Update URL with new filters
+                    const params = new URLSearchParams()
+                    if (newFilters.category && newFilters.category.length > 0) {
+                      newFilters.category.forEach(cat => params.append('category', cat))
+                    }
+                    if (newFilters.tags && newFilters.tags.length > 0) {
+                      newFilters.tags.forEach(tag => params.append('tag', tag))
+                    }
+                    if (newFilters.color && newFilters.color.length > 0) {
+                      newFilters.color.forEach(color => params.append('color', color))
+                    }
+                    if (newFilters.size && newFilters.size.length > 0) {
+                      newFilters.size.forEach(size => params.append('size', size))
+                    }
+                    if (newFilters.maxPrice !== undefined) {
+                      params.append('maxPrice', newFilters.maxPrice.toString())
+                    }
+                    const queryString = params.toString()
+                    router.push(queryString ? `/mens?${queryString}` : '/mens', { scroll: false })
+                  }} 
+                  priceRange={priceRange}
+                  availableColors={availableColors}
+                  currentGender="mens"
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

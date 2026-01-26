@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '@/lib/mockProducts'
@@ -103,9 +103,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeIn}
-        className="relative"
+        className="relative bg-gray-100 rounded-lg p-4 border border-gray-200"
       >
-        <div className="relative aspect-[3/4] bg-neutral-100 overflow-hidden mb-4">
+        <div className="relative aspect-[3/4] bg-white rounded-lg overflow-hidden mb-3">
           {imageSrc && !imageError ? (
             <motion.div
               whileHover={hoverEffects.imageZoom}
@@ -135,97 +135,94 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="absolute top-3 left-3 flex gap-2 z-10"
           >
             {product.tags.includes('New') && (
-              <span className="bg-black text-white text-xs px-2.5 py-1 font-light tracking-wide">
+              <span className="bg-purple-600 text-white text-xs px-2.5 py-1 font-medium">
                 New
               </span>
             )}
+            {product.tags.includes('Popular') && (
+              <span className="bg-black text-white text-xs px-2.5 py-1 font-medium">
+                Popular
+              </span>
+            )}
             {product.tags.includes('Sale') && product.salePrice && product.basePrice && (
-              <span className="bg-red-600 text-white text-xs px-2.5 py-1 font-light tracking-wide">
+              <span className="bg-red-600 text-white text-xs px-2.5 py-1 font-medium">
                 -{Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%
               </span>
             )}
           </motion.div>
 
-          {/* Wishlist Heart Button */}
-          <motion.button
+          {/* Wishlist Heart Button - Always Visible */}
+          <button
             onClick={handleWishlistToggle}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isHovered ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-3 right-3 p-2.5 bg-white/95 backdrop-blur-sm rounded-full shadow-soft z-10 hover:bg-white"
+            className="absolute top-3 right-3 p-1.5 z-10 hover:opacity-70 transition-opacity"
             aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
           >
-            <motion.svg
-              animate={inWishlist ? { scale: [1, 1.2, 1] } : {}}
-              transition={{ duration: 0.3 }}
-              className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-700'}`}
+            <svg
+              className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-400 stroke-gray-400'}`}
               fill={inWishlist ? 'currentColor' : 'none'}
               stroke="currentColor"
+              strokeWidth={1.5}
               viewBox="0 0 24 24"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={1.5}
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
-            </motion.svg>
-          </motion.button>
+            </svg>
+          </button>
 
-          {/* Size Selection Buttons or Sold Out */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isHovered ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={transitions.quick}
-            className="absolute bottom-0 left-0 right-0 p-4 bg-white/98 backdrop-blur-sm"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            {isAllSizesOutOfStock() ? (
-              <div className="flex justify-center">
-                <div className="px-4 py-2 bg-neutral-200 text-neutral-600 text-sm font-light tracking-wide cursor-not-allowed">
-                  Sold out
+          {/* Size Selection - Overlay on Hover */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm p-4 z-20"
+              >
+                <p className="text-base font-semibold text-gray-900 mb-2">Select size</p>
+                <div className="flex flex-wrap gap-2">
+                  {SIZES.map((size) => {
+                    const outOfStock = isSizeOutOfStock(size)
+                    const stock = getStockForSize(size)
+                    return (
+                      <button
+                        key={size}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          if (!outOfStock) handleSizeSelect(size)
+                        }}
+                        disabled={outOfStock}
+                        className={`px-3 py-1.5 text-xs font-medium transition-all focus:outline-none ${
+                          outOfStock
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : stock > 0
+                            ? 'bg-white border border-gray-300 text-gray-900 hover:border-gray-400'
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    )
+                  })}
                 </div>
-              </div>
-            ) : (
-              <div className="flex gap-2 justify-center">
-                {SIZES.map((size) => {
-                  const outOfStock = isSizeOutOfStock(size)
-                  return (
-                    <motion.button
-                      key={size}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        if (!outOfStock) handleSizeSelect(size)
-                      }}
-                      disabled={outOfStock}
-                      whileHover={!outOfStock ? { scale: 1.05 } : {}}
-                      whileTap={!outOfStock ? { scale: 0.95 } : {}}
-                      transition={transitions.quick}
-                      className={`px-3 py-1.5 border text-xs font-light tracking-wide transition-colors focus:outline-none ${
-                        outOfStock
-                          ? 'border-neutral-200 text-neutral-400 line-through cursor-not-allowed bg-neutral-50'
-                          : 'border-neutral-300 hover:bg-black hover:text-white hover:border-black'
-                      }`}
-                      style={{ willChange: 'transform' }}
-                    >
-                      {size}
-                    </motion.button>
-                  )
-                })}
-              </div>
+              </motion.div>
             )}
-          </motion.div>
+          </AnimatePresence>
         </div>
 
-        <div className="text-center">
-          <h3 className="font-light text-gray-900 mb-1.5 text-sm tracking-wide">{product.name}</h3>
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-base font-light tracking-wide">
+        {/* Product Name and Price */}
+        <div className="text-left">
+          <h3 className="font-semibold text-gray-900 mb-1 text-base">{product.name}</h3>
+          <div className="flex items-center gap-2">
+            <span className="text-base font-semibold text-gray-900">
               ${((product.salePrice || product.basePrice)).toFixed(2)}
             </span>
             {product.salePrice && (
-              <span className="text-sm text-gray-500 line-through font-light">
+              <span className="text-sm text-gray-500 line-through">
                 ${product.basePrice.toFixed(2)}
               </span>
             )}
