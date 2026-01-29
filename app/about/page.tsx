@@ -33,7 +33,7 @@ export default function AboutPage() {
       <section className="w-full py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif font-bold leading-[1.1] max-w-5xl">
-            NOVARA® ISN'T JUST A STORE. IT'S A MOVEMENT IN FORM. BASED IN PARIS, WE CURATE CLEAN, ESSENTIAL DESIGN — NO NOISE, JUST PURPOSE. EVERY PIECE IS CHOSEN FOR ITS FEEL, FUNCTION, AND TIMELESS EDGE. MINIMAL. DURABLE. UNAPOLOGETICALLY REFINED.
+            NOVARA® ISN&apos;T JUST A STORE. IT&apos;S A MOVEMENT IN FORM. BASED IN PARIS, WE CURATE CLEAN, ESSENTIAL DESIGN — NO NOISE, JUST PURPOSE. EVERY PIECE IS CHOSEN FOR ITS FEEL, FUNCTION, AND TIMELESS EDGE. MINIMAL. DURABLE. UNAPOLOGETICALLY REFINED.
           </h2>
         </div>
       </section>
@@ -80,7 +80,7 @@ export default function AboutPage() {
           <h3 className="text-2xl md:text-3xl font-semibold mb-2">Corporate Partners</h3>
           <h4 className="text-xl md:text-2xl font-medium mb-6 md:mb-8 text-gray-700">A natural fit</h4>
           <p className="text-base md:text-lg text-gray-600 mb-8 md:mb-12 max-w-3xl">
-            At NOVARA®, we team up with partners who share our values — purposeful design, long-term thinking, and real-world responsibility. Whether it's ethical labor, reduced carbon footprints, or mental health support, we stand with brands that back progress where it matters. Together, we're building more than product — we're building better standards.
+            At NOVARA®, we team up with partners who share our values — purposeful design, long-term thinking, and real-world responsibility. Whether it&apos;s ethical labor, reduced carbon footprints, or mental health support, we stand with brands that back progress where it matters. Together, we&apos;re building more than product — we&apos;re building better standards.
           </p>
           
           {/* Partner Logos Placeholder */}

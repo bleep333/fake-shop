@@ -355,12 +355,12 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
               <ScrollReveal delay={0.2} className="flex gap-4 pt-6 border-t border-neutral-200">
                 <motion.button
                   onClick={handleAddToCart}
-                  disabled={!selectedSize || isAllSizesOutOfStock || (selectedSize && isSizeOutOfStock(selectedSize))}
-                  whileHover={(!selectedSize || isAllSizesOutOfStock || (selectedSize && isSizeOutOfStock(selectedSize))) ? {} : hoverEffects.buttonFill}
-                  whileTap={(!selectedSize || isAllSizesOutOfStock || (selectedSize && isSizeOutOfStock(selectedSize))) ? {} : { scale: 0.98 }}
+                  disabled={!selectedSize || isAllSizesOutOfStock || (selectedSize ? isSizeOutOfStock(selectedSize) : false)}
+                  whileHover={(!selectedSize || isAllSizesOutOfStock || (selectedSize ? isSizeOutOfStock(selectedSize) : false)) ? {} : hoverEffects.buttonFill}
+                  whileTap={(!selectedSize || isAllSizesOutOfStock || (selectedSize ? isSizeOutOfStock(selectedSize) : false)) ? {} : { scale: 0.98 }}
                   transition={transitions.quick}
                   className={`flex-1 py-4 px-6 text-base font-light tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
-                    !selectedSize || isAllSizesOutOfStock || (selectedSize && isSizeOutOfStock(selectedSize))
+                    !selectedSize || isAllSizesOutOfStock || (selectedSize ? isSizeOutOfStock(selectedSize) : false)
                       ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
                       : 'bg-black text-white hover:bg-neutral-800'
                   }`}

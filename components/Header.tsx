@@ -213,7 +213,7 @@ export default function Header() {
                                 href="/mens"
                                 className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
-                                All Men's
+                                All Men&apos;s
                               </Link>
                             </li>
                             <li>
@@ -302,7 +302,7 @@ export default function Header() {
                                 href="/womens"
                                 className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
-                                All Women's
+                                All Women&apos;s
                               </Link>
                             </li>
                             <li>
@@ -504,7 +504,7 @@ export default function Header() {
                             href="/faqs"
                             className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
                           >
-                            FAQ's
+                            FAQ&apos;s
                           </Link>
                         </li>
                         <li>

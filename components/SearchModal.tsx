@@ -159,7 +159,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           <div className="flex-1 min-w-0">
                             <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
                             <p className="text-sm text-gray-500 mt-1">
-                              {product.category} • ${product.price}
+                              {product.category} • ${(product.salePrice || product.basePrice).toFixed(2)}
                             </p>
                           </div>
                         </div>

@@ -151,7 +151,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                 className="absolute inset-0"
                 style={{ willChange: 'transform' }}
                 animate={{ opacity: isHovered && alternateImageSrc && !alternateImageError ? 0 : 1 }}
-                transition={{ duration: 0.3 }}
               >
                 <Image
                   src={imageSrc}
@@ -173,7 +172,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                   style={{ willChange: 'transform' }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: isHovered ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
                 >
                   <Image
                     src={alternateImageSrc}

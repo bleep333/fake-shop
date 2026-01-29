@@ -13,6 +13,7 @@ type Product = {
   salePrice?: number | null
   category: string
   gender: string
+  color?: string | null
   image: string
   tags: string[]
   sizes: string[]

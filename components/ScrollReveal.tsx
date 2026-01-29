@@ -33,7 +33,7 @@ export default function ScrollReveal({
       animate={isVisible ? "visible" : "hidden"}
       variants={variants[variant]}
       transition={{
-        ...getReducedMotionTransition(prefersReducedMotion),
+        ...getReducedMotionTransition(prefersReducedMotion ?? false),
         delay,
       }}
       className={className}
