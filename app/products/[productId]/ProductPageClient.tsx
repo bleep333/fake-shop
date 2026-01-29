@@ -30,9 +30,20 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [imageError, setImageError] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const [alternateImageSrc, setAlternateImageSrc] = useState<string | null>(null)
+  const [alternateImageError, setAlternateImageError] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isSticky, setIsSticky] = useState(false)
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [loadingRelated, setLoadingRelated] = useState(true)
+
+  // Helper function to get alternate image path
+  const getAlternateImagePath = (basePath: string, extension: string): string => {
+    const pathParts = basePath.split('/')
+    const filename = pathParts[pathParts.length - 1]
+    const filenameWithoutExt = filename.replace(/\.(jpg|jpeg|png|webp)$/i, '')
+    return `/images/products/alternate images/${filenameWithoutExt} (2)${extension}`
+  }
 
   // Handle image extension detection (client-side only)
   useEffect(() => {
@@ -54,7 +65,30 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         
         const testImg = new window.Image()
         testImg.onload = () => {
-          setImageSrc(`${basePath}${extensions[currentIndex]}`)
+          const foundExtension = extensions[currentIndex]
+          setImageSrc(`${basePath}${foundExtension}`)
+          
+          // Try to load alternate image
+          let alternateIndex = 0
+          const tryAlternateNext = () => {
+            if (alternateIndex >= extensions.length) {
+              setAlternateImageError(true)
+              return
+            }
+            
+            const alternatePath = getAlternateImagePath(basePath, extensions[alternateIndex])
+            const alternateImg = new window.Image()
+            alternateImg.onload = () => {
+              setAlternateImageSrc(alternatePath)
+            }
+            alternateImg.onerror = () => {
+              alternateIndex++
+              tryAlternateNext()
+            }
+            alternateImg.src = alternatePath
+          }
+          
+          tryAlternateNext()
         }
         testImg.onerror = () => {
           currentIndex++
@@ -66,6 +100,22 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       tryNext()
     }
   }, [product?.image, product?.id])
+
+  // Get all available images
+  const availableImages = [
+    imageSrc,
+    alternateImageSrc && !alternateImageError ? alternateImageSrc : null,
+  ].filter(Boolean) as string[]
+
+  // Reset selected index if out of bounds
+  useEffect(() => {
+    if (availableImages.length > 0 && selectedImageIndex >= availableImages.length) {
+      setSelectedImageIndex(0)
+    }
+  }, [availableImages.length, selectedImageIndex])
+
+  // Get currently selected image (fallback to imageSrc if no images available)
+  const currentImageSrc = availableImages[selectedImageIndex] || imageSrc || null
 
   // Fetch related products (same category and gender, excluding current product)
   useEffect(() => {
@@ -150,45 +200,86 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <motion.div 
-              className="relative aspect-square bg-neutral-100 overflow-hidden"
-              whileHover={hoverEffects.imageZoom}
-              transition={transitions.hover}
-              style={{ willChange: 'transform' }}
-            >
-              {imageSrc && !imageError ? (
-                <Image
-                  src={imageSrc}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  onError={() => setImageError(true)}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-              ) : (
-                <PlaceholderImage seed={product.id} />
+            <div className="flex gap-4">
+              {/* Thumbnail Gallery - Left Side */}
+              {availableImages.length > 1 && (
+                <div className="flex flex-col gap-3 flex-shrink-0">
+                  {availableImages.map((imgSrc, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => setSelectedImageIndex(index)}
+                      className={`relative w-16 h-16 md:w-20 md:h-20 bg-neutral-100 overflow-hidden border-2 transition-all ${
+                        selectedImageIndex === index
+                          ? 'border-black'
+                          : 'border-neutral-200 hover:border-neutral-400'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={transitions.quick}
+                    >
+                      <Image
+                        src={imgSrc}
+                        alt={`${product.name} - view ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </motion.button>
+                  ))}
+                </div>
               )}
-              
-              {/* Tags */}
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="absolute top-6 left-6 flex gap-2 z-10"
-              >
-                {product.tags.includes('New') && (
-                  <span className="bg-black text-white text-xs px-3 py-1.5 font-light tracking-wide">
-                    New
-                  </span>
-                )}
-                {product.tags.includes('Sale') && product.salePrice && product.basePrice && (
-                  <span className="bg-red-600 text-white text-xs px-3 py-1.5 font-light tracking-wide">
-                    -{Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%
-                  </span>
-                )}
-              </motion.div>
-            </motion.div>
+
+              {/* Main Image - Right Side */}
+              <div className="flex-1">
+                <motion.div 
+                  className="relative aspect-square bg-neutral-100 overflow-hidden"
+                  whileHover={hoverEffects.imageZoom}
+                  transition={transitions.hover}
+                  style={{ willChange: 'transform' }}
+                >
+                  {currentImageSrc && !imageError ? (
+                    <motion.div
+                      key={currentImageSrc}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={currentImageSrc}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                        onError={() => setImageError(true)}
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        priority
+                      />
+                    </motion.div>
+                  ) : (
+                    <PlaceholderImage seed={product.id} />
+                  )}
+                  
+                  {/* Tags */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="absolute top-6 left-6 flex gap-2 z-10"
+                  >
+                    {product.tags.includes('New') && (
+                      <span className="bg-black text-white text-xs px-3 py-1.5 font-light tracking-wide">
+                        New
+                      </span>
+                    )}
+                    {product.tags.includes('Sale') && product.salePrice && product.basePrice && (
+                      <span className="bg-red-600 text-white text-xs px-3 py-1.5 font-light tracking-wide">
+                        -{Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}%
+                      </span>
+                    )}
+                  </motion.div>
+                </motion.div>
+              </div>
+            </div>
           </motion.div>
 
           {/* Product Details - Sticky Panel */}
