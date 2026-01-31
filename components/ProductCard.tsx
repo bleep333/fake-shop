@@ -139,7 +139,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeIn}
-        className="relative bg-gray-100 rounded-lg p-4 border border-gray-200"
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="relative bg-gray-100 rounded-lg p-4 border border-gray-200 overflow-hidden"
       >
         <div className="relative aspect-[3/4] bg-white rounded-lg overflow-hidden mb-3">
           {imageSrc && !imageError ? (
