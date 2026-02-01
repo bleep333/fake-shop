@@ -262,7 +262,7 @@ export default function CheckoutPage() {
           <h2 className="text-xl font-semibold mb-5">Contact</h2>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-stone-900 mb-1.5">
                 Email
               </label>
               <input
@@ -271,19 +271,19 @@ export default function CheckoutPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
               />
             </div>
 
             <div>
-              <label htmlFor="country" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="country" className="block text-sm font-medium text-stone-900 mb-1.5">
                 Country
               </label>
               <select
                 id="country"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white"
+                className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900 bg-white"
               >
                 <option value="Australia">Australia</option>
               </select>
@@ -291,7 +291,7 @@ export default function CheckoutPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label htmlFor="firstName" className="block text-sm font-medium text-stone-900 mb-1.5">
                   First name
                 </label>
                 <input
@@ -300,11 +300,11 @@ export default function CheckoutPage() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                  className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label htmlFor="lastName" className="block text-sm font-medium text-stone-900 mb-1.5">
                   Last name
                 </label>
                 <input
@@ -313,13 +313,13 @@ export default function CheckoutPage() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                  className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="address" className="block text-sm font-medium text-stone-900 mb-1.5">
                 Address
               </label>
               <div className="relative">
@@ -329,16 +329,16 @@ export default function CheckoutPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                  className="w-full px-3 py-2.5 pr-10 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                 />
-                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
             </div>
 
             <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="city" className="block text-sm font-medium text-stone-900 mb-1.5">
                 City
               </label>
               <input
@@ -347,19 +347,19 @@ export default function CheckoutPage() {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 required
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
               />
             </div>
 
             <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="state" className="block text-sm font-medium text-stone-900 mb-1.5">
                 State/territory
               </label>
               <select
                 id="state"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white"
+                className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900 bg-white"
               >
                 <option value="NSW">NSW</option>
                 <option value="VIC">VIC</option>
@@ -373,7 +373,7 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label htmlFor="postcode" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="postcode" className="block text-sm font-medium text-stone-900 mb-1.5">
                 Postcode
               </label>
               <input
@@ -382,12 +382,12 @@ export default function CheckoutPage() {
                 value={postcode}
                 onChange={(e) => setPostcode(e.target.value)}
                 required
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1.5">
+              <label htmlFor="phone" className="block text-sm font-medium text-stone-900 mb-1.5">
                 Phone
               </label>
               <div className="relative">
@@ -397,9 +397,9 @@ export default function CheckoutPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
-                  className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                  className="w-full px-3 py-2.5 pr-10 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                 />
-                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -410,15 +410,15 @@ export default function CheckoutPage() {
         {/* Payment Section */}
         <section>
           <h2 className="text-xl font-semibold mb-2">Payment</h2>
-          <p className="text-sm text-gray-600 mb-5">All transactions are secure and encrypted.</p>
+          <p className="text-sm text-stone-600 mb-5">All transactions are secure and encrypted.</p>
           <div className="space-y-3">
             {/* Credit Card Option */}
             <div>
               <label
                 className={`flex items-center justify-between p-4 border-2 cursor-pointer transition-colors ${
                   paymentMethod === 'credit-card'
-                    ? 'border-blue-600 bg-blue-50 rounded-t-md border-b-0'
-                    : 'border-gray-200 hover:border-gray-300 rounded-md'
+                    ? 'border-stone-900 bg-blue-50 rounded-t-md border-b-0'
+                    : 'border-stone-200 hover:border-stone-300 rounded-md'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -428,16 +428,16 @@ export default function CheckoutPage() {
                     value="credit-card"
                     checked={paymentMethod === 'credit-card'}
                     onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-600"
+                    className="w-4 h-4 text-stone-900 border-stone-300 focus:ring-stone-900"
                   />
                   <span className="text-sm font-medium">Credit card</span>
                 </div>
                 {paymentMethod === 'credit-card' && (
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-blue-600">VISA</span>
-                    <span className="text-xs font-semibold text-blue-600">Mastercard</span>
-                    <span className="text-xs font-semibold text-blue-600">AMEX</span>
-                    <span className="text-xs text-gray-500">+2</span>
+                    <span className="text-xs font-semibold text-stone-900">VISA</span>
+                    <span className="text-xs font-semibold text-stone-900">Mastercard</span>
+                    <span className="text-xs font-semibold text-stone-900">AMEX</span>
+                    <span className="text-xs text-stone-500">+2</span>
                   </div>
                 )}
               </label>
@@ -448,11 +448,11 @@ export default function CheckoutPage() {
                   paymentMethod === 'credit-card' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className={`pt-4 pb-4 px-4 space-y-4 bg-gray-50 border-2 border-blue-600 border-t-0 rounded-b-md ${
+                <div className={`pt-4 pb-4 px-4 space-y-4 bg-stone-50 border-2 border-stone-900 border-t-0 rounded-b-md ${
                   paymentMethod === 'credit-card' ? '' : 'border-0'
                 }`}>
                 <div>
-                  <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="cardNumber" className="block text-sm font-medium text-stone-900 mb-1.5">
                     Card number
                   </label>
                   <div className="relative">
@@ -465,9 +465,9 @@ export default function CheckoutPage() {
                       required
                       disabled
                       readOnly
-                      className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                      className="w-full px-3 py-2.5 pr-10 border border-stone-300 rounded-md bg-stone-100 text-stone-600 cursor-not-allowed"
                     />
-                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -475,7 +475,7 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="col-span-2">
-                    <label htmlFor="expirationDate" className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label htmlFor="expirationDate" className="block text-sm font-medium text-stone-900 mb-1.5">
                       Expiration date (MM / YY)
                     </label>
                     <input
@@ -488,11 +488,11 @@ export default function CheckoutPage() {
                       required
                       disabled
                       readOnly
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                      className="w-full px-3 py-2.5 border border-stone-300 rounded-md bg-stone-100 text-stone-600 cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label htmlFor="securityCode" className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label htmlFor="securityCode" className="block text-sm font-medium text-stone-900 mb-1.5">
                       Security code
                     </label>
                     <div className="relative">
@@ -506,9 +506,9 @@ export default function CheckoutPage() {
                         required
                         disabled
                         readOnly
-                        className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                        className="w-full px-3 py-2.5 pr-10 border border-stone-300 rounded-md bg-stone-100 text-stone-600 cursor-not-allowed"
                       />
-                      <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -516,7 +516,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="nameOnCard" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="nameOnCard" className="block text-sm font-medium text-stone-900 mb-1.5">
                     Name on card
                   </label>
                   <input
@@ -527,7 +527,7 @@ export default function CheckoutPage() {
                     required
                     disabled
                     readOnly
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+                    className="w-full px-3 py-2.5 border border-stone-300 rounded-md bg-stone-100 text-stone-600 cursor-not-allowed"
                   />
                 </div>
                 </div>
@@ -539,8 +539,8 @@ export default function CheckoutPage() {
               <label
                 className={`flex items-center justify-between p-4 border-2 rounded-md cursor-pointer transition-colors ${
                   paymentMethod === 'paypal'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-stone-900 bg-blue-50'
+                    : 'border-stone-200 hover:border-stone-300'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -550,12 +550,12 @@ export default function CheckoutPage() {
                     value="paypal"
                     checked={paymentMethod === 'paypal'}
                     onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-600"
+                    className="w-4 h-4 text-stone-900 border-stone-300 focus:ring-stone-900"
                   />
                   <span className="text-sm font-medium">PayPal</span>
                 </div>
                 {paymentMethod === 'paypal' && (
-                  <span className="text-sm font-semibold text-blue-600">PayPal</span>
+                  <span className="text-sm font-semibold text-stone-900">PayPal</span>
                 )}
               </label>
               
@@ -566,11 +566,11 @@ export default function CheckoutPage() {
                 }`}
               >
                 <div className="pt-4 pl-2">
-                  <div className="bg-gray-100 border border-gray-200 rounded-md p-4 flex items-start gap-3">
-                    <svg className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="bg-stone-100 border border-stone-200 rounded-md p-4 flex items-start gap-3">
+                    <svg className="w-5 h-5 text-stone-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-stone-700">
                       After clicking &apos;Pay with PayPal&apos;, you will be redirected to PayPal to complete your purchase securely.
                     </p>
                   </div>
@@ -587,8 +587,8 @@ export default function CheckoutPage() {
             <label
               className={`flex items-center p-4 border-2 rounded-md cursor-pointer transition-colors ${
                 billingOption === 'same'
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-stone-900 bg-blue-50'
+                  : 'border-stone-200 hover:border-stone-300'
               }`}
             >
               <input
@@ -597,7 +597,7 @@ export default function CheckoutPage() {
                 value="same"
                 checked={billingOption === 'same'}
                 onChange={(e) => setBillingOption(e.target.value as BillingOption)}
-                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-600"
+                className="w-4 h-4 text-stone-900 border-stone-300 focus:ring-stone-900"
               />
               <span className="ml-3 text-sm font-medium">Same as shipping address</span>
             </label>
@@ -605,8 +605,8 @@ export default function CheckoutPage() {
             <label
               className={`flex items-center p-4 border-2 rounded-md cursor-pointer transition-colors ${
                 billingOption === 'different'
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-stone-900 bg-blue-50'
+                  : 'border-stone-200 hover:border-stone-300'
               }`}
             >
               <input
@@ -615,7 +615,7 @@ export default function CheckoutPage() {
                 value="different"
                 checked={billingOption === 'different'}
                 onChange={(e) => setBillingOption(e.target.value as BillingOption)}
-                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-600"
+                className="w-4 h-4 text-stone-900 border-stone-300 focus:ring-stone-900"
               />
               <span className="ml-3 text-sm font-medium">Use a different billing address</span>
             </label>
@@ -623,14 +623,14 @@ export default function CheckoutPage() {
             {billingOption === 'different' && (
               <div className="mt-4 space-y-4 pl-2">
                 <div>
-                  <label htmlFor="billingCountry" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="billingCountry" className="block text-sm font-medium text-stone-900 mb-1.5">
                     Country
                   </label>
                   <select
                     id="billingCountry"
                     value={billingCountry}
                     onChange={(e) => setBillingCountry(e.target.value)}
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white"
+                    className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900 bg-white"
                   >
                     <option value="Australia">Australia</option>
                   </select>
@@ -638,7 +638,7 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="billingFirstName" className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label htmlFor="billingFirstName" className="block text-sm font-medium text-stone-900 mb-1.5">
                       First name
                     </label>
                     <input
@@ -647,11 +647,11 @@ export default function CheckoutPage() {
                       value={billingFirstName}
                       onChange={(e) => setBillingFirstName(e.target.value)}
                       required
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                     />
                   </div>
                   <div>
-                    <label htmlFor="billingLastName" className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label htmlFor="billingLastName" className="block text-sm font-medium text-stone-900 mb-1.5">
                       Last name
                     </label>
                     <input
@@ -660,13 +660,13 @@ export default function CheckoutPage() {
                       value={billingLastName}
                       onChange={(e) => setBillingLastName(e.target.value)}
                       required
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="billingAddress" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="billingAddress" className="block text-sm font-medium text-stone-900 mb-1.5">
                     Address
                   </label>
                   <div className="relative">
@@ -676,16 +676,16 @@ export default function CheckoutPage() {
                       value={billingAddress}
                       onChange={(e) => setBillingAddress(e.target.value)}
                       required
-                      className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      className="w-full px-3 py-2.5 pr-10 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                     />
-                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="billingCity" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="billingCity" className="block text-sm font-medium text-stone-900 mb-1.5">
                     City
                   </label>
                   <input
@@ -694,19 +694,19 @@ export default function CheckoutPage() {
                     value={billingCity}
                     onChange={(e) => setBillingCity(e.target.value)}
                     required
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                    className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="billingState" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="billingState" className="block text-sm font-medium text-stone-900 mb-1.5">
                     State/territory
                   </label>
                   <select
                     id="billingState"
                     value={billingState}
                     onChange={(e) => setBillingState(e.target.value)}
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white"
+                    className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900 bg-white"
                   >
                     <option value="NSW">NSW</option>
                     <option value="VIC">VIC</option>
@@ -720,7 +720,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="billingPostcode" className="block text-sm font-medium text-gray-900 mb-1.5">
+                  <label htmlFor="billingPostcode" className="block text-sm font-medium text-stone-900 mb-1.5">
                     Postcode
                   </label>
                   <input
@@ -729,13 +729,13 @@ export default function CheckoutPage() {
                     value={billingPostcode}
                     onChange={(e) => setBillingPostcode(e.target.value)}
                     required
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                    className="w-full px-3 py-2.5 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="billingPhone" className="block text-sm font-medium text-gray-900 mb-1.5">
-                    Phone <span className="text-gray-500 font-normal">(optional)</span>
+                  <label htmlFor="billingPhone" className="block text-sm font-medium text-stone-900 mb-1.5">
+                    Phone <span className="text-stone-500 font-normal">(optional)</span>
                   </label>
                   <div className="relative">
                     <input
@@ -743,9 +743,9 @@ export default function CheckoutPage() {
                       id="billingPhone"
                       value={billingPhone}
                       onChange={(e) => setBillingPhone(e.target.value)}
-                      className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      className="w-full px-3 py-2.5 pr-10 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-stone-900"
                     />
-                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -762,8 +762,8 @@ export default function CheckoutPage() {
             disabled={paymentMethod === 'paypal'}
             className={`w-full py-3 rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
               paymentMethod === 'paypal'
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-600'
+                ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-stone-900'
             }`}
           >
             {paymentMethod === 'credit-card' ? (

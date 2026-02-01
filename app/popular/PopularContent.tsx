@@ -159,7 +159,7 @@ export default function PopularContent() {
       {/* Collection Header */}
       <div className="mb-12 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold mb-3">Popular</h1>
-        <p className="text-gray-600 text-base">
+        <p className="text-stone-600 text-base">
           Discover our most loved products. Handpicked favorites from our community.
         </p>
       </div>
@@ -204,7 +204,7 @@ export default function PopularContent() {
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-stone-300 rounded-md hover:bg-stone-50 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -215,11 +215,11 @@ export default function PopularContent() {
 
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-8">
-            <p className="text-base font-semibold text-gray-900">
+            <p className="text-base font-semibold text-stone-900">
               {loading ? 'Loading...' : `${displayProducts.length} total`}
             </p>
             <div className="flex items-center gap-2">
-              <label htmlFor="sort" className="text-base font-semibold text-gray-900">Sort</label>
+              <label htmlFor="sort" className="text-base font-semibold text-stone-900">Sort</label>
               <select
                 id="sort"
                 value={sortBy}
@@ -227,7 +227,7 @@ export default function PopularContent() {
                   setSortBy(e.target.value as SortOption)
                   setCurrentPage(1)
                 }}
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-base bg-white font-medium"
+                className="px-4 py-2 border border-stone-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-base bg-white font-medium"
               >
                 <option value="newest">Relevance</option>
                 <option value="newest">Newest</option>
@@ -241,7 +241,7 @@ export default function PopularContent() {
           {displayProducts.length === 0 && loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-12">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="aspect-[3/4] bg-gray-100 rounded-lg animate-pulse" />
+                <div key={i} className="aspect-[3/4] bg-stone-100 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : paginatedProducts.length > 0 ? (
@@ -261,7 +261,7 @@ export default function PopularContent() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span className="text-sm text-gray-700">Loading...</span>
+                        <span className="text-sm text-stone-700">Loading...</span>
                       </div>
                     </div>
                   </div>
@@ -282,17 +282,17 @@ export default function PopularContent() {
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black"
+                    className="px-4 py-2 border border-stone-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-stone-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black"
                   >
                     Previous
                   </button>
-                  <span className="px-4 py-2 text-sm text-gray-600">
+                  <span className="px-4 py-2 text-sm text-stone-600">
                     Page {currentPage} of {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black"
+                    className="px-4 py-2 border border-stone-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-stone-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black"
                   >
                     Next
                   </button>
@@ -301,7 +301,7 @@ export default function PopularContent() {
             </>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600">No products found. Try adjusting your filters.</p>
+              <p className="text-stone-600">No products found. Try adjusting your filters.</p>
             </div>
           )}
         </div>
@@ -319,7 +319,7 @@ export default function PopularContent() {
               <h2 className="text-lg font-semibold">Filters</h2>
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-2 hover:bg-stone-100 rounded-full"
                 aria-label="Close filters"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

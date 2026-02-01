@@ -134,7 +134,7 @@ export default function OrderSummaryPage() {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-600">Loading order details...</p>
+          <p className="text-stone-600">Loading order details...</p>
         </div>
       </div>
     )
@@ -144,7 +144,7 @@ export default function OrderSummaryPage() {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">Order not found</p>
+          <p className="text-stone-600 mb-4">Order not found</p>
           <Link
             href="/profile"
             className="text-blue-600 hover:text-blue-800 underline"
@@ -172,7 +172,7 @@ export default function OrderSummaryPage() {
       <div className="mb-6">
         <Link
           href="/profile"
-          className="text-gray-600 hover:text-black transition-colors inline-flex items-center gap-2"
+          className="text-stone-600 hover:text-black transition-colors inline-flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -188,7 +188,7 @@ export default function OrderSummaryPage() {
         {/* Left Column - Customer details */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Customer Details</h2>
-          <div className="space-y-2 text-gray-700 mb-8">
+          <div className="space-y-2 text-stone-700 mb-8">
             <div>
               <span className="font-medium">Name: </span>
               <span>{order.customerDetails.firstName} {order.customerDetails.lastName}</span>
@@ -208,7 +208,7 @@ export default function OrderSummaryPage() {
           </div>
 
           {/* Order Info */}
-          <div className="space-y-2 text-gray-700">
+          <div className="space-y-2 text-stone-700">
             <h2 className="text-xl font-semibold mb-4">Order Information</h2>
             <div>
               <span className="font-medium">Order Number: </span>
@@ -229,20 +229,20 @@ export default function OrderSummaryPage() {
 
         {/* Right Column - Order Summary */}
         <div>
-          <div className="bg-gray-50 rounded-lg p-6">
+          <div className="bg-stone-50 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Order Items</h2>
             
             {/* Purchased Items */}
             <div className="space-y-4 mb-6">
               {order.items.map((item) => (
                 <div key={item.id} className="flex gap-4">
-                  <div className="relative w-20 h-24 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="relative w-20 h-24 bg-stone-100 rounded-md overflow-hidden flex-shrink-0">
                     <OrderItemImage product={item.productData} />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-sm mb-1">{item.productData.name}</h3>
-                    <p className="text-xs text-gray-600 mb-1">Size: {item.size}</p>
-                    <p className="text-xs text-gray-600">Quantity: {item.quantity}</p>
+                    <p className="text-xs text-stone-600 mb-1">Size: {item.size}</p>
+                    <p className="text-xs text-stone-600">Quantity: {item.quantity}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-sm">
@@ -254,7 +254,7 @@ export default function OrderSummaryPage() {
             </div>
 
             {/* Total Cost */}
-            <div className="space-y-2 pt-4 border-t border-gray-300">
+            <div className="space-y-2 pt-4 border-t border-stone-300">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
                 <span>${order.subtotal.toFixed(2)}</span>
@@ -263,12 +263,12 @@ export default function OrderSummaryPage() {
                 <span>Shipping</span>
                 <span>{order.shipping === 0 ? 'Free' : `$${order.shipping.toFixed(2)}`}</span>
               </div>
-              <div className="border-t border-gray-300 pt-2 mt-2">
+              <div className="border-t border-stone-300 pt-2 mt-2">
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
                   <span>${order.total.toFixed(2)}</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-stone-500 mt-1">
                   Including ${order.tax.toFixed(2)} in taxes
                 </p>
               </div>
@@ -281,7 +281,7 @@ export default function OrderSummaryPage() {
       <div className="mt-8 text-center">
         <Link
           href="/mens"
-          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-stone-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
         >
           Continue Shopping
         </Link>

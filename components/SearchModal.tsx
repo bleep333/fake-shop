@@ -100,9 +100,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           >
             <div className="w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden">
               {/* Search Input */}
-              <div className="p-6 border-b border-neutral-200">
+              <div className="p-6 border-b border-stone-200">
                 <div className="flex items-center gap-4">
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
@@ -111,11 +111,11 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search products..."
-                    className="flex-1 text-lg outline-none placeholder:text-gray-400"
+                    className="flex-1 text-lg outline-none placeholder:text-stone-400"
                   />
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    className="p-2 hover:bg-stone-100 rounded-full transition-colors"
                     aria-label="Close search"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,24 +128,24 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               {/* Results */}
               <div className="max-h-[60vh] overflow-y-auto">
                 {isLoading ? (
-                  <div className="p-12 text-center text-gray-500">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                  <div className="p-12 text-center text-stone-500">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-stone-900"></div>
                   </div>
                 ) : searchQuery.trim() && results.length === 0 ? (
-                  <div className="p-12 text-center text-gray-500">
+                  <div className="p-12 text-center text-stone-500">
                     <p>No products found</p>
                   </div>
                 ) : results.length > 0 ? (
-                  <div className="divide-y divide-neutral-200">
+                  <div className="divide-y divide-stone-200">
                     {results.map((product) => (
                       <Link
                         key={product.id}
                         href={`/products/${product.id}`}
                         onClick={handleResultClick}
-                        className="block p-4 hover:bg-neutral-50 transition-colors"
+                        className="block p-4 hover:bg-stone-50 transition-colors"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="relative w-16 h-16 bg-neutral-100 rounded overflow-hidden flex-shrink-0">
+                          <div className="relative w-16 h-16 bg-stone-100 rounded overflow-hidden flex-shrink-0">
                             {product.image && (
                               <Image
                                 src={product.image}
@@ -157,8 +157,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <h3 className="font-medium text-stone-900 truncate">{product.name}</h3>
+                            <p className="text-sm text-stone-500 mt-1">
                               {product.category} • ${(product.salePrice || product.basePrice).toFixed(2)}
                             </p>
                           </div>
@@ -167,7 +167,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     ))}
                   </div>
                 ) : (
-                  <div className="p-12 text-center text-gray-500">
+                  <div className="p-12 text-center text-stone-500">
                     <p>Start typing to search...</p>
                   </div>
                 )}

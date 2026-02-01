@@ -58,7 +58,7 @@ export default function AllOrdersPage() {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-stone-600">Loading...</p>
         </div>
       </div>
     )
@@ -73,7 +73,7 @@ export default function AllOrdersPage() {
       <div className="mb-6">
         <Link
           href="/profile"
-          className="text-gray-600 hover:text-black transition-colors mb-4 inline-block"
+          className="text-stone-600 hover:text-black transition-colors mb-4 inline-block"
         >
           ← Back to Profile
         </Link>
@@ -81,8 +81,8 @@ export default function AllOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-          <p className="text-gray-600 mb-4">No orders found</p>
+        <div className="bg-white border border-stone-200 rounded-lg p-12 text-center">
+          <p className="text-stone-600 mb-4">No orders found</p>
           <Link
             href="/mens"
             className="text-sm underline hover:text-black"
@@ -91,29 +91,29 @@ export default function AllOrdersPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-white border border-stone-200 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-stone-200">
+              <thead className="bg-stone-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
                     Order #
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
                     Total
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-stone-200">
                 {orders.map((order) => {
                   const orderDate = new Date(order.orderDate)
                   const formattedDate = orderDate.toLocaleDateString('en-AU', {
@@ -123,11 +123,11 @@ export default function AllOrdersPage() {
                   })
 
                   return (
-                    <tr key={order.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <tr key={order.id} className="hover:bg-stone-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">
                         {order.orderNumber}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-500">
                         {formattedDate}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -135,7 +135,7 @@ export default function AllOrdersPage() {
                           {order.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-900">
                         ${order.total.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

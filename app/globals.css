@@ -11,7 +11,7 @@
   }
 
   body {
-    @apply antialiased bg-white text-gray-900;
+    @apply antialiased bg-white text-stone-900;
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     font-feature-settings: "kern" 1;
     text-rendering: optimizeLegibility;
@@ -34,7 +34,7 @@
   .btn-primary {
     @apply px-8 py-4 bg-black text-white font-medium tracking-wide;
     @apply transition-all duration-300 ease-out;
-    @apply hover:bg-gray-800 active:scale-[0.98];
+    @apply hover:bg-stone-800 active:scale-[0.98];
     letter-spacing: 0.05em;
   }
 
@@ -133,6 +133,40 @@
 
   @media (prefers-reduced-motion: reduce) {
     .ambient-motion {
+      animation: none;
+    }
+  }
+
+  /* Horizontal scrolling marquee - GPU-accelerated for smooth scroll like product strip */
+  @keyframes scroll-left {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .animate-scroll-left {
+    display: flex;
+    width: max-content;
+    animation: scroll-left 40s linear infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .animate-scroll-left-slow {
+    display: flex;
+    width: max-content;
+    animation: scroll-left 50s linear infinite;
+    transform-origin: left center;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-scroll-left,
+    .animate-scroll-left-slow {
       animation: none;
     }
   }

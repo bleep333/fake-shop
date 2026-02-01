@@ -141,7 +141,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         variants={fadeIn}
         whileHover={{ y: -8 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="relative bg-gray-100 rounded-lg p-4 border border-gray-200 overflow-hidden"
+        className="relative bg-stone-100 rounded-lg p-4 border border-stone-200 overflow-hidden"
       >
         <div className="relative aspect-[3/4] bg-white rounded-lg overflow-hidden mb-3">
           {imageSrc && !imageError ? (
@@ -222,7 +222,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             <svg
-              className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-400 stroke-gray-400'}`}
+              className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-red-500 text-red-500' : 'text-stone-400 stroke-stone-400'}`}
               fill={inWishlist ? 'currentColor' : 'none'}
               stroke="currentColor"
               strokeWidth={1.5}
@@ -261,10 +261,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                         disabled={outOfStock}
                         className={`px-2 py-1 text-xs font-medium transition-all focus:outline-none flex-shrink-0 ${
                           outOfStock
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                             : stock > 0
-                            ? 'bg-white border border-gray-300 text-gray-900 hover:border-gray-400'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-white border border-stone-300 text-stone-900 hover:border-stone-400'
+                            : 'bg-stone-200 text-stone-400 cursor-not-allowed'
                         }`}
                       >
                         {size}
@@ -279,13 +279,13 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Product Name and Price */}
         <div className="text-left">
-          <h3 className="font-semibold text-gray-900 mb-1 text-base">{product.name}</h3>
+          <h3 className="font-semibold text-stone-900 mb-1 text-base">{product.name}</h3>
           <div className="flex items-center gap-2">
-            <span className="text-base font-semibold text-gray-900">
+            <span className="text-base font-semibold text-stone-900">
               ${((product.salePrice || product.basePrice)).toFixed(2)}
             </span>
             {product.salePrice && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-sm text-stone-500 line-through">
                 ${product.basePrice.toFixed(2)}
               </span>
             )}

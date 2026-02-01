@@ -65,16 +65,16 @@ export default function BlogPage() {
         {/* Featured Article */}
         <section className="mb-16 md:mb-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
-            <div className="aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                <span className="text-gray-400 text-sm md:text-base">Featured Article Image</span>
+            <div className="aspect-[4/3] bg-stone-100 rounded-lg overflow-hidden">
+              <div className="w-full h-full bg-gradient-to-br from-stone-200 to-stone-300 flex items-center justify-center">
+                <span className="text-stone-400 text-sm md:text-base">Featured Article Image</span>
               </div>
             </div>
             <div>
               <div className="flex items-center gap-4 mb-3 md:mb-4">
-                <span className="text-sm font-medium text-gray-600">{featuredArticle.category}</span>
-                <span className="text-sm text-gray-400">•</span>
-                <span className="text-sm font-medium text-gray-600">{featuredArticle.journal}</span>
+                <span className="text-sm font-medium text-stone-600">{featuredArticle.category}</span>
+                <span className="text-sm text-stone-400">•</span>
+                <span className="text-sm font-medium text-stone-600">{featuredArticle.journal}</span>
               </div>
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6 leading-tight">
                 {featuredArticle.title}
@@ -102,15 +102,15 @@ export default function BlogPage() {
                 href={`/blog/${article.title.toLowerCase().replace(/\s+/g, '-')}`}
                 className="group"
               >
-                <div className="aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden mb-3 md:mb-4">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                    <span className="text-gray-400 text-xs md:text-sm">Article {article.id}</span>
+                <div className="aspect-[4/3] bg-stone-100 rounded-lg overflow-hidden mb-3 md:mb-4">
+                  <div className="w-full h-full bg-gradient-to-br from-stone-200 to-stone-300 flex items-center justify-center">
+                    <span className="text-stone-400 text-xs md:text-sm">Article {article.id}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mb-2">
-                  <span className="text-sm font-medium text-gray-600">{article.category}</span>
-                  <span className="text-sm text-gray-400">•</span>
-                  <span className="text-sm font-medium text-gray-600">{article.journal}</span>
+                  <span className="text-sm font-medium text-stone-600">{article.category}</span>
+                  <span className="text-sm text-stone-400">•</span>
+                  <span className="text-sm font-medium text-stone-600">{article.journal}</span>
                 </div>
                 <h4 className="text-lg md:text-xl font-bold group-hover:underline transition-colors">{article.title}</h4>
               </Link>
@@ -128,15 +128,15 @@ export default function BlogPage() {
                 href={`/blog/${article.title.toLowerCase().replace(/\s+/g, '-')}`}
                 className="group"
               >
-                <div className="aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden mb-3 md:mb-4">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                    <span className="text-gray-400 text-xs md:text-sm">Article {article.id}</span>
+                <div className="aspect-[4/3] bg-stone-100 rounded-lg overflow-hidden mb-3 md:mb-4">
+                  <div className="w-full h-full bg-gradient-to-br from-stone-200 to-stone-300 flex items-center justify-center">
+                    <span className="text-stone-400 text-xs md:text-sm">Article {article.id}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mb-2">
-                  <span className="text-sm font-medium text-gray-600">{article.category}</span>
-                  <span className="text-sm text-gray-400">•</span>
-                  <span className="text-sm font-medium text-gray-600">{article.journal}</span>
+                  <span className="text-sm font-medium text-stone-600">{article.category}</span>
+                  <span className="text-sm text-stone-400">•</span>
+                  <span className="text-sm font-medium text-stone-600">{article.journal}</span>
                 </div>
                 <h4 className="text-lg md:text-xl font-bold group-hover:underline transition-colors">{article.title}</h4>
               </Link>

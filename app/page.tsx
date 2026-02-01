@@ -10,14 +10,17 @@ import { Product } from '@/lib/mockProducts'
 import { staggerContainer, staggerFadeUp, transitions, getReducedMotionTransition } from '@/lib/motion.config'
 import ScrollReveal from '@/components/ScrollReveal'
 import CountdownTimer from '@/components/CountdownTimer'
+import CopyableCode from '@/components/CopyableCode'
 import Testimonials from '@/components/Testimonials'
+import ScrollingProductStrip from '@/components/ScrollingProductStrip'
+import NewArrivalsCarousel from '@/components/NewArrivalsCarousel'
+import FeaturesScrollingStrip from '@/components/FeaturesScrollingStrip'
 import FAQ from '@/components/FAQ'
 
 export default function Home() {
   const [showToast, setShowToast] = useState(false)
   const [email, setEmail] = useState('')
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
-  const [popularProducts, setPopularProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const prefersReducedMotion = useReducedMotion()
   const { scrollY } = useScroll()
@@ -25,16 +28,12 @@ export default function Home() {
   // Parallax effects
   const heroY = useTransform(scrollY, [0, 500], [0, 150])
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0])
-  const bannerY = useTransform(scrollY, [0, 1000], [0, 200])
-  const bannerOpacity = useTransform(scrollY, [600, 1000], [1, 0.3])
 
   useEffect(() => {
     async function loadProducts() {
       try {
         const newest = await getProducts({ sortBy: 'newest' })
-        const popular = await getProducts({ tags: ['Popular'] })
         setFeaturedProducts(newest.slice(0, 8))
-        setPopularProducts(popular.slice(0, 4))
       } catch (error) {
         console.error('Failed to load products:', error)
       } finally {
@@ -181,7 +180,7 @@ export default function Home() {
               className="pt-2"
             >
               <Link
-                href="/mens"
+                href="/all"
                 className="inline-block px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300 group"
               >
                 <span className="flex items-center gap-2">
@@ -212,7 +211,7 @@ export default function Home() {
               {/* Mens Category Link - Enhanced hover effects */}
           <Link
             href="/mens"
-                className="group relative aspect-[4/5] overflow-hidden bg-neutral-100"
+                className="group relative aspect-[4/5] overflow-hidden bg-stone-100"
                 prefetch={true}
               >
                 {/* Background Image */}
@@ -225,7 +224,7 @@ export default function Home() {
                     src="/images/mens-hero.png"
                     alt="Mens Collection"
                     fill
-                    className="object-contain"
+                    className="object-cover object-center"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
@@ -267,7 +266,7 @@ export default function Home() {
               {/* Womens Category Link - Enhanced hover effects */}
           <Link
             href="/womens"
-                className="group relative aspect-[4/5] overflow-hidden bg-neutral-100"
+                className="group relative aspect-[4/5] overflow-hidden bg-stone-100"
                 prefetch={true}
               >
                 {/* Background Image */}
@@ -280,7 +279,7 @@ export default function Home() {
                     src="/images/womens-hero.jpg"
                     alt="Womens Collection"
                     fill
-                    className="object-contain"
+                    className="object-cover object-center"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
@@ -321,111 +320,55 @@ export default function Home() {
               </Link>
             </div>
           </ScrollReveal>
-
-          {/* Category Grid */}
-          <ScrollReveal delay={0.2}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <Link
-            href="/mens?category=shirts"
-                className="group relative aspect-square overflow-hidden bg-neutral-50"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 bg-gradient-to-br from-neutral-100 to-neutral-200"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <span className="text-2xl md:text-3xl font-light text-black">Shirts</span>
-            </div>
-          </Link>
-          <Link
-            href="/mens?category=pants"
-                className="group relative aspect-square overflow-hidden bg-neutral-50"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 bg-gradient-to-br from-neutral-100 to-neutral-200"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <span className="text-2xl md:text-3xl font-light text-black">Pants</span>
-                </div>
-              </Link>
-              <Link
-                href="/mens?category=outerwear"
-                className="group relative aspect-square overflow-hidden bg-neutral-50"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 bg-gradient-to-br from-neutral-100 to-neutral-200"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <span className="text-2xl md:text-3xl font-light text-black">Outerwear</span>
-                </div>
-              </Link>
-              <Link
-                href="/new-arrivals"
-                className="group relative aspect-square overflow-hidden bg-neutral-50"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 bg-gradient-to-br from-neutral-100 to-neutral-200"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <span className="text-2xl md:text-3xl font-light text-black">New</span>
-                </div>
-              </Link>
-            </div>
-          </ScrollReveal>
         </div>
       </section>
 
-      {/* Editorial Banner - Built for the Bold with Parallax */}
-      <section className="relative h-[60vh] md:h-[80vh] overflow-hidden bg-black">
-        <motion.div 
-          className="absolute inset-0"
-          style={{
-            y: bannerY,
-            opacity: bannerOpacity,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80" />
-        </motion.div>
-        <div className="relative h-full flex items-center justify-center text-center px-4 z-10">
+      {/* Built for the Bold - editorial block, matches section rhythm */}
+      <section className="section-spacing bg-stone-100">
+        <div className="container-custom">
           <ScrollReveal>
-            <div className="max-w-3xl">
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
+            <div className="max-w-2xl">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-6 leading-tight"
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-stone-900 mb-6"
                 style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}
               >
                 Built for the Bold
               </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-2xl mx-auto mb-8"
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="text-lg md:text-xl text-stone-600 font-light leading-relaxed mb-10 max-w-xl"
               >
                 Discover premium essentials designed for those who dare to stand out. Crafted with intention, styled with confidence.
               </motion.p>
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Link
-                  href="/mens"
-                  className="inline-block px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300"
+                  href="/all"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-stone-900 text-white font-light tracking-wide hover:bg-stone-800 transition-all duration-300"
                 >
                   Shop Now
+                  <motion.svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </motion.svg>
                 </Link>
               </motion.div>
             </div>
@@ -433,240 +376,142 @@ export default function Home() {
         </div>
       </section>
 
-      {/* New Arrivals Section */}
-      <section className="section-spacing bg-neutral-50">
+      {/* New Arrivals Section - horizontal scroll, pauses on hover */}
+      <section className="section-spacing bg-stone-50">
         <div className="container-custom">
           <ScrollReveal>
-            <div className="flex items-end justify-between mb-16">
+            <div className="flex items-end justify-between mb-12">
               <div>
                 <h2 className="text-5xl md:text-6xl font-light tracking-tight mb-4 text-black"
                     style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}>
                   New Arrivals
                 </h2>
-                <p className="text-gray-600 text-lg font-light">
+                <p className="text-stone-600 text-lg font-light">
                   Discover the latest additions to our collection
                 </p>
               </div>
-          <Link
+              <Link
                 href="/new-arrivals"
                 className="hidden md:block text-sm font-medium tracking-wide text-black hover:underline transition-all"
-          >
-            View all →
-          </Link>
-        </div>
-          </ScrollReveal>
-
-        {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[...Array(8)].map((_, i) => (
-                <div key={i} className="aspect-[3/4] bg-neutral-200 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-            >
-              {featuredProducts.map((product, index) => (
-                <motion.div
-                key={product.id}
-                  variants={staggerFadeUp}
-                  custom={index}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-          </div>
-      </section>
-
-      {/* Most Popular Section */}
-      <section className="section-spacing bg-white">
-        <div className="container-custom">
-          <ScrollReveal>
-            <div className="flex items-end justify-between mb-16">
-              <div>
-                <h2 className="text-5xl md:text-6xl font-light tracking-tight mb-4 text-black"
-                    style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}>
-                  Most Popular
-                </h2>
-                <p className="text-gray-600 text-lg font-light">
-                  Shop our bestsellers and customer favorites
-                </p>
-              </div>
-              <Link
-                href="/popular"
-                className="hidden md:block text-sm font-medium tracking-wide text-black hover:underline transition-all"
               >
-                Shop Popular →
+                View all →
               </Link>
             </div>
           </ScrollReveal>
-
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="aspect-[3/4] bg-neutral-200 animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-            >
-              {popularProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  variants={staggerFadeUp}
-                  custom={index}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
+          <NewArrivalsCarousel products={featuredProducts} loading={loading} />
         </div>
       </section>
 
-      {/* Sale Section with Countdown Timer */}
-      <section className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden bg-gradient-to-br from-neutral-900 via-neutral-800 to-black">
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative container-custom py-24 md:py-32">
+      {/* Sale Section - full photo behind, copyable code, centered for clear viewing */}
+      <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden bg-stone-900">
+        {/* Full background image - add sale-bg.jpg to public/images for custom photo */}
+        <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/sale-bg.jpg"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
+          <div className="absolute inset-0 bg-black/55" aria-hidden />
+        </div>
+        <div className="relative container-custom py-16 md:py-24 flex flex-col items-center justify-center z-10 w-full">
           <ScrollReveal>
-            <div className="text-center mb-12">
+            <div className="text-center max-w-xl mx-auto px-4">
+              <CopyableCode code="NOVARA38" className="mb-5" />
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4"
-                style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}
+                className="text-3xl md:text-4xl lg:text-5xl font-medium text-white uppercase tracking-wider mb-5"
+                style={{ textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
               >
-                End of Season Sale
+                Get 38% off
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="text-lg md:text-xl text-white/90 font-light mb-8 max-w-2xl mx-auto"
+                className="text-lg md:text-xl text-white/95 font-light mb-10 leading-relaxed"
+                style={{ textShadow: '0 1px 12px rgba(0,0,0,0.35)' }}
               >
-                Up to 40% off selected styles. Limited time only.
+                Limited time. Unlock our best deals – don&apos;t overthink it.
               </motion.p>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={0.4}>
-            <div className="flex flex-col items-center mb-12">
-              <CountdownTimer 
-                targetDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)}
-              />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Link
+                  href="/sale"
+                  className="inline-block px-10 py-4 bg-white text-stone-900 font-medium tracking-wide hover:bg-white/95 transition-all duration-300"
+                >
+                  Shop Sale
+                </Link>
+              </motion.div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.5}>
-            <div className="text-center">
-              <Link
-                href="/sale"
-                className="inline-block px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300"
-              >
-                Shop Sale
-              </Link>
+            <div className="flex flex-col items-center mt-14 md:mt-16 w-full max-w-2xl mx-auto px-4">
+              <CountdownTimer
+                targetDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)}
+              />
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Features Banner */}
-      <section className="section-spacing bg-white">
+      {/* Free Return / Secure Checkout / Worldwide - small scrolling strip */}
+      <FeaturesScrollingStrip />
+
+      {/* Statement, Not Subtle - centered editorial block, dark theme */}
+      <section className="section-spacing bg-stone-900">
         <div className="container-custom">
           <ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 py-16 border-y border-neutral-200">
-              <div className="text-center">
-                <motion.div 
-                  className="w-16 h-16 mx-auto mb-6 bg-neutral-100 rounded-full flex items-center justify-center"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                </motion.div>
-                <h3 className="text-lg font-light mb-2 text-black">Free Return</h3>
-                <p className="text-sm text-gray-600 font-light">30-day return policy</p>
-              </div>
-              <div className="text-center">
-                <motion.div 
-                  className="w-16 h-16 mx-auto mb-6 bg-neutral-100 rounded-full flex items-center justify-center"
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </motion.div>
-                <h3 className="text-lg font-light mb-2 text-black">Secure Checkout</h3>
-                <p className="text-sm text-gray-600 font-light">100% secure payment</p>
-              </div>
-              <div className="text-center">
-                <motion.div 
-                  className="w-16 h-16 mx-auto mb-6 bg-neutral-100 rounded-full flex items-center justify-center"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </motion.div>
-                <h3 className="text-lg font-light mb-2 text-black">Worldwide Shipping</h3>
-                <p className="text-sm text-gray-600 font-light">Global delivery available</p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Statement Banner */}
-      <section className="relative h-[60vh] md:h-[80vh] overflow-hidden bg-gradient-to-br from-neutral-900 via-neutral-800 to-black">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80" />
-        <div className="relative h-full flex items-center justify-center text-center px-4 z-10">
-          <ScrollReveal>
-            <div className="max-w-3xl">
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
+            <div className="max-w-2xl mx-auto text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-6 leading-tight"
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-white mb-6"
                 style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}
               >
                 Statement, Not Subtle
               </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-2xl mx-auto mb-8"
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="text-lg md:text-xl text-white/85 font-light leading-relaxed mb-10"
               >
                 Timeless pieces that move with you. No fluff, just refined style and exceptional quality.
               </motion.p>
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="flex justify-center"
               >
                 <Link
                   href="/all"
-                  className="inline-block px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-stone-900 font-light tracking-wide hover:bg-white/90 transition-all duration-300"
                 >
                   Shop Now
+                  <motion.svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </motion.svg>
                 </Link>
               </motion.div>
             </div>
@@ -676,6 +521,9 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <Testimonials />
+
+      {/* Scrolling product strip - Nivest-style under review */}
+      <ScrollingProductStrip />
 
       {/* FAQ Section */}
       <FAQ />
@@ -726,6 +574,7 @@ export default function Home() {
           <p className="font-light">Thanks for subscribing!</p>
         </motion.div>
       )}
+
     </div>
   )
 }

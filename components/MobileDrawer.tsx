@@ -72,7 +72,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
             <h2 className="text-lg font-semibold">Menu</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-stone-100 rounded-full transition-colors"
               aria-label="Close menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               href="/new-arrivals"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
-                pathname === '/new-arrivals' ? 'text-black' : 'text-gray-600 hover:text-black'
+                pathname === '/new-arrivals' ? 'text-black' : 'text-stone-600 hover:text-black'
               }`}
             >
               New Arrivals
@@ -96,7 +96,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               href="/mens"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
-                pathname === '/mens' ? 'text-black' : 'text-gray-600 hover:text-black'
+                pathname === '/mens' ? 'text-black' : 'text-stone-600 hover:text-black'
               }`}
             >
               Mens
@@ -105,7 +105,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               href="/womens"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
-                pathname === '/womens' ? 'text-black' : 'text-gray-600 hover:text-black'
+                pathname === '/womens' ? 'text-black' : 'text-stone-600 hover:text-black'
               }`}
             >
               Womens
@@ -114,7 +114,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               href="/wishlist"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
-                pathname === '/wishlist' ? 'text-black' : 'text-gray-600 hover:text-black'
+                pathname === '/wishlist' ? 'text-black' : 'text-stone-600 hover:text-black'
               }`}
             >
               Wishlist
@@ -123,7 +123,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               href="/cart"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
-                pathname === '/cart' ? 'text-black' : 'text-gray-600 hover:text-black'
+                pathname === '/cart' ? 'text-black' : 'text-stone-600 hover:text-black'
               }`}
             >
               Cart
@@ -132,7 +132,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
               href="/profile"
               onClick={onClose}
               className={`block py-2 text-lg font-medium transition-colors ${
-                pathname === '/profile' ? 'text-black' : 'text-gray-600 hover:text-black'
+                pathname === '/profile' ? 'text-black' : 'text-stone-600 hover:text-black'
               }`}
             >
               Profile
@@ -144,7 +144,7 @@ export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
             <input
               type="text"
               placeholder="Search..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
             </div>

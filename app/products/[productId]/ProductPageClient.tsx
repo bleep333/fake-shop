@@ -186,7 +186,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         >
           <Link
             href={product.gender === 'mens' ? '/mens' : product.gender === 'womens' ? '/womens' : '/'}
-            className="text-gray-600 hover:text-black mb-8 inline-block transition-colors font-light text-sm tracking-wide"
+            className="text-stone-600 hover:text-black mb-8 inline-block transition-colors font-light text-sm tracking-wide"
           >
             ← Back to {product.gender === 'mens' ? "Men's" : product.gender === 'womens' ? "Women's" : 'Products'}
           </Link>
@@ -208,10 +208,10 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     <motion.button
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
-                      className={`relative w-16 h-16 md:w-20 md:h-20 bg-neutral-100 overflow-hidden border-2 transition-all ${
+                      className={`relative w-16 h-16 md:w-20 md:h-20 bg-stone-100 overflow-hidden border-2 transition-all ${
                         selectedImageIndex === index
                           ? 'border-black'
-                          : 'border-neutral-200 hover:border-neutral-400'
+                          : 'border-stone-200 hover:border-stone-400'
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -232,7 +232,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
               {/* Main Image - Right Side */}
               <div className="flex-1">
                 <motion.div 
-                  className="relative aspect-square bg-neutral-100 overflow-hidden"
+                  className="relative aspect-square bg-stone-100 overflow-hidden"
                   whileHover={hoverEffects.imageZoom}
                   transition={transitions.hover}
                   style={{ willChange: 'transform' }}
@@ -302,7 +302,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     ${((product.salePrice || product.basePrice)).toFixed(2)}
                   </span>
                   {product.salePrice && (
-                    <span className="text-xl text-gray-500 line-through font-light">
+                    <span className="text-xl text-stone-500 line-through font-light">
                       ${product.basePrice.toFixed(2)}
                     </span>
                   )}
@@ -311,15 +311,15 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
 
               {/* Description */}
               {product.description && (
-                <ScrollReveal className="border-t border-neutral-200 pt-6">
-                  <p className="text-gray-700 leading-relaxed font-light text-base">
+                <ScrollReveal className="border-t border-stone-200 pt-6">
+                  <p className="text-stone-700 leading-relaxed font-light text-base">
                     {product.description}
                   </p>
                 </ScrollReveal>
               )}
 
               {/* Size Selection */}
-              <ScrollReveal delay={0.1} className="border-t border-neutral-200 pt-6">
+              <ScrollReveal delay={0.1} className="border-t border-stone-200 pt-6">
                 <h2 className="text-sm font-light tracking-wider uppercase mb-6 text-black">
                   Size
                 </h2>
@@ -337,10 +337,10 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                         transition={transitions.quick}
                         className={`px-4 py-3 border-2 text-sm font-light tracking-wide transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
                           outOfStock
-                            ? 'border-neutral-200 text-neutral-400 line-through cursor-not-allowed bg-neutral-50'
+                            ? 'border-stone-200 text-stone-400 line-through cursor-not-allowed bg-stone-50'
                             : isSelected
                             ? 'bg-black border-black text-white'
-                            : 'border-neutral-300 hover:border-black'
+                            : 'border-stone-300 hover:border-black'
                         }`}
                         style={{ willChange: 'transform' }}
                       >
@@ -352,7 +352,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
               </ScrollReveal>
 
               {/* Add to Cart and Wishlist Buttons */}
-              <ScrollReveal delay={0.2} className="flex gap-4 pt-6 border-t border-neutral-200">
+              <ScrollReveal delay={0.2} className="flex gap-4 pt-6 border-t border-stone-200">
                 <motion.button
                   onClick={handleAddToCart}
                   disabled={!selectedSize || isAllSizesOutOfStock || (selectedSize ? isSizeOutOfStock(selectedSize) : false)}
@@ -361,8 +361,8 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                   transition={transitions.quick}
                   className={`flex-1 py-4 px-6 text-base font-light tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
                     !selectedSize || isAllSizesOutOfStock || (selectedSize ? isSizeOutOfStock(selectedSize) : false)
-                      ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-                      : 'bg-black text-white hover:bg-neutral-800'
+                      ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                      : 'bg-black text-white hover:bg-stone-800'
                   }`}
                   style={{ willChange: 'transform' }}
                 >
@@ -387,7 +387,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     className={`px-6 py-4 border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
                       isInWishlist(product.id)
                         ? 'border-red-500 bg-red-50 text-red-500 hover:bg-red-100'
-                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-neutral-400'
+                        : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
                     }`}
                     aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
                     style={{ willChange: 'transform' }}
@@ -417,7 +417,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
 
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (
-        <section className="section-spacing bg-white border-t border-neutral-200">
+        <section className="section-spacing bg-white border-t border-stone-200">
           <div className="container-custom">
             <ScrollReveal>
               <h2 

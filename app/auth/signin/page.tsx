@@ -41,15 +41,15 @@ export default function SignInPage() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-md mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-center">Sign In</h1>
-        <p className="text-gray-600 mb-8 text-center">
+        <p className="text-stone-600 mb-8 text-center">
           Sign in to view your profile, orders, and manage your account.
         </p>
 
-        <p className="text-sm text-gray-500 mb-4 text-center">
+        <p className="text-sm text-stone-500 mb-4 text-center">
           Demo credentials are pre-filled — just click Sign In.
         </p>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white border border-stone-200 rounded-lg p-6 space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
               {error}
@@ -57,7 +57,7 @@ export default function SignInPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-1">
               Email
             </label>
             <input
@@ -66,13 +66,13 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="user@fakeshop.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-1">
               Password
             </label>
             <input
@@ -81,7 +81,7 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="user123"
             />
           </div>
@@ -89,13 +89,13 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-black text-white px-8 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-black text-white px-8 py-3 rounded-md font-semibold hover:bg-stone-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-gray-600 text-center">
+        <p className="mt-4 text-sm text-stone-600 text-center">
           Don&apos;t have an account?{' '}
           <Link href="/profile" className="underline hover:text-black">
             Sign up
@@ -103,7 +103,7 @@ export default function SignInPage() {
         </p>
 
         {/* Admin Dashboard Link */}
-        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+        <div className="mt-8 pt-6 border-t border-stone-200 text-center">
           <Link
             href="/admin"
             className="text-base font-semibold underline text-blue-700 hover:text-black"

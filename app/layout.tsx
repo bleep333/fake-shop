@@ -7,6 +7,7 @@ import { WishlistProvider } from '@/lib/wishlistContext'
 import SessionProvider from '@/components/SessionProvider'
 import PageTransition from '@/components/PageTransition'
 import MainContentWrapper from '@/components/MainContentWrapper'
+import NewsletterPopup from '@/components/NewsletterPopup'
 import './globals.css'
 
 // Google Fonts - Luxury typography system
@@ -48,6 +49,7 @@ export default function RootLayout({
                 </PageTransition>
               </main>
               <Footer />
+              <NewsletterPopup />
             </WishlistProvider>
           </CartProvider>
         </SessionProvider>

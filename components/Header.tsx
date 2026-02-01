@@ -116,7 +116,7 @@ export default function Header() {
           ease: [0.22, 1, 0.36, 1],
         }}
         className={`fixed left-0 right-0 z-50 ${
-          pathname === '/' && !isScrolled ? 'border-b border-transparent' : 'border-b border-neutral-200/50 bg-white'
+          pathname === '/' && !isScrolled ? 'border-b border-transparent' : 'border-b border-stone-200/50 bg-white'
         }`}
         style={{ 
           willChange: 'background-color',
@@ -143,7 +143,7 @@ export default function Header() {
               >
                 <button
                   className={`text-base font-medium tracking-wide transition-colors ${
-                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-black'
+                    isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
                   }`}
                 >
                   Shop
@@ -155,7 +155,7 @@ export default function Header() {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-[100]"
+                      className="absolute top-full left-0 mt-2 bg-white border border-stone-200 shadow-soft py-8 px-8 z-[100]"
                       style={{ willChange: 'transform, opacity', minWidth: '600px' }}
                       onMouseEnter={() => setOpenDropdown('shop')}
                       onMouseLeave={() => setOpenDropdown(null)}
@@ -163,14 +163,14 @@ export default function Header() {
                       <div className="grid grid-cols-3 gap-12">
                         {/* Discover Column */}
                         <div>
-                          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
+                          <h3 className="text-xs font-medium text-stone-500 uppercase tracking-wider mb-4">
                             Discover
                           </h3>
                           <ul className="space-y-2">
                             <li>
                               <Link
                                 href="/all"
-                                className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                                className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
                                 All
                               </Link>
@@ -178,7 +178,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/new-arrivals"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 New
                               </Link>
@@ -186,7 +186,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/popular"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Popular
                               </Link>
@@ -194,7 +194,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/sale"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Sale
                               </Link>
@@ -204,14 +204,14 @@ export default function Header() {
 
                         {/* Men Column */}
                         <div>
-                          <h3 className="text-xs font-medium text-gray-900 uppercase tracking-wider mb-4">
+                          <h3 className="text-xs font-medium text-stone-900 uppercase tracking-wider mb-4">
                             Men
                           </h3>
                           <ul className="space-y-2">
                             <li>
                               <Link
                                 href="/mens"
-                                className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                                className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
                                 All Men&apos;s
                               </Link>
@@ -219,7 +219,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=t-shirts"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 T-Shirts
                               </Link>
@@ -227,7 +227,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=shirts"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Shirts
                               </Link>
@@ -235,7 +235,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=hoodies"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Hoodies
                               </Link>
@@ -243,7 +243,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=jackets"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jackets
                               </Link>
@@ -251,7 +251,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=knitwear"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Knitwear
                               </Link>
@@ -259,7 +259,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=pants"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Pants
                               </Link>
@@ -267,7 +267,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=jeans"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jeans
                               </Link>
@@ -275,7 +275,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=shorts"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Shorts
                               </Link>
@@ -283,7 +283,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/mens?category=accessories"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Accessories
                               </Link>
@@ -293,14 +293,14 @@ export default function Header() {
 
                         {/* Women Column */}
                         <div>
-                          <h3 className="text-xs font-medium text-gray-900 uppercase tracking-wider mb-4">
+                          <h3 className="text-xs font-medium text-stone-900 uppercase tracking-wider mb-4">
                             Women
                           </h3>
                           <ul className="space-y-2">
                             <li>
                               <Link
                                 href="/womens"
-                                className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                                className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
                               >
                                 All Women&apos;s
                               </Link>
@@ -308,7 +308,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=dresses"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Dresses
                               </Link>
@@ -316,7 +316,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=tops"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Tops
                               </Link>
@@ -324,7 +324,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=t-shirts"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 T-Shirts
                               </Link>
@@ -332,7 +332,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=skirts"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Skirts
                               </Link>
@@ -340,7 +340,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=pants"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Pants
                               </Link>
@@ -348,7 +348,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=jeans"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jeans
                               </Link>
@@ -356,7 +356,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=jackets"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jackets
                               </Link>
@@ -364,7 +364,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=knitwear"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Knitwear
                               </Link>
@@ -372,7 +372,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=shorts"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Shorts
                               </Link>
@@ -380,7 +380,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=jumpsuits"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Jumpsuits
                               </Link>
@@ -388,7 +388,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=lingerie"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Lingerie
                               </Link>
@@ -396,7 +396,7 @@ export default function Header() {
                             <li>
                               <Link
                                 href="/womens?category=accessories"
-                                className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                               >
                                 Accessories
             </Link>
@@ -417,7 +417,7 @@ export default function Header() {
               >
                 <button
                   className={`text-base font-medium tracking-wide transition-colors ${
-                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-black'
+                    isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
                   }`}
                 >
                   Company
@@ -429,7 +429,7 @@ export default function Header() {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-[100]"
+                      className="absolute top-full left-0 mt-2 bg-white border border-stone-200 shadow-soft py-8 px-8 z-[100]"
                       style={{ willChange: 'transform, opacity', minWidth: '280px' }}
                       onMouseEnter={() => setOpenDropdown('company')}
                       onMouseLeave={() => setOpenDropdown(null)}
@@ -438,7 +438,7 @@ export default function Header() {
                         <li>
                           <Link
                             href="/about"
-                            className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                            className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
                           >
                             About
                           </Link>
@@ -446,7 +446,7 @@ export default function Header() {
                         <li>
                           <Link
                             href="/values"
-                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                           >
                             Values
                           </Link>
@@ -454,7 +454,7 @@ export default function Header() {
                         <li>
                           <Link
                             href="/locations"
-                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                           >
                             Locations
                           </Link>
@@ -473,7 +473,7 @@ export default function Header() {
               >
                 <button
                   className={`text-base font-medium tracking-wide transition-colors ${
-                    isOnHero ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-black'
+                    isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
                   }`}
                 >
                   Blog
@@ -485,7 +485,7 @@ export default function Header() {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 shadow-soft py-8 px-8 z-[100]"
+                      className="absolute top-full left-0 mt-2 bg-white border border-stone-200 shadow-soft py-8 px-8 z-[100]"
                       style={{ willChange: 'transform, opacity', minWidth: '280px' }}
                       onMouseEnter={() => setOpenDropdown('blog')}
                       onMouseLeave={() => setOpenDropdown(null)}
@@ -494,7 +494,7 @@ export default function Header() {
                         <li>
                           <Link
                             href="/blog"
-                            className="block text-sm text-gray-900 hover:text-black font-medium tracking-wide transition-colors"
+                            className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
                           >
                             Newsroom
                           </Link>
@@ -502,7 +502,7 @@ export default function Header() {
                         <li>
                           <Link
                             href="/faqs"
-                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                           >
                             FAQ&apos;s
                           </Link>
@@ -510,7 +510,7 @@ export default function Header() {
                         <li>
                           <Link
                             href="/contact"
-                            className="block text-sm text-gray-700 hover:text-black font-light tracking-wide transition-colors"
+                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
                           >
                             Contact
                           </Link>
@@ -539,7 +539,7 @@ export default function Header() {
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className={`p-2 transition-colors rounded-full ${
-                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
+                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                 }`}
                 aria-label="Search"
               >
@@ -552,7 +552,7 @@ export default function Header() {
               <Link 
                 href="/wishlist" 
                 className={`relative p-2 transition-colors rounded-full ${
-                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
+                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                 }`}
                 aria-label="Wishlist"
               >
@@ -572,7 +572,7 @@ export default function Header() {
                   <button
                 onClick={() => setIsCartOpen(true)}
                 className={`relative p-2 transition-colors rounded-full ${
-                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
+                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                 }`}
                 aria-label="Shopping cart"
               >
@@ -594,7 +594,7 @@ export default function Header() {
                   <Link 
                     href="/profile" 
                     className={`p-2 transition-colors rounded-full ${
-                      isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
+                      isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                     }`}
                     aria-label="Profile"
                   >
@@ -602,17 +602,17 @@ export default function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </Link>
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-1">
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-100"
                       >
                         Profile
                       </Link>
                       <button
                         onClick={handleSignOut}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-stone-100"
                       >
                         Sign Out
                       </button>
@@ -623,7 +623,7 @@ export default function Header() {
                 <Link 
                   href="/auth/signin" 
                   className={`hidden md:block p-2 transition-colors rounded-full ${
-                    isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
+                    isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                   }`}
                   aria-label="Sign In"
                 >
@@ -637,7 +637,7 @@ export default function Header() {
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className={`md:hidden p-2 transition-colors rounded-full ${
-                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-700'
+                  isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                 }`}
                 aria-label="Open menu"
               >

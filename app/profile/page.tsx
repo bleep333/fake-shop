@@ -230,7 +230,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-md mx-auto text-center py-12">
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-stone-600">Loading...</p>
         </div>
       </div>
     )
@@ -241,16 +241,16 @@ export default function ProfilePage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-md mx-auto text-center py-12">
           <h1 className="text-4xl font-bold mb-4">Sign In</h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-stone-600 mb-8">
             Sign in to view your profile, orders, and manage your account.
           </p>
           <Link
             href="/auth/signin"
-            className="inline-block bg-black text-white px-8 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+            className="inline-block bg-black text-white px-8 py-3 rounded-md font-semibold hover:bg-stone-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
           >
             Sign In
           </Link>
-          <p className="mt-4 text-sm text-gray-600">
+          <p className="mt-4 text-sm text-stone-600">
             Don&apos;t have an account?{' '}
             <a href="#" className="underline hover:text-black">
               Sign up
@@ -268,41 +268,41 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Profile Info */}
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-stone-200 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Account Information</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   Full Name
                 </label>
                 <input
                   type="text"
                   value={profileInfo.name}
                   onChange={(e) => setProfileInfo({ ...profileInfo, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   value={profileInfo.email}
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-md bg-stone-50 text-stone-500 cursor-not-allowed"
                   title="Email cannot be changed"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   Phone
                 </label>
                 <input
                   type="tel"
                   value={profileInfo.phone}
                   onChange={(e) => setProfileInfo({ ...profileInfo, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               <button
@@ -310,8 +310,8 @@ export default function ProfilePage() {
                 disabled={!hasProfileChanges || savingProfile}
                 className={`px-6 py-2 rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
                   hasProfileChanges && !savingProfile
-                    ? 'bg-black text-white hover:bg-gray-800'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    ? 'bg-black text-white hover:bg-stone-800'
+                    : 'bg-stone-300 text-stone-500 cursor-not-allowed'
                 }`}
               >
                 {savingProfile ? 'Saving...' : 'Save Changes'}
@@ -320,41 +320,41 @@ export default function ProfilePage() {
           </div>
 
           {/* Address */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-stone-200 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-stone-700 mb-1">
                   Street Address
                 </label>
                 <input
                   type="text"
                   value={addressInfo.street}
                   onChange={(e) => setAddressInfo({ ...addressInfo, street: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-stone-700 mb-1">
                     City
                   </label>
                   <input
                     type="text"
                     value={addressInfo.city}
                     onChange={(e) => setAddressInfo({ ...addressInfo, city: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-stone-700 mb-1">
                     ZIP Code
                   </label>
                   <input
                     type="text"
                     value={addressInfo.zipCode}
                     onChange={(e) => setAddressInfo({ ...addressInfo, zipCode: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                 </div>
               </div>
@@ -363,8 +363,8 @@ export default function ProfilePage() {
                 disabled={!hasAddressChanges || savingAddress}
                 className={`px-6 py-2 rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
                   hasAddressChanges && !savingAddress
-                    ? 'bg-black text-white hover:bg-gray-800'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    ? 'bg-black text-white hover:bg-stone-800'
+                    : 'bg-stone-300 text-stone-500 cursor-not-allowed'
                 }`}
               >
                 {savingAddress ? 'Saving...' : 'Update Address'}
@@ -375,24 +375,24 @@ export default function ProfilePage() {
 
         {/* Orders */}
         <div className="md:col-span-1">
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-stone-200 rounded-lg p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Past Orders</h2>
               {orders.length > 0 && (
                 <Link
                   href="/orders"
-                  className="text-sm text-gray-600 hover:text-black underline"
+                  className="text-sm text-stone-600 hover:text-black underline"
                 >
                   View All
                 </Link>
               )}
             </div>
             {loadingOrders ? (
-              <div className="text-center py-8 text-gray-600">
+              <div className="text-center py-8 text-stone-600">
                 <p>Loading orders...</p>
               </div>
             ) : orders.length === 0 ? (
-              <div className="text-center py-8 text-gray-600">
+              <div className="text-center py-8 text-stone-600">
                 <p className="mb-4">No orders yet</p>
                 <Link
                   href="/mens"
@@ -415,12 +415,12 @@ export default function ProfilePage() {
                     <Link
                       key={order.id}
                       href={`/orders/${order.id}`}
-                      className="block p-4 border border-gray-200 rounded-md hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                      className="block p-4 border border-stone-200 rounded-md hover:border-stone-400 hover:bg-stone-50 transition-colors"
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <p className="font-semibold text-sm">{order.orderNumber}</p>
-                          <p className="text-xs text-gray-600">{formattedDate}</p>
+                          <p className="text-xs text-stone-600">{formattedDate}</p>
                         </div>
                         <p className="font-semibold">${order.total.toFixed(2)}</p>
                       </div>

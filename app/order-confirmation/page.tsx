@@ -129,7 +129,7 @@ export default function OrderConfirmationPage() {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-600">Loading order confirmation...</p>
+          <p className="text-stone-600">Loading order confirmation...</p>
         </div>
       </div>
     )
@@ -150,14 +150,14 @@ export default function OrderConfirmationPage() {
         {/* Left Column - Thank you message and customer details */}
         <div>
           <h1 className="text-3xl font-bold mb-4">Thank you for your purchase!</h1>
-          <p className="text-gray-700 mb-8">
+          <p className="text-stone-700 mb-8">
             Your order will be processed shortly. An email confirmation has been sent to the provided email address.
           </p>
 
           {/* Customer Details */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold mb-4">Customer Details</h2>
-            <div className="space-y-2 text-gray-700">
+            <div className="space-y-2 text-stone-700">
               <div>
                 <span className="font-medium">Name: </span>
                 <span>{customerDetails.firstName} {customerDetails.lastName}</span>
@@ -180,21 +180,21 @@ export default function OrderConfirmationPage() {
 
         {/* Right Column - Order Summary */}
         <div>
-          <div className="bg-gray-50 rounded-lg p-6">
+          <div className="bg-stone-50 rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
             
             {/* Top row: Date | Order Number | Payment Method */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 pb-4 border-b border-gray-300">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 pb-4 border-b border-stone-300">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Date</p>
+                <p className="text-sm text-stone-600 mb-1">Date</p>
                 <p className="font-medium">{orderDate}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Order Number</p>
+                <p className="text-sm text-stone-600 mb-1">Order Number</p>
                 <p className="font-medium">{orderNumber}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Payment Method</p>
+                <p className="text-sm text-stone-600 mb-1">Payment Method</p>
                 <p className="font-medium capitalize">
                   {paymentMethod === 'credit-card' ? 'Credit Card' : 'PayPal'}
                 </p>
@@ -205,13 +205,13 @@ export default function OrderConfirmationPage() {
             <div className="space-y-4 mb-6">
               {cartItems.map((item, index) => (
                 <div key={`${item.product.id}-${index}`} className="flex gap-4">
-                  <div className="relative w-20 h-24 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="relative w-20 h-24 bg-stone-100 rounded-md overflow-hidden flex-shrink-0">
                     <OrderItemImage product={item.product} />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-sm mb-1">{item.product.name}</h3>
-                    <p className="text-xs text-gray-600 mb-1">Size: {item.size}</p>
-                    <p className="text-xs text-gray-600">Quantity: {item.quantity}</p>
+                    <p className="text-xs text-stone-600 mb-1">Size: {item.size}</p>
+                    <p className="text-xs text-stone-600">Quantity: {item.quantity}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-sm">
@@ -223,7 +223,7 @@ export default function OrderConfirmationPage() {
             </div>
 
             {/* Total Cost */}
-            <div className="space-y-2 pt-4 border-t border-gray-300">
+            <div className="space-y-2 pt-4 border-t border-stone-300">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
@@ -232,12 +232,12 @@ export default function OrderConfirmationPage() {
                 <span>Shipping</span>
                 <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
               </div>
-              <div className="border-t border-gray-300 pt-2 mt-2">
+              <div className="border-t border-stone-300 pt-2 mt-2">
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-stone-500 mt-1">
                   Including ${tax.toFixed(2)} in taxes
                 </p>
               </div>
@@ -250,7 +250,7 @@ export default function OrderConfirmationPage() {
       <div className="mt-8 text-center">
         <Link
           href="/mens"
-          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          className="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-stone-800 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
         >
           Continue Shopping
         </Link>

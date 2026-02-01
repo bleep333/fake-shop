@@ -217,7 +217,7 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
 
   return (
     <div className="w-64 space-y-0">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-200">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -226,20 +226,20 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
         </h2>
         <button
           onClick={clearFilters}
-          className="text-sm text-gray-600 hover:text-black transition-colors font-medium"
+          className="text-sm text-stone-600 hover:text-black transition-colors font-medium"
         >
           Clear filters
         </button>
       </div>
 
       {/* Gender */}
-      <div className="border-b border-gray-200 py-4">
+      <div className="border-b border-stone-200 py-4">
         <button
           onClick={() => toggleSection('gender')}
           className="flex items-center justify-between w-full mb-3"
         >
-          <h3 className="font-semibold text-base text-gray-900">Gender ({pathname === '/all' ? 0 : currentGender ? 1 : 0})</h3>
-          <span className="text-gray-400 text-base">{expandedSections.gender ? '−' : '+'}</span>
+          <h3 className="font-semibold text-base text-stone-900">Gender ({pathname === '/all' ? 0 : currentGender ? 1 : 0})</h3>
+          <span className="text-stone-400 text-base">{expandedSections.gender ? '−' : '+'}</span>
         </button>
         {expandedSections.gender && (
           <div className="space-y-2.5">
@@ -249,9 +249,9 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                 name="gender-filter"
                 checked={pathname === '/all' || (!currentGender && pathname !== '/mens' && pathname !== '/womens')}
                 onChange={handleAllGenderClick}
-                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                className="w-4 h-4 text-black border-stone-300 rounded focus:ring-black"
               />
-              <span className="ml-2 text-base text-gray-900 font-medium">All</span>
+              <span className="ml-2 text-base text-stone-900 font-medium">All</span>
             </label>
             <label className="flex items-center cursor-pointer">
               <input
@@ -259,9 +259,9 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                 name="gender-filter"
                 checked={currentGender === 'mens' || pathname === '/mens'}
                 onChange={handleGenderChange('mens')}
-                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                className="w-4 h-4 text-black border-stone-300 rounded focus:ring-black"
               />
-              <span className="ml-2 text-base text-gray-900 font-medium">Men</span>
+              <span className="ml-2 text-base text-stone-900 font-medium">Men</span>
             </label>
             <label className="flex items-center cursor-pointer">
               <input
@@ -269,22 +269,22 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                 name="gender-filter"
                 checked={currentGender === 'womens' || pathname === '/womens'}
                 onChange={handleGenderChange('womens')}
-                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                className="w-4 h-4 text-black border-stone-300 rounded focus:ring-black"
               />
-              <span className="ml-2 text-base text-gray-900 font-medium">Women</span>
+              <span className="ml-2 text-base text-stone-900 font-medium">Women</span>
             </label>
           </div>
         )}
       </div>
 
       {/* Collection */}
-      <div className="border-b border-gray-200 py-4">
+      <div className="border-b border-stone-200 py-4">
         <button
           onClick={() => toggleSection('collection')}
           className="flex items-center justify-between w-full mb-3"
         >
-          <h3 className="font-semibold text-base text-gray-900">Collection ({localFilters.tags?.length || 0})</h3>
-          <span className="text-gray-400 text-base">{expandedSections.collection ? '−' : '+'}</span>
+          <h3 className="font-semibold text-base text-stone-900">Collection ({localFilters.tags?.length || 0})</h3>
+          <span className="text-stone-400 text-base">{expandedSections.collection ? '−' : '+'}</span>
         </button>
         {expandedSections.collection && (
           <div className="space-y-2.5">
@@ -294,9 +294,9 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                   type="checkbox"
                   checked={localFilters.tags?.includes(tag) || false}
                   onChange={() => handleCollectionChange(tag)}
-                  className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                  className="w-4 h-4 text-black border-stone-300 rounded focus:ring-black"
                 />
-                <span className="ml-2 text-base text-gray-900 font-medium">{tag}</span>
+                <span className="ml-2 text-base text-stone-900 font-medium">{tag}</span>
               </label>
             ))}
           </div>
@@ -304,13 +304,13 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
       </div>
 
       {/* Categories */}
-      <div className="border-b border-gray-200 py-4">
+      <div className="border-b border-stone-200 py-4">
         <button
           onClick={() => toggleSection('category')}
           className="flex items-center justify-between w-full mb-3"
         >
-          <h3 className="font-semibold text-base text-gray-900">Category ({localFilters.category?.length || 0})</h3>
-          <span className="text-gray-400 text-base">{expandedSections.category ? '−' : '+'}</span>
+          <h3 className="font-semibold text-base text-stone-900">Category ({localFilters.category?.length || 0})</h3>
+          <span className="text-stone-400 text-base">{expandedSections.category ? '−' : '+'}</span>
         </button>
         {expandedSections.category && (
           <div className="space-y-2.5">
@@ -394,9 +394,9 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                     type="checkbox"
                     checked={localFilters.category?.includes(category) || false}
                     onChange={() => handleCategoryChange(category)}
-                    className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                    className="w-4 h-4 text-black border-stone-300 rounded focus:ring-black"
                   />
-                  <span className="ml-2 text-base text-gray-900 font-medium">{formatCategoryName(category)}</span>
+                  <span className="ml-2 text-base text-stone-900 font-medium">{formatCategoryName(category)}</span>
                 </label>
               ))
             })()}
@@ -405,13 +405,13 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
       </div>
 
       {/* Color */}
-      <div className="border-b border-gray-200 py-4">
+      <div className="border-b border-stone-200 py-4">
         <button
           onClick={() => toggleSection('color')}
           className="flex items-center justify-between w-full mb-3"
         >
-          <h3 className="font-semibold text-base text-gray-900">Color ({localFilters.color?.length || 0})</h3>
-          <span className="text-gray-400 text-base">{expandedSections.color ? '−' : '+'}</span>
+          <h3 className="font-semibold text-base text-stone-900">Color ({localFilters.color?.length || 0})</h3>
+          <span className="text-stone-400 text-base">{expandedSections.color ? '−' : '+'}</span>
         </button>
         {expandedSections.color && (
           <div className="space-y-2.5">
@@ -422,13 +422,13 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                     type="checkbox"
                     checked={localFilters.color?.includes(color) || false}
                     onChange={() => handleColorChange(color)}
-                    className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                    className="w-4 h-4 text-black border-stone-300 rounded focus:ring-black"
                   />
-                  <span className="ml-2 text-base text-gray-900 font-medium capitalize">{color}</span>
+                  <span className="ml-2 text-base text-stone-900 font-medium capitalize">{color}</span>
                 </label>
               ))
             ) : (
-              <p className="text-sm text-gray-500">No colors available</p>
+              <p className="text-sm text-stone-500">No colors available</p>
             )}
           </div>
         )}
@@ -436,18 +436,18 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
 
       {/* Price Range */}
       {priceRange && (
-        <div className="border-b border-gray-200 py-4">
+        <div className="border-b border-stone-200 py-4">
           <button
             onClick={() => toggleSection('price')}
             className="flex items-center justify-between w-full mb-3"
           >
-            <h3 className="font-semibold text-base text-gray-900">Price ({sliderValue < priceRange.max ? 1 : 0})</h3>
-            <span className="text-gray-400 text-base">{expandedSections.price ? '−' : '+'}</span>
+            <h3 className="font-semibold text-base text-stone-900">Price ({sliderValue < priceRange.max ? 1 : 0})</h3>
+            <span className="text-stone-400 text-base">{expandedSections.price ? '−' : '+'}</span>
           </button>
           {expandedSections.price && (
             <div className="space-y-3">
               <div>
-                <label className="block text-base text-gray-900 font-medium mb-2">
+                <label className="block text-base text-stone-900 font-medium mb-2">
                   Max: ${sliderValue.toFixed(2)}
                 </label>
                 <input
@@ -457,12 +457,12 @@ export default function FilterSidebar({ filters, onFiltersChange, priceRange, av
                   step="1"
                   value={sliderValue}
                   onChange={(e) => handleMaxPriceChange(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                  className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-black"
                   style={{
                     background: `linear-gradient(to right, #000 0%, #000 ${((sliderValue - priceRange.min) / (priceRange.max - priceRange.min) * 100)}%, #e5e7eb ${((sliderValue - priceRange.min) / (priceRange.max - priceRange.min) * 100)}%, #e5e7eb 100%)`
                   }}
                 />
-                <div className="flex justify-between text-sm text-gray-600 mt-1 font-medium">
+                <div className="flex justify-between text-sm text-stone-600 mt-1 font-medium">
                   <span>${priceRange.min.toFixed(2)}</span>
                   <span>${priceRange.max.toFixed(2)}</span>
                 </div>

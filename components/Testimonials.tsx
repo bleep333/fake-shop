@@ -1,14 +1,12 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import ScrollReveal from './ScrollReveal'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Testimonial {
   quote: string
   author: string
   location: string
-  image?: string
 }
 
 const testimonials: Testimonial[] = [
@@ -30,42 +28,68 @@ const testimonials: Testimonial[] = [
 ]
 
 export default function Testimonials() {
-  return (
-    <section className="section-spacing bg-white">
-      <div className="container-custom">
-        <ScrollReveal>
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-light tracking-tight mb-4 text-black"
-                style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}>
-              What Our Customers Say
-            </h2>
-          </div>
-        </ScrollReveal>
+  const [activeIndex, setActiveIndex] = useState(0)
+  const current = testimonials[activeIndex]
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {testimonials.map((testimonial, index) => (
-            <ScrollReveal key={index} delay={index * 0.1}>
-              <motion.div
-                whileHover={{ y: -5 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="bg-neutral-50 p-8 md:p-10 h-full flex flex-col"
+  return (
+    <section className="section-spacing bg-black text-white">
+      <div className="container-custom flex justify-center">
+        <div className="text-center w-full max-w-xl px-4 py-6 md:py-8">
+          {/* Quotation mark */}
+          <div className="flex justify-center mb-3">
+            <span className="text-2xl md:text-3xl text-amber-600/90 font-serif leading-none" aria-hidden>
+              &ldquo;
+            </span>
+          </div>
+
+          {/* Single review - carousel */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="min-h-0"
+            >
+              <p className="text-lg md:text-xl font-semibold text-white uppercase tracking-wide leading-relaxed mb-6">
+                {current.quote}
+              </p>
+
+              {/* Profile - circular placeholder */}
+              <div className="flex flex-col items-center mb-4">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-stone-700 flex items-center justify-center overflow-hidden">
+                  <span className="text-xl font-light text-stone-400">
+                    {current.author.charAt(0)}
+                  </span>
+                </div>
+                <p className="text-base font-medium text-white mt-2">{current.author}</p>
+                <p className="text-xs text-stone-400 font-light">{current.location}</p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Clickable dots / lines to switch reviews */}
+          <div className="flex items-center justify-center gap-3 mt-4">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                className="group p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded"
+                aria-label={`View review ${index + 1} of ${testimonials.length}`}
+                aria-current={activeIndex === index ? 'true' : undefined}
               >
-                <div className="flex-1 mb-6">
-                  <p className="text-lg md:text-xl text-gray-900 font-light leading-relaxed italic">
-                    "{testimonial.quote}"
-                  </p>
-                </div>
-                <div className="border-t border-neutral-200 pt-6">
-                  <p className="text-base font-medium text-black mb-1">
-                    {testimonial.author}
-                  </p>
-                  <p className="text-sm text-gray-600 font-light">
-                    {testimonial.location}
-                  </p>
-                </div>
-              </motion.div>
-            </ScrollReveal>
-          ))}
+                <span
+                  className={`block w-12 h-0.5 md:w-16 transition-all duration-300 ${
+                    activeIndex === index
+                      ? 'bg-white'
+                      : 'bg-stone-600 group-hover:bg-stone-500'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

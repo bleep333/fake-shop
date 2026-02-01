@@ -40,7 +40,7 @@ export default function FAQ() {
   }
 
   return (
-    <section className="section-spacing bg-neutral-50">
+    <section className="section-spacing bg-stone-50">
       <div className="container-custom max-w-4xl">
         <ScrollReveal>
           <div className="text-center mb-16">
@@ -48,7 +48,7 @@ export default function FAQ() {
                 style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}>
               Know Before You Go
             </h2>
-            <p className="text-gray-600 text-lg font-light">
+            <p className="text-stone-600 text-lg font-light">
               Common questions answered
             </p>
           </div>
@@ -59,11 +59,11 @@ export default function FAQ() {
             <ScrollReveal key={index} delay={index * 0.05}>
               <motion.div
                 initial={false}
-                className="bg-white border border-neutral-200 overflow-hidden"
+                className="bg-stone-50 border border-stone-200 overflow-hidden"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 md:px-8 py-6 md:py-8 flex items-center justify-between text-left hover:bg-neutral-50 transition-colors"
+                  className="w-full px-6 md:px-8 py-6 md:py-8 flex items-center justify-between text-left hover:bg-stone-100 transition-colors"
                 >
                   <span className="text-lg md:text-xl font-medium text-black pr-8">
                     {faq.question}
@@ -89,7 +89,7 @@ export default function FAQ() {
                       className="overflow-hidden"
                     >
                       <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
-                        <p className="text-gray-600 font-light leading-relaxed">
+                        <p className="text-stone-600 font-light leading-relaxed">
                           {faq.answer}
                         </p>
                       </div>
