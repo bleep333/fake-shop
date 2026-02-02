@@ -11,9 +11,21 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'newest'
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
+    const q = searchParams.get('q')?.trim() // Search query (name, description, category)
 
     // Build where clause - use AND array to combine conditions properly
     const conditions: any[] = []
+
+    // Text search: match query in name, description, or category
+    if (q) {
+      conditions.push({
+        OR: [
+          { name: { contains: q, mode: 'insensitive' } },
+          { description: { contains: q, mode: 'insensitive' } },
+          { category: { contains: q, mode: 'insensitive' } },
+        ],
+      })
+    }
     
     if (gender) {
       conditions.push({
@@ -100,7 +112,17 @@ export async function GET(request: NextRequest) {
       const { mockProducts } = await import('@/lib/mockProducts')
       let filteredProducts = mockProducts
       
-      // Apply basic filtering to mock products
+      const qFallback = request.nextUrl.searchParams.get('q')?.trim()
+      if (qFallback) {
+        const lower = qFallback.toLowerCase()
+        filteredProducts = filteredProducts.filter(
+          p =>
+            p.name.toLowerCase().includes(lower) ||
+            (p.description?.toLowerCase().includes(lower)) ||
+            p.category.toLowerCase().includes(lower)
+        )
+      }
+      
       const gender = request.nextUrl.searchParams.get('gender') as 'mens' | 'womens' | 'unisex' | null
       if (gender) {
         filteredProducts = filteredProducts.filter(p => p.gender === gender || p.gender === 'unisex')

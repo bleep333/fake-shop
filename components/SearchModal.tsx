@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Product } from '@/lib/mockProducts'
 import { getProducts } from '@/lib/products'
 
@@ -13,6 +14,7 @@ interface SearchModalProps {
 }
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [results, setResults] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -75,6 +77,16 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     onClose()
   }
 
+  // Submit search: go to full-page results (like General Pants Co.)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const trimmed = searchQuery.trim()
+    if (trimmed) {
+      onClose()
+      router.push(`/search?q=${encodeURIComponent(trimmed)}`)
+    }
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -102,10 +114,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             aria-label="Search products"
           >
             <div className="w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden">
-              {/* Search Input */}
-              <div className="p-6 border-b border-stone-200">
+              {/* Search Input - submit goes to full-page results */}
+              <form onSubmit={handleSubmit} className="p-6 border-b border-stone-200">
                 <div className="flex items-center gap-4">
-                  <svg className="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-stone-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
@@ -118,6 +130,13 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     aria-label="Search for products"
                   />
                   <button
+                    type="submit"
+                    className="px-4 py-2 bg-stone-900 text-white text-sm font-medium rounded hover:bg-stone-800 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
+                  >
+                    Search
+                  </button>
+                  <button
+                    type="button"
                     onClick={onClose}
                     className="p-2 hover:bg-stone-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900"
                     aria-label="Close search"
@@ -127,7 +146,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     </svg>
                   </button>
                 </div>
-              </div>
+                <p className="mt-2 text-xs text-stone-500">Press Enter or click Search to see all results</p>
+              </form>
 
               {/* Results */}
               <div className="max-h-[60vh] overflow-y-auto">
@@ -140,36 +160,45 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     <p>No products found</p>
                   </div>
                 ) : results.length > 0 ? (
-                  <div className="divide-y divide-stone-200">
-                    {results.map((product) => (
-                      <Link
-                        key={product.id}
-                        href={`/products/${product.id}`}
-                        onClick={handleResultClick}
-                        className="block p-4 hover:bg-stone-50 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-inset"
-                        aria-label={`View ${product.name} - $${(product.salePrice || product.basePrice).toFixed(2)}`}
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="relative w-16 h-16 bg-stone-100 rounded overflow-hidden flex-shrink-0">
-                            {product.image && (
-                              <Image
-                                src={product.image}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                                sizes="64px"
-                              />
-                            )}
+                  <div>
+                    <Link
+                      href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
+                      onClick={() => { onClose() }}
+                      className="block p-4 bg-stone-50 border-b border-stone-200 font-medium text-stone-900 hover:bg-stone-100 transition-colors text-center"
+                    >
+                      View all results for &quot;{searchQuery.trim()}&quot; →
+                    </Link>
+                    <div className="divide-y divide-stone-200">
+                      {results.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={`/products/${product.id}`}
+                          onClick={handleResultClick}
+                          className="block p-4 hover:bg-stone-50 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-inset"
+                          aria-label={`View ${product.name} - $${(product.salePrice || product.basePrice).toFixed(2)}`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="relative w-16 h-16 bg-stone-100 rounded overflow-hidden flex-shrink-0">
+                              {product.image && (
+                                <Image
+                                  src={product.image}
+                                  alt={product.name}
+                                  fill
+                                  className="object-cover"
+                                  sizes="64px"
+                                />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-medium text-stone-900 truncate">{product.name}</h3>
+                              <p className="text-sm text-stone-500 mt-1">
+                                {product.category} • ${(product.salePrice || product.basePrice).toFixed(2)}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-stone-900 truncate">{product.name}</h3>
-                            <p className="text-sm text-stone-500 mt-1">
-                              {product.category} • ${(product.salePrice || product.basePrice).toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div className="p-12 text-center text-stone-500">

@@ -8,6 +8,7 @@ export async function getProducts(filters?: {
   minPrice?: number
   maxPrice?: number
   sortBy?: SortOption
+  q?: string // Search query (name, description, category)
 }): Promise<Product[]> {
   const params = new URLSearchParams()
   
@@ -24,6 +25,7 @@ export async function getProducts(filters?: {
   if (filters?.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString())
   if (filters?.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString())
   if (filters?.sortBy) params.append('sortBy', filters.sortBy)
+  if (filters?.q?.trim()) params.append('q', filters.q.trim())
 
   const baseUrl = typeof window !== 'undefined' 
     ? window.location.origin 
