@@ -107,7 +107,7 @@ export default function FAQ() {
               href="#"
               className="inline-block text-sm font-medium tracking-wide text-black hover:underline transition-all"
             >
-              See FAQ's →
+              See FAQ&apos;s →
             </a>
           </div>
         </ScrollReveal>

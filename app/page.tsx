@@ -25,9 +25,9 @@ export default function Home() {
   const prefersReducedMotion = useReducedMotion()
   const { scrollY } = useScroll()
   
-  // Parallax effects
+  // Parallax effects - keep image visible on scroll
   const heroY = useTransform(scrollY, [0, 500], [0, 150])
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0])
+  // Removed heroOpacity fade - keep image visible instead of fading to black
 
   useEffect(() => {
     async function loadProducts() {
@@ -86,7 +86,6 @@ export default function Home() {
           className="absolute inset-0"
           style={{ 
             y: heroY,
-            opacity: heroOpacity,
           }}
           initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 1.05 }}
           animate={{ 
@@ -243,7 +242,7 @@ export default function Home() {
                     className="text-5xl md:text-6xl font-light text-white drop-shadow-2xl mb-2"
                     style={{ textShadow: '0 4px 20px rgba(0, 0, 0, 0.8)' }}
                   >
-                    Men's
+                    Men&apos;s
                   </motion.span>
                   <motion.span
                     initial={{ opacity: 0.8 }}
@@ -298,7 +297,7 @@ export default function Home() {
                     className="text-5xl md:text-6xl font-light text-white drop-shadow-2xl mb-2"
                     style={{ textShadow: '0 4px 20px rgba(0, 0, 0, 0.8)' }}
                   >
-                    Women's
+                    Women&apos;s
                   </motion.span>
                   <motion.span
                     initial={{ opacity: 0.8 }}
@@ -538,7 +537,7 @@ export default function Home() {
                 Join the Movement
               </h2>
               <p className="text-white/80 mb-12 font-light text-lg">
-                By submitting your email, you'll be the first to know about upcoming updates for NOVARA. You can unsubscribe at any time.
+                By submitting your email, you&apos;ll be the first to know about upcoming updates for NOVARA. You can unsubscribe at any time.
               </p>
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input
