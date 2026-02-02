@@ -87,7 +87,7 @@ export default function ProfilePage() {
             
             if (addressStreet || addressCity || addressZipCode) {
               // Split street address into line 1 and line 2 if needed
-              const streetParts = addressStreet.split(',').map(s => s.trim())
+              const streetParts = addressStreet.split(',').map((s: string) => s.trim())
               const addressLine1 = streetParts[0] || ''
               const addressLine2 = streetParts.slice(1).join(', ') || ''
               

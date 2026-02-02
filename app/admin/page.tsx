@@ -2,8 +2,9 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { signIn } from 'next-auth/react'
+import Image from 'next/image'
 
 type Product = {
   id: string
@@ -102,37 +103,7 @@ export default function AdminPage() {
   const [editingPromoCode, setEditingPromoCode] = useState<any>(null)
   const [savingAnnouncement, setSavingAnnouncement] = useState(false)
 
-  useEffect(() => {
-    if (status === 'loading') return
-
-    if (!session) {
-      setLoading(false)
-      return
-    }
-
-    const isAdmin = (session.user as any)?.isAdmin === true
-    if (!isAdmin) {
-      router.push('/')
-      return
-    }
-
-    fetchProducts()
-    if (activeTab === 'orders') {
-      fetchOrders()
-    }
-    if (activeTab === 'users') {
-      fetchUsers()
-    }
-    if (activeTab === 'analytics') {
-      fetchAnalytics()
-    }
-    if (activeTab === 'promotions') {
-      fetchPromoCodes()
-      fetchAnnouncementBar()
-    }
-  }, [session, status, router, activeTab, analyticsDays])
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/products')
       if (response.ok) {
@@ -155,7 +126,7 @@ export default function AdminPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const handleStockChange = (productId: string, size: string, value: string) => {
     const numValue = parseInt(value, 10)
@@ -429,7 +400,7 @@ export default function AdminPage() {
   }
 
   // Order Management Functions
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const params = new URLSearchParams()
       if (orderFilters.status) params.append('status', orderFilters.status)
@@ -446,7 +417,7 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch orders:', error)
     }
-  }
+  }, [orderFilters])
 
   const handleOrderSort = (column: 'orderNumber' | 'orderDate' | 'customer' | 'status' | 'total') => {
     if (orderSortColumn === column) {
@@ -568,7 +539,7 @@ export default function AdminPage() {
   }
 
   // User Management Functions
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const params = new URLSearchParams()
       if (userSearch) params.append('search', userSearch)
@@ -581,7 +552,7 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch users:', error)
     }
-  }
+  }, [userSearch])
 
   const handleViewUser = async (userId: string) => {
     try {
@@ -638,7 +609,7 @@ export default function AdminPage() {
   }
 
   // Analytics Functions
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       const response = await fetch(`/api/admin/analytics?days=${analyticsDays}`)
       if (response.ok) {
@@ -648,10 +619,10 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch analytics:', error)
     }
-  }
+  }, [analyticsDays])
 
   // Promotions Functions
-  const fetchPromoCodes = async () => {
+  const fetchPromoCodes = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/promotions/promo-codes')
       if (response.ok) {
@@ -661,9 +632,9 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch promo codes:', error)
     }
-  }
+  }, [])
 
-  const fetchAnnouncementBar = async () => {
+  const fetchAnnouncementBar = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/promotions/announcement')
       if (response.ok) {
@@ -673,7 +644,37 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch announcement bar:', error)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (status === 'loading') return
+
+    if (!session) {
+      setLoading(false)
+      return
+    }
+
+    const isAdmin = (session.user as any)?.isAdmin === true
+    if (!isAdmin) {
+      router.push('/')
+      return
+    }
+
+    fetchProducts()
+    if (activeTab === 'orders') {
+      fetchOrders()
+    }
+    if (activeTab === 'users') {
+      fetchUsers()
+    }
+    if (activeTab === 'analytics') {
+      fetchAnalytics()
+    }
+    if (activeTab === 'promotions') {
+      fetchPromoCodes()
+      fetchAnnouncementBar()
+    }
+  }, [session, status, router, activeTab, analyticsDays, fetchProducts, fetchOrders, fetchUsers, fetchAnalytics, fetchPromoCodes, fetchAnnouncementBar])
 
   const handleSaveAnnouncement = async (text: string, isActive: boolean) => {
     setSavingAnnouncement(true)
@@ -1568,12 +1569,16 @@ function ProductModal({ product, onClose, onSave }: { product: Product | null, o
               {imagePreview && (
                 <div className="mt-3">
                   <p className="text-sm text-gray-600 mb-2">Preview:</p>
-                  <img
-                    src={imagePreview}
-                    alt="Product preview"
-                    className="w-32 h-32 object-cover border border-gray-300 rounded"
-                    onError={() => setImagePreview(null)}
-                  />
+                  <div className="relative w-32 h-32 border border-gray-300 rounded overflow-hidden">
+                    <Image
+                      src={imagePreview}
+                      alt="Product preview"
+                      fill
+                      className="object-cover"
+                      onError={() => setImagePreview(null)}
+                      unoptimized
+                    />
+                  </div>
                   <p className="mt-2 text-xs text-gray-500">Image path: {formData.image}</p>
                 </div>
               )}

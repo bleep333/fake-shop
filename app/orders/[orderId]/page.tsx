@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -98,20 +98,7 @@ export default function OrderSummaryPage() {
   const [isLoading, setIsLoading] = useState(true)
   const orderId = params?.orderId as string
 
-  useEffect(() => {
-    if (status === 'loading') return
-    
-    if (!session) {
-      router.push('/auth/signin')
-      return
-    }
-
-    if (orderId) {
-      fetchOrder()
-    }
-  }, [orderId, session, status, router])
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       const response = await fetch(`/api/orders/${orderId}`)
       if (response.ok) {
@@ -128,7 +115,20 @@ export default function OrderSummaryPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [orderId, router])
+
+  useEffect(() => {
+    if (status === 'loading') return
+    
+    if (!session) {
+      router.push('/auth/signin')
+      return
+    }
+
+    if (orderId) {
+      fetchOrder()
+    }
+  }, [orderId, session, status, router, fetchOrder])
 
   if (status === 'loading' || isLoading) {
     return (

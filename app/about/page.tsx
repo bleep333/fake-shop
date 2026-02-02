@@ -21,26 +21,33 @@ export default function AboutPage() {
   const words = fullText.split(' ')
   
   // Create word animations - each word fades in sequentially with slower timing
-  const wordAnimations = words.map((_, index) => {
-    const totalWords = words.length
+  // Note: We need to create transforms for each word. Since the text is static,
+  // the number of hooks is constant. We disable the eslint rule for this case.
+  const totalWords = words.length
+  const wordAnimations: Array<{ opacity: any, color: any }> = []
+  
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  for (let index = 0; index < totalWords; index++) {
     // Spread words across more of the scroll range for slower reveal
     const startProgress = (index / totalWords) * 0.8  // Words start revealing across 80% of scroll
     const endProgress = startProgress + (0.8 / totalWords)  // Each word gets a portion of the scroll
     
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const opacity = useTransform(
       scrollYProgress,
       [Math.max(0, startProgress - 0.05), startProgress, endProgress, Math.min(1, endProgress + 0.1)],
       [0.1, 0.2, 1, 1]  // Start very faint, gradually become fully visible
     )
     
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const color = useTransform(
       scrollYProgress,
       [Math.max(0, startProgress - 0.05), startProgress, endProgress, Math.min(1, endProgress + 0.1)],
       ['rgb(75, 85, 99)', 'rgb(107, 114, 128)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)']
     )
     
-    return { opacity, color }
-  })
+    wordAnimations.push({ opacity, color })
+  }
   return (
     <div className="w-full" style={{ overflow: 'visible' }}>
       {/* Hero Section - NIVEST Style: Text on top, Image below */}
