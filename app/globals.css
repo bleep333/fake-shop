@@ -27,6 +27,23 @@
     @apply font-normal tracking-tight;
     letter-spacing: -0.02em;
   }
+
+  /* Global focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-stone-900 ring-offset-2;
+  }
+
+  /* Links and buttons get visible focus */
+  a:focus-visible,
+  button:focus-visible {
+    @apply outline-none;
+  }
+
+  /* Navigation links - no focus ring */
+  nav a:focus-visible,
+  nav button:focus-visible {
+    @apply outline-none ring-0 ring-offset-0;
+  }
 }
 
 @layer components {

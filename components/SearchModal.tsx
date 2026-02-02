@@ -97,6 +97,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-[101] flex items-start justify-center pt-20 md:pt-32 px-4"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search products"
           >
             <div className="w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden">
               {/* Search Input */}
@@ -111,11 +114,12 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search products..."
-                    className="flex-1 text-lg outline-none placeholder:text-stone-400"
+                    className="flex-1 text-lg outline-none placeholder:text-stone-400 focus:ring-2 focus:ring-stone-900 rounded px-2"
+                    aria-label="Search for products"
                   />
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-stone-100 rounded-full transition-colors"
+                    className="p-2 hover:bg-stone-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900"
                     aria-label="Close search"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +146,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         key={product.id}
                         href={`/products/${product.id}`}
                         onClick={handleResultClick}
-                        className="block p-4 hover:bg-stone-50 transition-colors"
+                        className="block p-4 hover:bg-stone-50 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-inset"
+                        aria-label={`View ${product.name} - $${(product.salePrice || product.basePrice).toFixed(2)}`}
                       >
                         <div className="flex items-center gap-4">
                           <div className="relative w-16 h-16 bg-stone-100 rounded overflow-hidden flex-shrink-0">

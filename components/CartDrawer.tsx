@@ -128,13 +128,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             exit={{ x: '100%' }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="fixed top-0 right-0 h-full w-full md:w-[480px] bg-white z-[101] shadow-2xl flex flex-col"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Shopping cart"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200">
               <h2 className="text-xl font-light tracking-wide">Shopping Cart</h2>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-stone-100 rounded-full transition-colors"
+                className="p-2 hover:bg-stone-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900"
                 aria-label="Close cart"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,9 +155,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   </svg>
                   <p className="text-stone-600 mb-4">Your cart is empty</p>
                   <Link
-                    href="/mens"
+                    href="/all"
                     onClick={onClose}
-                    className="inline-block bg-black text-white px-6 py-3 rounded-md font-light tracking-wide hover:bg-stone-800 transition-colors"
+                    className="inline-block bg-black text-white px-6 py-3 rounded-md font-light tracking-wide hover:bg-stone-800 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
+                    aria-label="Continue shopping"
                   >
                     Continue Shopping
                   </Link>
@@ -176,16 +180,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           <div className="flex items-center border border-stone-300 rounded">
                             <button
                               onClick={() => updateQuantity(index, item.quantity - 1)}
-                              className="px-3 py-1 hover:bg-stone-100 transition-colors text-sm"
-                              aria-label="Decrease quantity"
+                              className="px-3 py-1 hover:bg-stone-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-inset"
+                              aria-label={`Decrease quantity of ${item.product.name}`}
                             >
                               −
                             </button>
-                            <span className="px-4 py-1 min-w-[3rem] text-center text-sm">{item.quantity}</span>
+                            <span className="px-4 py-1 min-w-[3rem] text-center text-sm" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(index, item.quantity + 1)}
-                              className="px-3 py-1 hover:bg-stone-100 transition-colors text-sm"
-                              aria-label="Increase quantity"
+                              className="px-3 py-1 hover:bg-stone-100 transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-inset"
+                              aria-label={`Increase quantity of ${item.product.name}`}
                             >
                               +
                             </button>
@@ -194,7 +198,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           {/* Remove Button */}
                           <button
                             onClick={() => removeFromCart(index)}
-                            className="text-sm text-stone-600 hover:text-black transition-colors underline"
+                            className="text-sm text-stone-600 hover:text-black transition-colors underline focus:outline-none focus:ring-2 focus:ring-stone-900 rounded px-1"
+                            aria-label={`Remove ${item.product.name} from cart`}
                           >
                             Remove
                           </button>
@@ -236,14 +241,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <Link
                   href="/checkout"
                   onClick={handleCheckout}
-                  className="block w-full bg-black text-white py-3 rounded-md font-light tracking-wide hover:bg-stone-800 transition-colors mb-3 text-center"
+                  className="block w-full bg-black text-white py-3 rounded-md font-light tracking-wide hover:bg-stone-800 transition-colors mb-3 text-center focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
+                  aria-label="Proceed to checkout"
                 >
                   Checkout
                 </Link>
                 <Link
-                  href="/mens"
+                  href="/all"
                   onClick={onClose}
-                  className="block text-center text-sm text-stone-600 hover:text-black transition-colors"
+                  className="block text-center text-sm text-stone-600 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 rounded px-2 py-1"
+                  aria-label="Continue shopping"
                 >
                   Continue Shopping
                 </Link>

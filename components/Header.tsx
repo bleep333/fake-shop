@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import MobileDrawer from './MobileDrawer'
@@ -20,7 +21,7 @@ export default function Header() {
   const cartCount = getCartCount()
   const wishlistCount = getWishlistCount()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<'shop' | 'company' | 'blog' | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<'shop' | 'company' | null>(null)
   const pathname = usePathname()
   // Initialize isScrolled based on pathname - non-home pages should always have white header
   const [isScrolled, setIsScrolled] = useState(pathname !== '/')
@@ -87,6 +88,15 @@ export default function Header() {
     fetchAnnouncement()
   }, [])
 
+  // Listen for mobile drawer search trigger
+  useEffect(() => {
+    const handleOpenSearch = () => {
+      setIsSearchOpen(true)
+    }
+    window.addEventListener('openSearch', handleOpenSearch)
+    return () => window.removeEventListener('openSearch', handleOpenSearch)
+  }, [])
+
   // Check if we're on the home page hero section (and haven't scrolled past it)
   const isOnHero = pathname === '/' && !isScrolled
 
@@ -99,7 +109,7 @@ export default function Header() {
         </div>
       )}
 
-      {/* Fixed Header - Nivest Style: Left Nav | Center Brand | Right Icons */}
+      {/* Fixed Header - Left Nav | Center Brand | Right Icons */}
       <motion.header
         initial={{
           backgroundColor: pathname === '/' ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.98)',
@@ -142,9 +152,12 @@ export default function Header() {
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <button
-                  className={`text-base font-medium tracking-wide transition-colors ${
+                  className={`text-base font-medium tracking-wide transition-colors focus:outline-none rounded px-2 py-1 ${
                     isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
                   }`}
+                  aria-label="Shop menu"
+                  aria-expanded={openDropdown === 'shop'}
+                  aria-haspopup="true"
                 >
                   Shop
                 </button>
@@ -416,9 +429,12 @@ export default function Header() {
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <button
-                  className={`text-base font-medium tracking-wide transition-colors ${
+                  className={`text-base font-medium tracking-wide transition-colors focus:outline-none rounded px-2 py-1 ${
                     isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
                   }`}
+                  aria-label="Company menu"
+                  aria-expanded={openDropdown === 'company'}
+                  aria-haspopup="true"
                 >
                   Company
                 </button>
@@ -429,97 +445,108 @@ export default function Header() {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="absolute top-full left-0 mt-2 bg-white border border-stone-200 shadow-soft py-8 px-8 z-[100]"
-                      style={{ willChange: 'transform, opacity', minWidth: '280px' }}
+                      className="absolute top-full left-0 mt-2 bg-white border border-stone-200 shadow-soft py-8 px-8 z-[100] rounded-lg"
+                      style={{ willChange: 'transform, opacity', minWidth: '700px' }}
                       onMouseEnter={() => setOpenDropdown('company')}
                       onMouseLeave={() => setOpenDropdown(null)}
                     >
-                      <ul className="space-y-2">
-                        <li>
+                      <div className="flex gap-8">
+                        {/* Visual Cards Section - Left */}
+                        <div className="flex gap-4 flex-1">
+                          {/* About Card */}
                           <Link
                             href="/about"
-                            className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
+                            className="group relative flex-1 overflow-hidden rounded-lg aspect-[4/5] min-w-[180px] bg-stone-100 hover:opacity-90 transition-opacity"
                           >
-                            About
+                            <Image
+                              src="/images/company/about-hero.jpg"
+                              alt="About NOVARA"
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 180px, 200px"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <span className="text-white font-medium text-sm tracking-wide">About</span>
+                            </div>
                           </Link>
-                        </li>
-                        <li>
+
+                          {/* Values Card */}
                           <Link
                             href="/values"
-                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
+                            className="group relative flex-1 overflow-hidden rounded-lg aspect-[4/5] min-w-[180px] bg-stone-100 hover:opacity-90 transition-opacity"
                           >
-                            Values
+                            <Image
+                              src="/images/company/sustainability.jpg"
+                              alt="Our Values"
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 180px, 200px"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <span className="text-white font-medium text-sm tracking-wide">Values</span>
+                            </div>
                           </Link>
-                        </li>
-                        <li>
+
+                          {/* Locations Card */}
                           <Link
                             href="/locations"
-                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
+                            className="group relative flex-1 overflow-hidden rounded-lg aspect-[4/5] min-w-[180px] bg-stone-100 hover:opacity-90 transition-opacity"
                           >
-                            Locations
+                            <Image
+                              src="/images/company/team.jpg"
+                              alt="Store Locations"
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 180px, 200px"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <span className="text-white font-medium text-sm tracking-wide">Locations</span>
+                            </div>
                           </Link>
-                        </li>
-                      </ul>
+                        </div>
+
+                        {/* Text Links Section - Right */}
+                        <div className="w-48 border-l border-stone-200 pl-8">
+                          <h3 className="text-xs font-medium text-stone-500 uppercase tracking-wider mb-4">
+                            Others
+                          </h3>
+                          <ul className="space-y-2">
+                            <li>
+                              <Link
+                                href="/faqs"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                FAQ&apos;s
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/contact"
+                                className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
+                              >
+                                Contact
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
-              {/* Blog Dropdown */}
-              <div 
-                className="relative"
-                onMouseEnter={() => setOpenDropdown('blog')}
-                onMouseLeave={() => setOpenDropdown(null)}
+              {/* Blog Link */}
+              <Link
+                href="/blog"
+                className={`text-base font-medium tracking-wide transition-colors focus:outline-none rounded px-2 py-1 ${
+                  isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
+                }`}
               >
-                <button
-                  className={`text-base font-medium tracking-wide transition-colors ${
-                    isOnHero ? 'text-white/90 hover:text-white' : 'text-stone-900 hover:text-black'
-                  }`}
-                >
-                  Blog
-                </button>
-                <AnimatePresence>
-                  {openDropdown === 'blog' && (
-                    <motion.div
-                      variants={dropdownVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="absolute top-full left-0 mt-2 bg-white border border-stone-200 shadow-soft py-8 px-8 z-[100]"
-                      style={{ willChange: 'transform, opacity', minWidth: '280px' }}
-                      onMouseEnter={() => setOpenDropdown('blog')}
-                      onMouseLeave={() => setOpenDropdown(null)}
-                    >
-                      <ul className="space-y-2">
-                        <li>
-                          <Link
-                            href="/blog"
-                            className="block text-sm text-stone-900 hover:text-black font-medium tracking-wide transition-colors"
-                          >
-                            Newsroom
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/faqs"
-                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
-                          >
-                            FAQ&apos;s
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/contact"
-                            className="block text-sm text-stone-700 hover:text-black font-light tracking-wide transition-colors"
-                          >
-                            Contact
-                          </Link>
-                        </li>
-                      </ul>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                Blog
+              </Link>
             </nav>
 
             {/* Center: NOVARA Brand (Large, Centered) */}
@@ -591,8 +618,7 @@ export default function Header() {
               {/* Profile / Sign In (Desktop only) */}
               {session ? (
                 <div className="hidden md:block relative group">
-                  <Link 
-                    href="/profile" 
+                  <button
                     className={`p-2 transition-colors rounded-full ${
                       isOnHero ? 'hover:bg-white/10 text-white' : 'hover:bg-stone-100 text-stone-700'
                     }`}
@@ -601,20 +627,60 @@ export default function Header() {
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                  </Link>
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="py-1">
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-100"
-                      >
-                        Profile
-                      </Link>
+                  </button>
+                  <div className="absolute right-0 mt-2 bg-white border border-stone-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[200px] py-3">
+                    <div className="flex flex-col">
+                      {/* Greeting - Clickable link to profile */}
+                      {!(session.user as any)?.isAdmin ? (
+                        <Link
+                          href="/profile"
+                          className="px-4 py-2 border-b border-stone-200 hover:bg-stone-50 transition-colors"
+                        >
+                          <p className="text-sm font-semibold text-stone-900">
+                            Hi, {session.user?.name?.split(' ')[0] || 'User'}
+                          </p>
+                        </Link>
+                      ) : (
+                        <div className="px-4 py-2 border-b border-stone-200">
+                          <p className="text-sm font-semibold text-stone-900">
+                            Hi, {session.user?.name?.split(' ')[0] || 'Admin'}
+                          </p>
+                        </div>
+                      )}
+                      {/* Quick Links - Only show for non-admin users */}
+                      {!(session.user as any)?.isAdmin ? (
+                        <>
+                          <div className="py-1">
+                            <Link
+                              href="/orders"
+                              className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                            >
+                              My Orders
+                            </Link>
+                          </div>
+                          {/* Divider */}
+                          <div className="border-t border-stone-200 my-1" />
+                        </>
+                      ) : (
+                        <>
+                          <div className="py-1">
+                            <Link
+                              href="/admin"
+                              className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                            >
+                              Admin Dashboard
+                            </Link>
+                          </div>
+                          {/* Divider */}
+                          <div className="border-t border-stone-200 my-1" />
+                        </>
+                      )}
+                      {/* Sign Out */}
                       <button
                         onClick={handleSignOut}
-                        className="block w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-stone-100"
+                        className="block w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                       >
-                        Sign Out
+                        Logout
                       </button>
                     </div>
                   </div>

@@ -180,7 +180,8 @@ export default function Home() {
             >
               <Link
                 href="/all"
-                className="inline-block px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300 group"
+                className="inline-block px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                aria-label="Shop all products"
               >
                 <span className="flex items-center gap-2">
                   Shop Now
@@ -210,8 +211,9 @@ export default function Home() {
               {/* Mens Category Link - Enhanced hover effects */}
           <Link
             href="/mens"
-                className="group relative aspect-[4/5] overflow-hidden bg-stone-100"
+                className="group relative aspect-[4/5] overflow-hidden bg-stone-100 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
                 prefetch={true}
+                aria-label="Shop Men&apos;s collection"
               >
                 {/* Background Image */}
                 <motion.div
@@ -265,8 +267,9 @@ export default function Home() {
               {/* Womens Category Link - Enhanced hover effects */}
           <Link
             href="/womens"
-                className="group relative aspect-[4/5] overflow-hidden bg-stone-100"
+                className="group relative aspect-[4/5] overflow-hidden bg-stone-100 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
                 prefetch={true}
+                aria-label="Shop Women&apos;s collection"
               >
                 {/* Background Image */}
                 <motion.div
@@ -354,7 +357,8 @@ export default function Home() {
               >
                 <Link
                   href="/all"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-stone-900 text-white font-light tracking-wide hover:bg-stone-800 transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-stone-900 text-white font-light tracking-wide hover:bg-stone-800 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
+                  aria-label="Shop all products"
                 >
                   Shop Now
                   <motion.svg
@@ -391,7 +395,8 @@ export default function Home() {
               </div>
               <Link
                 href="/new-arrivals"
-                className="hidden md:block text-sm font-medium tracking-wide text-black hover:underline transition-all"
+                className="hidden md:block text-sm font-medium tracking-wide text-black hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-stone-900 rounded px-2 py-1"
+                aria-label="View all new arrivals"
               >
                 View all →
               </Link>
@@ -408,9 +413,10 @@ export default function Home() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/sale-bg.jpg"
-            alt=""
+            alt="NOVARA sale collection background"
             className="absolute inset-0 w-full h-full object-cover object-center"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            aria-hidden="true"
           />
           <div className="absolute inset-0 bg-black/55" aria-hidden />
         </div>
@@ -443,7 +449,8 @@ export default function Home() {
               >
                 <Link
                   href="/sale"
-                  className="inline-block px-10 py-4 bg-white text-stone-900 font-medium tracking-wide hover:bg-white/95 transition-all duration-300"
+                  className="inline-block px-10 py-4 bg-white text-stone-900 font-medium tracking-wide hover:bg-white/95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-stone-900"
+                  aria-label="Shop sale items"
                 >
                   Shop Sale
                 </Link>
@@ -497,7 +504,8 @@ export default function Home() {
               >
                 <Link
                   href="/all"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-stone-900 font-light tracking-wide hover:bg-white/90 transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-stone-900 font-light tracking-wide hover:bg-white/90 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-stone-900"
+                  aria-label="Shop all products"
                 >
                   Shop Now
                   <motion.svg
@@ -521,7 +529,7 @@ export default function Home() {
       {/* Testimonials Section */}
       <Testimonials />
 
-      {/* Scrolling product strip - Nivest-style under review */}
+      {/* Scrolling product strip */}
       <ScrollingProductStrip />
 
       {/* FAQ Section */}
@@ -534,10 +542,10 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-6 text-white"
                   style={{ fontFamily: 'var(--font-playfair), ui-serif, serif' }}>
-                Join the Movement
+                Subscribe to Our Newsletter
               </h2>
               <p className="text-white/80 mb-12 font-light text-lg">
-                By submitting your email, you&apos;ll be the first to know about upcoming updates for NOVARA. You can unsubscribe at any time.
+                Stay updated with the latest collections, exclusive offers, and style inspiration from NOVARA. You can unsubscribe at any time.
               </p>
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input
@@ -552,9 +560,10 @@ export default function Home() {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300"
+                  className="px-8 py-4 bg-white text-black font-light tracking-wide hover:bg-white/90 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                  aria-label="Subscribe to newsletter"
                 >
-                  Submit
+                  Subscribe
                 </motion.button>
               </form>
             </div>

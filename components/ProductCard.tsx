@@ -218,8 +218,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Wishlist Heart Button - Always Visible */}
           <button
             onClick={handleWishlistToggle}
-            className="absolute top-3 right-3 p-1.5 z-10 hover:opacity-70 transition-opacity"
-            aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+            className="absolute top-3 right-3 p-1.5 z-10 hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2 rounded"
+            aria-label={inWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
           >
             <svg
               className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-red-500 text-red-500' : 'text-stone-400 stroke-stone-400'}`}
@@ -259,13 +259,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                           if (!outOfStock) handleSizeSelect(size)
                         }}
                         disabled={outOfStock}
-                        className={`px-2 py-1 text-xs font-medium transition-all focus:outline-none flex-shrink-0 ${
+                        className={`px-2 py-1 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-1 flex-shrink-0 ${
                           outOfStock
                             ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                             : stock > 0
                             ? 'bg-white border border-stone-300 text-stone-900 hover:border-stone-400'
                             : 'bg-stone-200 text-stone-400 cursor-not-allowed'
                         }`}
+                        aria-label={`Select size ${size}${outOfStock ? ' - out of stock' : ''}`}
                       >
                         {size}
                       </button>

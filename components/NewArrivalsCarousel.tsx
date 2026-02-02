@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import ProductCard from './ProductCard'
+import SkeletonShimmer from './SkeletonShimmer'
 import { Product } from '@/lib/mockProducts'
 
 interface NewArrivalsCarouselProps {
@@ -16,7 +17,9 @@ export default function NewArrivalsCarousel({ products, loading }: NewArrivalsCa
     return (
       <div className="flex gap-6 overflow-hidden py-4">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="aspect-[3/4] w-[280px] shrink-0 bg-stone-200 animate-pulse rounded-lg" />
+          <div key={i} className="aspect-[3/4] w-[280px] shrink-0 bg-stone-100 rounded-lg overflow-hidden">
+            <SkeletonShimmer className="w-full h-full" />
+          </div>
         ))}
       </div>
     )

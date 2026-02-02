@@ -30,7 +30,7 @@ function StripRow({ rowIndex }: { rowIndex: number }) {
           >
             <Image
               src={src}
-              alt=""
+              alt={`NOVARA product - ${src.split('/').pop()?.replace(/\.(jpg|jpeg|png|webp)$/i, '').replace(/-/g, ' ') || 'Product'}`}
               fill
               className="object-cover"
               sizes="100px"

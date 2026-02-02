@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 import ScrollReveal from './ScrollReveal'
 
 interface FAQItem {
@@ -63,9 +64,11 @@ export default function FAQ() {
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 md:px-8 py-6 md:py-8 flex items-center justify-between text-left hover:bg-stone-100 transition-colors"
+                  className="w-full px-6 md:px-8 py-6 md:py-8 flex items-center justify-between text-left hover:bg-stone-100 transition-colors focus:outline-none focus:ring-2 focus:ring-stone-900 focus:ring-inset"
+                  aria-expanded={openIndex === index}
+                  aria-controls={`faq-answer-${index}`}
                 >
-                  <span className="text-lg md:text-xl font-medium text-black pr-8">
+                  <span id={`faq-question-${index}`} className="text-lg md:text-xl font-medium text-black pr-8">
                     {faq.question}
                   </span>
                   <motion.svg
@@ -82,11 +85,14 @@ export default function FAQ() {
                 <AnimatePresence initial={false}>
                   {openIndex === index && (
                     <motion.div
+                      id={`faq-answer-${index}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
+                      role="region"
+                      aria-labelledby={`faq-question-${index}`}
                     >
                       <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
                         <p className="text-stone-600 font-light leading-relaxed">
@@ -103,12 +109,12 @@ export default function FAQ() {
 
         <ScrollReveal delay={0.3}>
           <div className="text-center mt-12">
-            <a
-              href="#"
-              className="inline-block text-sm font-medium tracking-wide text-black hover:underline transition-all"
+            <Link
+              href="/faqs"
+              className="inline-block text-sm font-medium tracking-wide text-black hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-stone-900 rounded px-2 py-1"
             >
               See FAQ&apos;s →
-            </a>
+            </Link>
           </div>
         </ScrollReveal>
       </div>
