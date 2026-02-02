@@ -273,5 +273,3 @@ Once everything is set up:
 3. ✅ Sign in and complete checkout
 4. ✅ View orders in your profile
 5. ✅ Explore the order summary pages
-
-Happy coding! 🚀
